@@ -1,26 +1,37 @@
 {
-    "name": "REVSwerve",
-    "sourceUrl": "",
-    "rotations": [
-      {
-        "axis": "x",
-        "degrees": 180
-      }
-    ],
-    "position": [-0.3175, 0.3175, 0.04],
-    "cameras": [
-      {
-        "name": "Camera",
-        "rotations": [
-          {
-            "axis": "y",
-            "degrees": 20
-          }
-        ],
-        "position": [0.2, 0, 0.8],
-        "resolution": [960, 720],
-        "fov": 100
-      }
-    ],
-    "components": []
-  }
+  "name": "REVSwerve",
+  "sourceUrl": "",
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 180
+    }
+  ],
+  "position": [
+    -0.3175,
+    0.3175,
+    0.04
+  ],
+  "cameras": [
+    {
+      "name": "Camera",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": 20
+        }
+      ],
+      "position": [
+        0.2,
+        0,
+        0.8
+      ],
+      "resolution": [
+        960,
+        720
+      ],
+      "fov": 100
+    }
+  ],
+  "components": []
+}
