@@ -29,6 +29,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.mechs.Elevator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -42,6 +46,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
+  private final Intake intake;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -63,6 +68,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
 
         elevator = new Elevator();
+        intake = new Intake(new IntakeIOSpark());
         break;
 
       case SIM:
@@ -76,6 +82,7 @@ public class RobotContainer {
                 new ModuleIOSim());
 
         elevator = new Elevator();
+        intake = new Intake(new IntakeIOSim());
         break;
 
       default:
@@ -89,6 +96,7 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         elevator = new Elevator();
+        intake = new Intake(new IntakeIO() {});
         break;
     }
 
@@ -129,6 +137,10 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    // Default roller command, control with triggers
+    intake.setDefaultCommand(
+        intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
     // Lock to 0° when A button is held
     controller
