@@ -15,6 +15,9 @@ package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
 
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.motorsims.SimulatedMotorController;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +30,10 @@ public class ModuleIOSim implements ModuleIO {
   private final DCMotorSim driveSim;
   private final DCMotorSim turnSim;
 
+  private final SwerveModuleSimulation moduleSimulation;
+  private final SimulatedMotorController.GenericMotorController driveMotor;
+    private final SimulatedMotorController.GenericMotorController turnMotor;
+
   private boolean driveClosedLoop = false;
   private boolean turnClosedLoop = false;
   private PIDController driveController = new PIDController(driveSimP, 0, driveSimD);
@@ -35,7 +42,12 @@ public class ModuleIOSim implements ModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
 
-  public ModuleIOSim() {
+  public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
+    this.moduleSimulation = moduleSimulation;
+    this.driveMotor =
+            moduleSimulation.useGenericMotorControllerForDrive().withCurrentLimit(Amps.of(driveMotorCurrentLimit));
+    this.turnMotor =
+            moduleSimulation.useGenericControllerForSteer().withCurrentLimit(Amps.of(turnMotorCurrentLimit));
     // Create drive and turn sim models
     driveSim =
         new DCMotorSim(
@@ -63,6 +75,20 @@ public class ModuleIOSim implements ModuleIO {
       turnAppliedVolts = turnController.calculate(turnSim.getAngularPositionRad());
     } else {
       turnController.reset();
+    }
+
+    if (driveClosedLoop) {
+      driveAppliedVolts = driveFFVolts
+              + driveController.calculate(
+                      moduleSimulation.getDriveWheelFinalSpeed().in(RadiansPerSecond));
+    } else {
+        driveController.reset();
+    }
+    if (turnClosedLoop) {
+        turnAppliedVolts = turnController.calculate(
+                moduleSimulation.getSteerAbsoluteFacing().getRadians());
+    } else {
+        turnController.reset();
     }
 
     // Update simulation state
