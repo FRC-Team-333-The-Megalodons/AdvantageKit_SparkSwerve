@@ -14,14 +14,14 @@
 package frc.robot.subsystems.drive;
 
 import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.config.RobotConfig;                    
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.4;
+  public static final double maxSpeedMetersPerSec = 4;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(21.508);
   public static final double wheelBase = Units.inchesToMeters(21.508);
