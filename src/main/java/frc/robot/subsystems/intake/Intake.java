@@ -23,16 +23,16 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Roller", inputs);
+    Logger.processInputs("Intake", inputs);
   }
 
   public Command runPercent(double percent) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+    return runEnd(() -> io.setVoltage(percent * 6.0), () -> io.setVoltage(0.0));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
     return runEnd(
-        () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
+        () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 2.0),
         () -> io.setVoltage(0.0));
   }
 }
