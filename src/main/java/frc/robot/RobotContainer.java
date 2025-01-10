@@ -148,6 +148,9 @@ public class RobotContainer {
     intake.setDefaultCommand(
         intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
+    // Eject game pieve when triangle is held
+    controller.triangle().whileTrue(intake.runPercent(-0.333));
+
     // Lock to 0° when A button is held
     controller
         .cross()
