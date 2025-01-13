@@ -13,12 +13,17 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 4.4;
@@ -54,11 +59,11 @@ public class DriveConstants {
   public static final int backRightTurnCanId = 23;
 
   // Drive motor configuration
-  public static final int driveMotorCurrentLimit = 39;
+  public static final int driveMotorCurrentLimit = 40;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.5);
   public static final double driveMotorReduction =
       (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
-  public static final DCMotor driveGearbox = DCMotor.getNEO(1);
+  public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
 
   // Drive encoder configuration
   public static final double driveEncoderPositionFactor =
@@ -90,7 +95,7 @@ public class DriveConstants {
   // Turn PID configuration
   public static final double turnKp = 2.0;
   public static final double turnKd = 0.0;
-  public static final double turnSimP = 8.0; // 6.209 3.844 -154.330
+  public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = 0; // Radians
   public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
@@ -111,4 +116,21 @@ public class DriveConstants {
               driveMotorCurrentLimit,
               1),
           moduleTranslations);
+
+  public static final DriveTrainSimulationConfig mapleSimConfig =
+      DriveTrainSimulationConfig.Default()
+          .withCustomModuleTranslations(moduleTranslations)
+          .withRobotMass(Kilogram.of(robotMassKg))
+          .withGyro(COTS.ofPigeon2())
+          .withSwerveModule(
+              new SwerveModuleSimulationConfig(
+                  driveGearbox,
+                  turnGearbox,
+                  driveMotorReduction,
+                  turnMotorReduction,
+                  Volts.of(0.1),
+                  Volts.of(0.1),
+                  Meters.of(wheelRadiusMeters),
+                  KilogramSquareMeters.of(0.02),
+                  wheelCOF));
 }
