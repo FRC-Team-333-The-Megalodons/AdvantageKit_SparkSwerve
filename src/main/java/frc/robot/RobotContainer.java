@@ -202,8 +202,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
     // controller.L1().whileTrue(new RunCoralIntake(0.5, coralIntake));
     // controller.R1().whileTrue(new RunCoralIntake(-0.5, coralIntake));
+
+    controller.L1().whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            drive, 
+            () -> -controller.getLeftY(), 
+            () -> -controller.getLeftX(), 
+            () -> Rotation2d.fromDegrees(0)));
   }
 
   /**
