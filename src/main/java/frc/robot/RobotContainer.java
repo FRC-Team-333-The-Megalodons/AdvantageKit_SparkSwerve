@@ -213,8 +213,7 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> vision.getTargetX(1)
-                ));
+                () -> vision.getTargetX(1)));
   }
 
   /**
