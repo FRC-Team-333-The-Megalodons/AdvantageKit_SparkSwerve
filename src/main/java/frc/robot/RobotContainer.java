@@ -206,12 +206,15 @@ public class RobotContainer {
     // controller.L1().whileTrue(new RunCoralIntake(0.5, coralIntake));
     // controller.R1().whileTrue(new RunCoralIntake(-0.5, coralIntake));
 
-    controller.L1().whileTrue(
-        DriveCommands.joystickDriveAtAngle(
-            drive, 
-            () -> -controller.getLeftY(), 
-            () -> -controller.getLeftX(), 
-            () -> Rotation2d.fromDegrees(0)));
+    controller
+        .L1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> vision.getTargetX(1)
+                ));
   }
 
   /**
