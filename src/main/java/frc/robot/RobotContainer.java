@@ -168,8 +168,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
+            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
             () -> -controller.getRightX()));
 
     // Default roller command, control with triggers
