@@ -30,7 +30,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
+import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
@@ -54,7 +56,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Vision vision;
-  private final Drive drive =
+  private Drive drive =
       new Drive(
           new GyroIOPigeon2(),
           new ModuleIOSpark(0),
@@ -101,13 +103,13 @@ public class RobotContainer {
         // add the simulated drivetrain to the simulation field
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         // Sim robot, instantiate physics sim IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIO() {},
-        //         new ModuleIOSim(driveSimulation.getModules()[0]),
-        //         new ModuleIOSim(driveSimulation.getModules()[1]),
-        //         new ModuleIOSim(driveSimulation.getModules()[2]),
-        //         new ModuleIOSim(driveSimulation.getModules()[3]));
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOSim(driveSimulation.getModules()[0]),
+                new ModuleIOSim(driveSimulation.getModules()[1]),
+                new ModuleIOSim(driveSimulation.getModules()[2]),
+                new ModuleIOSim(driveSimulation.getModules()[3]));
 
         vision =
             new Vision(
