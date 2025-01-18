@@ -233,6 +233,15 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> vision.getTargetX(1)));
 
+    controller
+        .R1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> drive.getLeftCoralStationYaw()));
+
     controller.options().whileTrue(new DriveToClosestReef(drive));
   }
 
