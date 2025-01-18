@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
@@ -20,7 +21,12 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.assistedDrive.DriveToClosestReef;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -39,13 +46,19 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -56,6 +69,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Vision vision;
+  public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
+  public static List<PhotonTrackedTarget> backCameraTargets = new ArrayList<>();
+
   private Drive drive =
       new Drive(
           new GyroIOPigeon2(),
@@ -216,6 +232,66 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> vision.getTargetX(1)));
+
+    controller.options().whileTrue(new DriveToClosestReef(drive));
+  }
+
+  static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));
+  static List<Integer> redReefTags = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11));
+
+  static List<Integer> blueCoralStationTags = new ArrayList<>(Arrays.asList(12, 13));
+  static List<Integer> redCoralStationTags = new ArrayList<>(Arrays.asList(1, 2));
+
+  static List<Integer> blueProcessorTags = new ArrayList<>(Arrays.asList(3));
+  static List<Integer> redProcessorTags = new ArrayList<>(Arrays.asList(16));
+
+  static List<Integer> blueBargeTags = new ArrayList<>(Arrays.asList(14, 4));
+  static List<Integer> redBargeTags = new ArrayList<>(Arrays.asList(15, 5));
+
+  public static boolean amBlueAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+    // In testing mode, we'll act as if we're the blue alliance.
+  }
+
+  public static Pose2d getClosestReefPose() {
+    double closestDistance = Double.MAX_VALUE;
+    PhotonTrackedTarget closestValidTarget = null;
+    for (PhotonTrackedTarget target : frontCameraTargets) {
+      Integer tagId = target.getFiducialId();
+      List<Integer> reefTags = amBlueAlliance() ? blueReefTags : redReefTags;
+      if (reefTags.contains(tagId)) {
+        double distance =
+            PhotonUtils.calculateDistanceToTargetMeters(
+                0.2, // Mesaured with a tape measure, how high is the camera from the ground on our
+                // robot
+                1.4, // How high up off the ground is an April tag, should be from Game Manual
+                Units.degreesToRadians(
+                    -30), // TODO: I have no idea what this number is! It's something from our robot
+                // presumably.
+                Units.degreesToRadians(target.getPitch()));
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestValidTarget = target;
+        }
+      }
+    }
+
+    if (closestValidTarget == null) {
+      return null;
+    }
+
+    if (VisionConstants.aprilTagLayout.getTagPose(closestValidTarget.getFiducialId()).isPresent()) {
+      Pose3d robotPose =
+          PhotonUtils.estimateFieldToRobotAprilTag(
+              closestValidTarget.getBestCameraToTarget(),
+              aprilTagLayout.getTagPose(closestValidTarget.getFiducialId()).get(),
+              new Transform3d()); // TODO: There should be a class that describes the physical
+      // robot's center relative to the camera.
+      return robotPose.toPose2d();
+    }
+
+    return null;
   }
 
   /**
