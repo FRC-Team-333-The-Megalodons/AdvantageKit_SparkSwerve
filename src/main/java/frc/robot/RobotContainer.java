@@ -216,6 +216,15 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> vision.getTargetX(1)));
+
+    controller
+        .R1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> drive.getLeftCoralStationYaw()));
   }
 
   /**
