@@ -39,6 +39,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
+import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.intake.Intake;
@@ -68,20 +70,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  */
 public class RobotContainer {
   // Subsystems
+  private final Drive drive;
   private final Vision vision;
+  private final Intake intake;
+  private SwerveDriveSimulation driveSimulation = null;
+
   public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
   public static List<PhotonTrackedTarget> backCameraTargets = new ArrayList<>();
-
-  private Drive drive =
-      new Drive(
-          new GyroIOPigeon2(),
-          new ModuleIOSpark(0),
-          new ModuleIOSpark(1),
-          new ModuleIOSpark(2),
-          new ModuleIOSpark(3));
-  private SwerveDriveSimulation driveSimulation = null;
-  private final Intake intake;
-  //   private CoralIntake coralIntake;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -94,23 +89,24 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOSpark(0),
-        //         new ModuleIOSpark(1),
-        //         new ModuleIOSpark(2),
-        //         new ModuleIOSpark(3));
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOSpark(0),
+                new ModuleIOSpark(1),
+                new ModuleIOSpark(2),
+                new ModuleIOSpark(3),
+                (pose) -> {});
 
-        vision =
+        this.vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOLimelight(camera1Name, drive::getRotation));
+                drive,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
         intake = new Intake(new IntakeIOSpark());
-        break;
 
+        break;
       case SIM:
         // create a maple-sim swerve drive simulation instance
         this.driveSimulation =
@@ -121,34 +117,38 @@ public class RobotContainer {
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
                 new ModuleIOSim(driveSimulation.getModules()[0]),
                 new ModuleIOSim(driveSimulation.getModules()[1]),
                 new ModuleIOSim(driveSimulation.getModules()[2]),
-                new ModuleIOSim(driveSimulation.getModules()[3]));
+                new ModuleIOSim(driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
 
         vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+                drive,
+                new VisionIOPhotonVisionSim(
+                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
 
         intake = new Intake(new IntakeIOSim());
-        break;
 
+        break;
       default:
         // Replayed robot, disable IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {},
-        //         new ModuleIO() {});
-
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                (pose) -> {});
+        vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
 
         intake = new Intake(new IntakeIO() {});
+
         break;
     }
 
@@ -174,7 +174,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
   }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -197,7 +196,7 @@ public class RobotContainer {
     // Eject game pieve when triangle is held
     controller.triangle().whileTrue(intake.runPercent(-0.333));
 
-    // Lock to 0° when A button is held
+    // Lock to 0°
     controller
         .cross()
         .whileTrue(
@@ -207,22 +206,21 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
+    // Switch to X pattern
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .circle()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-
-    // controller.L1().whileTrue(new RunCoralIntake(0.5, coralIntake));
-    // controller.R1().whileTrue(new RunCoralIntake(-0.5, coralIntake));
+    // Reset gyro to 0°
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.resetOdometry(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.resetOdometry(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    controller.options().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     controller
         .L1()
@@ -231,18 +229,9 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> vision.getTargetX(1)));
+                () -> vision.getTargetX(0)));
 
-    controller
-        .R1()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> drive.getLeftCoralStationYaw()));
-
-    controller.options().whileTrue(new DriveToClosestReef(drive));
+    controller.create().whileTrue(new DriveToClosestReef(drive));
   }
 
   static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));

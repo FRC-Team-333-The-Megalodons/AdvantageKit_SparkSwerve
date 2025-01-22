@@ -1,4 +1,4 @@
-// Copyright 2021-2024 FRC 6328
+// Copyright 2021-2025 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -21,17 +21,13 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -52,12 +48,11 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase implements Vision.VisionConsumer {
-  private final AprilTagFieldLayout aprilTagFieldLayout =
-      AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -66,25 +61,28 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
   private Rotation2d rawGyroRotation = new Rotation2d();
-  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+  private final SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
         new SwerveModulePosition(),
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
+  private final SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+  private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      Consumer<Pose2d> resetSimulationPoseCallBack) {
     this.gyroIO = gyroIO;
+    this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
     modules[2] = new Module(blModuleIO, 2);
@@ -99,11 +97,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
         this::getPose,
-        this::setPose,
+        this::resetOdometry,
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(4.5, 0.01, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -196,13 +194,13 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
-    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    speeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, maxSpeedMetersPerSec);
 
     // Log unoptimized setpoints
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+    Logger.recordOutput("SwerveChassisSpeeds/Setpoints", speeds);
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -305,21 +303,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   }
 
   /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
-
-  /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-  }
-
-  /** Resets the current odometry pose. */
   public void resetOdometry(Pose2d pose) {
+    resetSimulationPoseCallBack.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
@@ -346,14 +331,5 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public boolean isRed() {
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
-  }
-
-  public Rotation2d getLeftCoralStationYaw() {
-    int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 13 : 1;
-    // Taken from PhotonUtils.getYawToPose()
-    Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-    Translation2d relativeTrl =
-        speakerAprilTagPose.toPose2d().relativeTo(getPose()).getTranslation();
-    return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(getRotation());
   }
 }
