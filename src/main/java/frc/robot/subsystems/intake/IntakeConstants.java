@@ -9,4 +9,5 @@ public class IntakeConstants {
   public static final int intakeCanId = 3;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 30;
+  public static final int canRangeId = 5;
 }

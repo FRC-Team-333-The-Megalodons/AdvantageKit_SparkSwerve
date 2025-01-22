@@ -332,4 +332,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
   }
+
+  @AutoLogOutput(key = "Drive/NearCoralStation?")
+  public boolean isNearCoralStation() {
+    return (getPose().getX() < 3.0) ? true : false;
+  }
 }

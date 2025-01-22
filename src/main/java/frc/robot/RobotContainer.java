@@ -194,7 +194,9 @@ public class RobotContainer {
         intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
     // Eject game pieve when triangle is held
-    controller.triangle().whileTrue(intake.runPercent(-0.333));
+    controller
+        .triangle()
+        .whileTrue(drive.isNearCoralStation() ? intake.runPercent(-0.333) : intake.runPercent(0));
 
     // Lock to 0°
     controller
@@ -220,6 +222,7 @@ public class RobotContainer {
             : () ->
                 drive.resetOdometry(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+
     controller.options().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     controller
