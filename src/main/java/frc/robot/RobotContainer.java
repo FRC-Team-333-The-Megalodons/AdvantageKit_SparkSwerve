@@ -115,7 +115,7 @@ public class RobotContainer {
         // create a maple-sim swerve drive simulation instance
         this.driveSimulation =
             new SwerveDriveSimulation(
-                DriveConstants.mapleSimConfig, new Pose2d(8.1, 5.081, new Rotation2d()));
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         // add the simulated drivetrain to the simulation field
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         // Sim robot, instantiate physics sim IO implementations
