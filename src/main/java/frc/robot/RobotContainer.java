@@ -29,12 +29,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -73,6 +76,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Intake intake;
+  private final LED led;
   private SwerveDriveSimulation driveSimulation = null;
 
   public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
@@ -83,6 +87,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final LoggedDashboardChooser<Command> ledChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -105,6 +110,8 @@ public class RobotContainer {
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
         intake = new Intake(new IntakeIOSpark());
+
+        led = new LED();
 
         break;
       case SIM:
@@ -134,6 +141,8 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIOSim());
 
+        led = new LED();
+
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -149,11 +158,14 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIO() {});
 
+        led = new LED();
+
         break;
     }
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    ledChooser = new LoggedDashboardChooser<>("LED Controles");
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -173,7 +185,12 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    addCommandsToDashboard();
+
+    ledChooser.addOption("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
+    ledChooser.addOption("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
   }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -196,7 +213,13 @@ public class RobotContainer {
     // Eject game pieve when triangle is held
     controller
         .triangle()
-        .whileTrue(drive.isNearCoralStation() ? intake.runPercent(-0.333) : intake.runPercent(0));
+        .whileTrue(
+            drive.isNearCoralStation()
+                ? intake
+                    .runPercent(-0.333)
+                    .until(intake::isTriggered)
+                    .andThen(new RunCommand(() -> led.setLEDs(0, 255, 0), led))
+                : intake.runPercent(0).alongWith(new RunCommand(() -> led.setLEDs(0, 0, 0), led)));
 
     // Lock to 0°
     controller
@@ -320,5 +343,11 @@ public class RobotContainer {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+  }
+
+  public void addCommandsToDashboard() {
+    SmartDashboard.putData("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
+    SmartDashboard.putData("Orange", new RunCommand(() -> led.setLEDs(252, 25, 3), led));
+    SmartDashboard.putData("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
   }
 }

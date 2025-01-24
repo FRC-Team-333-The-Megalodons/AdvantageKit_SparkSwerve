@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -27,11 +26,10 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    Logger.recordOutput("CANRange", canRange.getIsDetected().getValue());
-    Logger.recordOutput("CANRangeDistance", canRange.getDistance().getValueAsDouble());
+    Logger.recordOutput("CANRange", isTriggered());
+    Logger.recordOutput("CANRangeDistance", getDistance());
   }
 
-  @AutoLogOutput(key = "Intake/RunPercent")
   public Command runPercent(double percent) {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
@@ -40,5 +38,13 @@ public class Intake extends SubsystemBase {
     return runEnd(
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 6.0),
         () -> io.setVoltage(0.0));
+  }
+
+  public boolean isTriggered() {
+    return canRange.getIsDetected().getValue();
+  }
+
+  public double getDistance() {
+    return canRange.getDistance().getValueAsDouble();
   }
 }
