@@ -16,7 +16,6 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.RobotContainer;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,7 +71,7 @@ public class VisionIOPhotonVision implements VisionIO {
         // Calculate average tag distance
         double totalTagDistance = 0.0;
         latestTargets = result.targets;
-        RobotContainer.frontCameraTargets = latestTargets;
+        // RobotContainer.frontCameraTargets = latestTargets;
 
         for (var target : result.targets) {
           totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();

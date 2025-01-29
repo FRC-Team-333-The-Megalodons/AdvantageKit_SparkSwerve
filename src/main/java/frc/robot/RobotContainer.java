@@ -1,4 +1,4 @@
-// Copyright 2021-2024 FRC 6328
+// Copyright 2021-2025 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -13,57 +13,26 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
-import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
-import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.assistedDrive.DriveToClosestReef;
-import frc.robot.subsystems.LED;
+import frc.robot.commands.ElevatorCommand;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOSpark;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOSpark;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonUtils;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -74,20 +43,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
-  private final Intake intake;
-  private final LED led;
-  private SwerveDriveSimulation driveSimulation = null;
-
-  public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
-  public static List<PhotonTrackedTarget> backCameraTargets = new ArrayList<>();
+  private final Elevator elevator;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardChooser<Command> ledChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -97,53 +59,25 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOSpark(0),
-                new ModuleIOSpark(1),
-                new ModuleIOSpark(2),
-                new ModuleIOSpark(3),
-                (pose) -> {});
-
-        this.vision =
-            new Vision(
-                drive,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-
-        intake = new Intake(new IntakeIOSpark());
-
-        led = new LED();
-
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight));
+        elevator = new Elevator();
         break;
+
       case SIM:
-        // create a maple-sim swerve drive simulation instance
-        this.driveSimulation =
-            new SwerveDriveSimulation(
-                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        // add the simulated drivetrain to the simulation field
-        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOSim(driveSimulation.getModules()[0]),
-                new ModuleIOSim(driveSimulation.getModules()[1]),
-                new ModuleIOSim(driveSimulation.getModules()[2]),
-                new ModuleIOSim(driveSimulation.getModules()[3]),
-                driveSimulation::setSimulationWorldPose);
-
-        vision =
-            new Vision(
-                drive,
-                new VisionIOPhotonVisionSim(
-                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-
-        intake = new Intake(new IntakeIOSim());
-
-        led = new LED();
-
+                new GyroIO() {},
+                new ModuleIOSim(TunerConstants.FrontLeft),
+                new ModuleIOSim(TunerConstants.FrontRight),
+                new ModuleIOSim(TunerConstants.BackLeft),
+                new ModuleIOSim(TunerConstants.BackRight));
+        elevator = new Elevator();
         break;
+
       default:
         // Replayed robot, disable IO implementations
         drive =
@@ -152,20 +86,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
-                (pose) -> {});
-        vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-
-        intake = new Intake(new IntakeIO() {});
-
-        led = new LED();
-
+                new ModuleIO() {});
+        elevator = new Elevator();
         break;
     }
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    ledChooser = new LoggedDashboardChooser<>("LED Controles");
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -185,10 +112,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    addCommandsToDashboard();
-
-    ledChooser.addOption("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
-    ledChooser.addOption("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
   }
 
   /**
@@ -202,26 +125,11 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Default roller command, control with triggers
-    intake.setDefaultCommand(
-        intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
-
-    // Eject game pieve when triangle is held
-    controller
-        .triangle()
-        .whileTrue(
-            drive.isNearCoralStation()
-                ? intake
-                    .runPercent(-0.333)
-                    .until(intake::isTriggered)
-                    .andThen(new RunCommand(() -> led.setLEDs(0, 255, 0), led))
-                : intake.runPercent(0).alongWith(new RunCommand(() -> led.setLEDs(0, 0, 0), led)));
-
-    // Lock to 0°
+    // Lock to 0° when A button is held
     controller
         .cross()
         .whileTrue(
@@ -231,91 +139,21 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    // Switch to X pattern
-    controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // Switch to X pattern when X button is pressed
+    controller.triangle().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller.R2().whileTrue(new ElevatorCommand(0.5, elevator));
+    controller.L2().whileTrue(new ElevatorCommand(-0.5, elevator));
 
-    // Reset gyro to 0°
-    final Runnable resetGyro =
-        Constants.currentMode == Constants.Mode.SIM
-            ? () ->
-                drive.resetOdometry(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            // simulation
-            : () ->
-                drive.resetOdometry(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-
-    controller.options().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-
+    // Reset gyro to 0° when B button is pressed
     controller
-        .L1()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> vision.getTargetX(0)));
-
-    controller.create().whileTrue(new DriveToClosestReef(drive));
-  }
-
-  static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));
-  static List<Integer> redReefTags = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11));
-
-  static List<Integer> blueCoralStationTags = new ArrayList<>(Arrays.asList(12, 13));
-  static List<Integer> redCoralStationTags = new ArrayList<>(Arrays.asList(1, 2));
-
-  static List<Integer> blueProcessorTags = new ArrayList<>(Arrays.asList(3));
-  static List<Integer> redProcessorTags = new ArrayList<>(Arrays.asList(16));
-
-  static List<Integer> blueBargeTags = new ArrayList<>(Arrays.asList(14, 4));
-  static List<Integer> redBargeTags = new ArrayList<>(Arrays.asList(15, 5));
-
-  public static boolean amBlueAlliance() {
-    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-    // In testing mode, we'll act as if we're the blue alliance.
-  }
-
-  public static Pose2d getClosestReefPose() {
-    double closestDistance = Double.MAX_VALUE;
-    PhotonTrackedTarget closestValidTarget = null;
-    for (PhotonTrackedTarget target : frontCameraTargets) {
-      Integer tagId = target.getFiducialId();
-      List<Integer> reefTags = amBlueAlliance() ? blueReefTags : redReefTags;
-      if (reefTags.contains(tagId)) {
-        double distance =
-            PhotonUtils.calculateDistanceToTargetMeters(
-                0.2, // Mesaured with a tape measure, how high is the camera from the ground on our
-                // robot
-                1.4, // How high up off the ground is an April tag, should be from Game Manual
-                Units.degreesToRadians(
-                    -30), // TODO: I have no idea what this number is! It's something from our robot
-                // presumably.
-                Units.degreesToRadians(target.getPitch()));
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestValidTarget = target;
-        }
-      }
-    }
-
-    if (closestValidTarget == null) {
-      return null;
-    }
-
-    if (VisionConstants.aprilTagLayout.getTagPose(closestValidTarget.getFiducialId()).isPresent()) {
-      Pose3d robotPose =
-          PhotonUtils.estimateFieldToRobotAprilTag(
-              closestValidTarget.getBestCameraToTarget(),
-              aprilTagLayout.getTagPose(closestValidTarget.getFiducialId()).get(),
-              new Transform3d()); // TODO: There should be a class that describes the physical
-      // robot's center relative to the camera.
-      return robotPose.toPose2d();
-    }
-
-    return null;
+        .square()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
   }
 
   /**
@@ -325,29 +163,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  public void resetSimulationField() {
-    if (Constants.currentMode != Constants.Mode.SIM) return;
-
-    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
-    SimulatedArena.getInstance().resetFieldForAuto();
-  }
-
-  public void displaySimFieldToAdvantageScope() {
-    if (Constants.currentMode != Constants.Mode.SIM) return;
-
-    Logger.recordOutput(
-        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-    Logger.recordOutput(
-        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput(
-        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-  }
-
-  public void addCommandsToDashboard() {
-    SmartDashboard.putData("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
-    SmartDashboard.putData("Orange", new RunCommand(() -> led.setLEDs(252, 25, 3), led));
-    SmartDashboard.putData("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
   }
 }
