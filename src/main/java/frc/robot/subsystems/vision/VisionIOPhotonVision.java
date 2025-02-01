@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.LEDStrip.LEDSegment;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +45,9 @@ public class VisionIOPhotonVision implements VisionIO {
     this.robotToCamera = robotToCamera;
   }
 
+  // PROOF OF CONCEPT: Light up LEDs when we see a target.
+  LEDSegment ledSegment = LEDStrip.getSegment(3, 4);
+
   @Override
   public void updateInputs(VisionIOInputs inputs) {
     inputs.connected = camera.isConnected();
@@ -60,8 +62,12 @@ public class VisionIOPhotonVision implements VisionIO {
             new TargetObservation(
                 Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
                 Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+
+        LEDStrip.setLEDs(Color.kYellow, ledSegment);
       } else {
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+
+        // LEDStrip.setLEDs(Color.kBlack, ledSegment);
       }
 
       // Add pose observation
@@ -77,14 +83,6 @@ public class VisionIOPhotonVision implements VisionIO {
         double totalTagDistance = 0.0;
         latestTargets = result.targets;
         RobotContainer.frontCameraTargets = latestTargets;
-
-        // PROOF OF CONCEPT: Light up LEDs when we see a target.
-        LEDSegment ledSegment = LEDStrip.getSegment(3,4);
-        if (result.hasTargets()) {
-          LEDStrip.setLEDs(Color.kYellow, ledSegment);
-        } else {
-          LEDStrip.setLEDs(Color.kBlack, ledSegment);
-        }
 
         for (var target : result.targets) {
           totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
