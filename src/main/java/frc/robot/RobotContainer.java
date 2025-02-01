@@ -231,8 +231,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> new Rotation2d()));
 
     controller.R2().whileTrue(led.makeWholeColorCommand(LEDStrip.RED));
@@ -259,8 +259,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
