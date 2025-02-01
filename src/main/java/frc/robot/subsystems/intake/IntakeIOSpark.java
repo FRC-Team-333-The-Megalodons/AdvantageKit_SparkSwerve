@@ -55,4 +55,9 @@ public class IntakeIOSpark implements IntakeIO {
   public void setVoltage(double volts) {
     intake.setVoltage(volts);
   }
+
+  @Override
+  public void setSpeed(double speed) {
+    intake.set(speed);
+  }
 }

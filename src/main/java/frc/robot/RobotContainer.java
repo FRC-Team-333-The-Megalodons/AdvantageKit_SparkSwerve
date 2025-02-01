@@ -20,10 +20,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.WristCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -37,6 +40,8 @@ import frc.robot.subsystems.elevator.ElevatorIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.intake.Wrist;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -50,6 +55,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final Intake intake;
+  private final Wrist wrist;
   // private final Vision vision;
 
   // Controller
@@ -72,6 +78,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
+        wrist = new Wrist();
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
@@ -156,6 +163,12 @@ public class RobotContainer {
     controller.triangle().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller.R2().whileTrue(new ElevatorCommand(0.5, elevator));
     controller.L2().whileTrue(new ElevatorCommand(-0.5, elevator));
+    controller.R1().whileTrue(new IntakeCommand(0.3, intake));
+    controller.L1().whileTrue(new IntakeCommand(-0.3, intake));
+    controller.square().whileTrue(new WristCommand(0.2, wrist));
+    controller.circle().whileTrue(new WristCommand(-0.2, wrist));
+
+
 
     // Reset gyro to 0° when B button is pressed
     controller

@@ -6,6 +6,10 @@ package frc.robot.subsystems.intake;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
+import java.util.Optional;
+
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -19,10 +23,16 @@ public class IntakeIOSim implements IntakeIO {
           DCMotor.getNEO(1));
 
   private double appliedVolts = 0.0;
+  private double speed = Double.MIN_VALUE;
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    sim.setInputVoltage(appliedVolts);
+
+    if (speed != Double.MIN_VALUE) {
+      sim.setInput(speed);
+    } else {
+      sim.setInputVoltage(appliedVolts);
+    }
     sim.update(0.02);
 
     inputs.positionRad = sim.getAngularPositionRad();
@@ -34,5 +44,11 @@ public class IntakeIOSim implements IntakeIO {
   @Override
   public void setVoltage(double volts) {
     appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    speed = Double.MIN_VALUE;
+  }
+
+  @Override
+  public void setSpeed(double speed) {
+    this.speed = speed;
   }
 }
