@@ -32,6 +32,11 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -44,6 +49,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
+  private final Intake intake;
+  // private final Vision vision;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -63,7 +70,9 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        elevator = new Elevator();
+        elevator = new Elevator(new ElevatorIOSpark());
+        intake = new Intake(new IntakeIOSpark());
+        // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
       case SIM:
@@ -75,7 +84,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        elevator = new Elevator();
+        elevator = new Elevator(new ElevatorIOSim());
+        intake = new Intake(new IntakeIOSim());
+        // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
       default:
@@ -87,7 +98,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        elevator = new Elevator();
+        elevator = new Elevator(new ElevatorIOSim());
+        intake = new Intake(new IntakeIOSim());
+        // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
 
