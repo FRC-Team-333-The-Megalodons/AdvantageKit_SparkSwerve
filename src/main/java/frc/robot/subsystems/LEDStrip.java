@@ -12,12 +12,14 @@ import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDStrip extends SubsystemBase {
   private static final CANdle candle = new CANdle(7);
 
+  /*
   // Team colors
   public static final Color ORANGE = new Color(255, 25, 0);
   public static final Color BLUE = new Color(8, 32, 255);
@@ -31,6 +33,7 @@ public class LEDStrip extends SubsystemBase {
   public static final Color GREEN = new Color(56, 209, 0);
   public static final Color BLACK = new Color(0, 0, 0);
   public static final Color RED = new Color(255, 0, 0);
+  */
 
   public LEDSegment BatteryIndicator;
   public LEDSegment PressureIndicator;
@@ -39,6 +42,9 @@ public class LEDStrip extends SubsystemBase {
   public LEDSegment WristEncoderIndicator;
   public LEDSegment DriverStationIndicator;
   public LEDSegment MainStrip;
+
+  public static final LEDSegment FirstBulb = new LEDSegment(0, 1, 0);
+  public static final LEDSegment SecondBulb = new LEDSegment(1, 1, 0);
 
   public LEDStrip() {
     CANdleConfiguration candleConfiguration = new CANdleConfiguration();
@@ -58,6 +64,14 @@ public class LEDStrip extends SubsystemBase {
     MainStrip = new LEDSegment(8, 300, 2);
   }
 
+  public static LEDSegment getSegment(int startBulb, int length) {
+    return new LEDSegment(startBulb, length, -1);
+  }
+
+  public static LEDSegment getBulb(int bulb) {
+    return getSegment(bulb, 1);
+  }
+
   public void setBrightness(double percent) {
     candle.configBrightnessScalar(percent, 100);
   }
@@ -73,7 +87,33 @@ public class LEDStrip extends SubsystemBase {
   public Command makeWholeColorCommand(Color color) {
     return runOnce(
         () -> {
-          candle.setLEDs(color.red, color.blue, color.green);
+          setLEDs(color);
+        });
+  }
+
+  public static int colorDoubleToInt(double value) {
+    return (int) (value * 255.0);
+  }
+
+  public static void setLEDs(Color color) {
+    candle.setLEDs(
+        colorDoubleToInt(color.red), colorDoubleToInt(color.green), colorDoubleToInt(color.blue));
+  }
+
+  public static void setLEDs(Color color, LEDSegment segment) {
+    candle.setLEDs(
+        colorDoubleToInt(color.red),
+        colorDoubleToInt(color.green),
+        colorDoubleToInt(color.blue),
+        0,
+        segment.startIndex,
+        segment.segmentSize);
+  }
+
+  public Command makeSegmentColorCommand(Color color, LEDSegment segment) {
+    return runOnce(
+        () -> {
+          setLEDs(color, segment);
         });
   }
 
@@ -91,7 +131,7 @@ public class LEDStrip extends SubsystemBase {
 
     public void setColor(Color color) {
       clearAnimation();
-      candle.setLEDs(color.red, color.green, color.blue, 0, startIndex, segmentSize);
+      setLEDs(color, this);
     }
 
     private void setAnimation(Animation animation) {
@@ -108,15 +148,15 @@ public class LEDStrip extends SubsystemBase {
     }
 
     public void disableLEDs() {
-      setColor(BLACK);
+      setColor(Color.kBlack);
     }
 
     public void setFlowAnimation(Color color, double speed) {
       setAnimation(
           new ColorFlowAnimation(
-              color.red,
-              color.green,
-              color.blue,
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
               0,
               speed,
               segmentSize,
@@ -127,15 +167,21 @@ public class LEDStrip extends SubsystemBase {
     public void setFadeAnimation(Color color, double speed) {
       setAnimation(
           new SingleFadeAnimation(
-              color.red, color.green, color.blue, 0, speed, segmentSize, startIndex));
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              startIndex));
     }
 
     public void setBandAnimation(Color color, double speed) {
       setAnimation(
           new LarsonAnimation(
-              color.red,
-              color.green,
-              color.blue,
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
               0,
               speed,
               segmentSize,
@@ -147,7 +193,13 @@ public class LEDStrip extends SubsystemBase {
     public void setStrobeAnimation(Color color, double speed) {
       setAnimation(
           new StrobeAnimation(
-              color.red, color.green, color.blue, 0, speed, segmentSize, startIndex));
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              startIndex));
     }
 
     public void setRainbowAnimation(double speed) {
@@ -155,31 +207,31 @@ public class LEDStrip extends SubsystemBase {
     }
   }
 
-  public static class Color {
-    public int red;
-    public int green;
-    public int blue;
+  // public static class Color {
+  //   public int red;
+  //   public int green;
+  //   public int blue;
 
-    public Color(int red, int green, int blue) {
-      this.red = red;
-      this.green = green;
-      this.blue = blue;
-    }
+  //   public Color(int red, int green, int blue) {
+  //     this.red = red;
+  //     this.green = green;
+  //     this.blue = blue;
+  //   }
 
-    //     /**
-    //      * Highly imperfect way of dimming the LEDs. It does not maintain color or
-    //      * accurately adjust perceived brightness.
-    //      *
-    //      * @param dimFactor
-    //      * @return The dimmed color
-    //      */
-    //     // public Color dim(double dimFactor) {
-    //     //     int newRed = (int) (MathUtils.ensureRange(red * dimFactor, 0, 200));
-    //     //     int newGreen = (int) (MathUtils.ensureRange(green * dimFactor, 0, 200));
-    //     //     int newBlue = (int) (MathUtils.ensureRange(blue * dimFactor, 0, 200));
+  //   //     /**
+  //   //      * Highly imperfect way of dimming the LEDs. It does not maintain color or
+  //   //      * accurately adjust perceived brightness.
+  //   //      *
+  //   //      * @param dimFactor
+  //   //      * @return The dimmed color
+  //   //      */
+  //   //     // public Color dim(double dimFactor) {
+  //   //     //     int newRed = (int) (MathUtils.ensureRange(red * dimFactor, 0, 200));
+  //   //     //     int newGreen = (int) (MathUtils.ensureRange(green * dimFactor, 0, 200));
+  //   //     //     int newBlue = (int) (MathUtils.ensureRange(blue * dimFactor, 0, 200));
 
-    //     //     return new Color(newRed, newGreen, newBlue);
-  }
+  //   //     //     return new Color(newRed, newGreen, newBlue);
+  // }
 
   public Object setColorRGB(int r, int g, int b) {
     throw new UnsupportedOperationException("Unimplemented method 'setColorRGB'");
