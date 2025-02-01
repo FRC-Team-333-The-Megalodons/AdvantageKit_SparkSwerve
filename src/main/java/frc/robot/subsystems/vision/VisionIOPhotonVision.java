@@ -16,7 +16,11 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.LEDStrip;
+import frc.robot.subsystems.LEDStrip.LEDSegment;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +77,14 @@ public class VisionIOPhotonVision implements VisionIO {
         double totalTagDistance = 0.0;
         latestTargets = result.targets;
         RobotContainer.frontCameraTargets = latestTargets;
+
+        // PROOF OF CONCEPT: Light up LEDs when we see a target.
+        LEDSegment ledSegment = LEDStrip.getSegment(3,4);
+        if (result.hasTargets()) {
+          LEDStrip.setLEDs(Color.kYellow, ledSegment);
+        } else {
+          LEDStrip.setLEDs(Color.kBlack, ledSegment);
+        }
 
         for (var target : result.targets) {
           totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();

@@ -214,18 +214,19 @@ public class RobotContainer {
 
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5
-    controller
-        .triangle()
-        .whileTrue(
-            drive.isNearCoralStation()
-                ? intake
-                    .runPercent(-0.333)
-                    .until(intake::isTriggered)
-                    .andThen(new RunCommand(() -> led.setColorRGB(0, 255, 0), led))
-                : intake
-                    .runPercent(0)
-                    .alongWith(new RunCommand(() -> led.setColorRGB(0, 0, 0), led)));
-
+    /*
+        controller
+            .triangle()
+            .whileTrue(
+                drive.isNearCoralStation()
+                    ? intake
+                        .runPercent(-0.333)
+                        .until(intake::isTriggered)
+                        .andThen(new RunCommand(() -> led.setColorRGB(0, 255, 0), led))
+                    : intake
+                        .runPercent(0)
+                        .alongWith(new RunCommand(() -> led.setColorRGB(0, 0, 0), led)));
+    */
     // Lock to 0°
     controller
         .cross()
@@ -236,8 +237,15 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-    controller.R2().whileTrue(led.makeWholeColorCommand(Color.kRed));
-    controller.L2().whileTrue(led.makeWholeColorCommand(Color.kBlue));
+    controller
+        .L2()
+        .whileTrue(led.makeSegmentColorCommand(Color.kRed, LEDStrip.getBulb(0)))
+        .onFalse(led.makeClearSegmentCommand(LEDStrip.getBulb(0)));
+
+    controller
+        .R2()
+        .whileTrue(led.makeSegmentColorCommand(Color.kBlue, LEDStrip.getSegment(4, 3)))
+        .onFalse(led.makeClearSegmentCommand(LEDStrip.getSegment(4, 3)));
     // Switch to X pattern
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
