@@ -16,6 +16,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.LEDStrip;
@@ -47,6 +48,7 @@ public class VisionIOPhotonVision implements VisionIO {
 
   // PROOF OF CONCEPT: Light up LEDs when we see a target.
   LEDSegment ledSegment = LEDStrip.getSegment(3, 4);
+  public final String HAS_TARGET_LABEL = new String("Has Target");
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
@@ -63,11 +65,13 @@ public class VisionIOPhotonVision implements VisionIO {
                 Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
                 Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
 
+        SmartDashboard.putBoolean(HAS_TARGET_LABEL, true);
         LEDStrip.setLEDs(Color.kYellow, ledSegment);
       } else {
-        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
 
-        // LEDStrip.setLEDs(Color.kBlack, ledSegment);
+        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+        SmartDashboard.putBoolean(HAS_TARGET_LABEL, false);
+        LEDStrip.setLEDs(Color.kBlack, ledSegment);
       }
 
       // Add pose observation
