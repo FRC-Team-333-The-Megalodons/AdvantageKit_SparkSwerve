@@ -5,20 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intake.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ElevatorCommand extends Command {
-  /** Creates a new ElevatorCommand. */
+public class IntakeCommand extends Command {
+  /** Creates a new IntakeCommand. */
   private double value;
+  private Intake intake;
 
-  private Elevator elevator;
-
-  public ElevatorCommand(double value, Elevator elevator) {
+  public IntakeCommand(double value, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.value = value;
-    this.elevator = elevator;
-    addRequirements(elevator);
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -28,18 +26,18 @@ public class ElevatorCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevator.setSpeed(value);
+    intake.setSpeed(value);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevator.setSpeed(0);
+    intake.setSpeed(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return intake.isTriggered();
   }
 }
