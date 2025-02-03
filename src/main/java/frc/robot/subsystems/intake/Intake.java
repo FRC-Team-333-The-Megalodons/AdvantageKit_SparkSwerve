@@ -48,7 +48,7 @@ public class Intake extends SubsystemBase {
     return canRange.getDistance().getValueAsDouble();
   }
 
-  public void setSpeed(double speed){
+  public void setSpeed(double speed) {
     io.setSpeed(speed);
   }
 }
