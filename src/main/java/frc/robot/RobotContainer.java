@@ -48,6 +48,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -85,7 +88,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardChooser<Command> ledChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -107,8 +109,7 @@ public class RobotContainer {
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
 
-        // Commented out until something can be plugged into Can ID 5
-        // intake = new Intake(new IntakeIOSpark());
+        intake = new Intake(new IntakeIOSpark());
 
         led = new LEDStrip();
 
@@ -138,9 +139,7 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
 
-        // Commented out until something can be plugged into Can ID 5
-        // intake = new Intake(new IntakeIOSim());
-
+        intake = new Intake(new IntakeIOSim());
         led = new LEDStrip();
 
         break;
@@ -156,8 +155,7 @@ public class RobotContainer {
                 (pose) -> {});
         vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
 
-        // Commented out until something can be plugged into Can ID 5
-        // intake = new Intake(new IntakeIO() {});
+        intake = new Intake(new IntakeIO() {});
 
         led = new LEDStrip();
 
@@ -166,7 +164,6 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    ledChooser = new LoggedDashboardChooser<>("LED Controles");
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -187,9 +184,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     addCommandsToDashboard();
-
-    ledChooser.addOption("White", new RunCommand(() -> led.setColorRGB(255, 255, 255), led));
-    ledChooser.addOption("Blue", new RunCommand(() -> led.setColorRGB(0, 0, 255), led));
   }
 
   /**
@@ -209,24 +203,24 @@ public class RobotContainer {
 
     // Default roller command, control with triggers
     // Commented out until something can be plugged into Can ID 5
-    // intake.setDefaultCommand(
-    //    intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+    intake.setDefaultCommand(
+        intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5
-    /*
-        controller
-            .triangle()
-            .whileTrue(
-                drive.isNearCoralStation()
-                    ? intake
-                        .runPercent(-0.333)
-                        .until(intake::isTriggered)
-                        .andThen(new RunCommand(() -> led.setColorRGB(0, 255, 0), led))
-                    : intake
-                        .runPercent(0)
-                        .alongWith(new RunCommand(() -> led.setColorRGB(0, 0, 0), led)));
-    */
+
+    controller
+        .triangle()
+        .whileTrue(
+            drive.isNearCoralStation()
+                ? intake
+                    .runPercent(-0.333)
+                    .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kRed)))
+                    .until(intake::isTriggered)
+                    .andThen(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
+                : intake.runPercent(0))
+        .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
+
     // Lock to 0°
     controller
         .cross()
@@ -238,12 +232,12 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     controller
-        .L2()
+        .povLeft()
         .whileTrue(led.makeSegmentColorCommand(Color.kRed, LEDStrip.getBulb(0)))
         .onFalse(led.makeClearSegmentCommand(LEDStrip.getBulb(0)));
 
     controller
-        .R2()
+        .povRight()
         .whileTrue(led.makeSegmentColorCommand(Color.kBlue, LEDStrip.getSegment(4, 3)))
         .onFalse(led.makeClearSegmentCommand(LEDStrip.getSegment(4, 3)));
     // Switch to X pattern
@@ -361,8 +355,10 @@ public class RobotContainer {
   }
 
   public void addCommandsToDashboard() {
-    SmartDashboard.putData("Blue", new RunCommand(() -> led.setColorRGB(0, 0, 255), led));
-    SmartDashboard.putData("Orange", new RunCommand(() -> led.setColorRGB(252, 25, 3), led));
-    SmartDashboard.putData("White", new RunCommand(() -> led.setColorRGB(255, 255, 255), led));
+    SmartDashboard.putData(
+        "Blue Segmented",
+        new RunCommand(() -> led.makeSegmentColorCommand(Color.kBlue, LEDStrip.getSegment(4, 3))));
+    SmartDashboard.putData(
+        "Blue Whole", new RunCommand(() -> led.makeWholeColorCommand(Color.kAqua)));
   }
 }
