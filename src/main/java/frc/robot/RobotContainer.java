@@ -16,6 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -148,9 +149,12 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    elevator.setDefaultCommand(
+        elevator.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+
     // Lock to 0° when A button is held
     controller
-        .cross()
+        .R3()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
@@ -159,17 +163,19 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.triangle().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller.R2().whileTrue(elevator.runPercent(0.5));
-    controller.L2().whileTrue(elevator.runPercent(-0.5));
-    controller.R1().whileTrue(intake.runPercent(0.75));
-    controller.L1().whileTrue(intake.runPercent(-0.75));
-    controller.square().whileTrue(wrist.runPercent(0.2));
-    controller.circle().whileTrue(wrist.runPercent(-0.2));
+    controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    //TODO: Angelina add comments
+    controller.povUp().whileTrue(elevator.runPercent(0.5));
+    controller.povDown().whileTrue(elevator.runPercent(-0.5));
+    controller.triangle().whileTrue(intake.runPercent(0.75));
+    controller.cross().whileTrue(intake.runPercent(-0.75));
+    controller.R1().whileTrue(wrist.runPercent(0.2));
+    controller.L1().whileTrue(wrist.runPercent(-0.2));
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .square()
+        .options()
         .onTrue(
             Commands.runOnce(
                     () ->
