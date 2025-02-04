@@ -162,8 +162,8 @@ public class RobotContainer {
     controller.triangle().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller.R2().whileTrue(elevator.runPercent(0.5));
     controller.L2().whileTrue(elevator.runPercent(-0.5));
-    controller.R1().whileTrue(intake.runPercent(0.3));
-    controller.L1().whileTrue(intake.runPercent(-0.3));
+    controller.R1().whileTrue(intake.runPercent(0.75));
+    controller.L1().whileTrue(intake.runPercent(-0.75));
     controller.square().whileTrue(wrist.runPercent(0.2));
     controller.circle().whileTrue(wrist.runPercent(-0.2));
 

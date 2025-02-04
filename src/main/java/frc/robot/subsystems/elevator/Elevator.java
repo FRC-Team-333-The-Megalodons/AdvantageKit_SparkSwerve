@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems.elevator;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,21 +15,10 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private SparkFlex elevatorMotor1, elevatorMotor2;
-  private RelativeEncoder elevatorEncoder1, elevatorEncoder2;
   private DigitalInput lowerLimitSwitch = new DigitalInput(ElevatorConstants.limitSwitchId);
 
   public Elevator(ElevatorIO io) {
-    elevatorMotor1 = new SparkFlex(8, MotorType.kBrushless);
-    elevatorMotor2 = new SparkFlex(9, MotorType.kBrushless);
-    elevatorEncoder1 = elevatorMotor1.getEncoder();
-    elevatorEncoder2 = elevatorMotor2.getEncoder();
     this.io = io;
-  }
-
-  public void setSpeed(double speed) {
-    elevatorMotor1.set(speed);
-    elevatorMotor2.set(speed);
   }
 
   public Command runPercent(double percent) {

@@ -18,8 +18,10 @@ import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ElevatorIOSpark implements ElevatorIO {
-  private final SparkFlex elevator = new SparkFlex(elevatorMotor1CanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = elevator.getEncoder();
+  private final SparkFlex elevatorMotor1 = new SparkFlex(elevatorMotor1CanId, MotorType.kBrushless);
+  private final SparkFlex elevatorMotor2 = new SparkFlex(elevatorMotor2CanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder1 = elevatorMotor1.getEncoder();
+  private final RelativeEncoder encoder2 = elevatorMotor2.getEncoder();
 
   public ElevatorIOSpark() {
     var config = new SparkFlexConfig();
@@ -33,26 +35,42 @@ public class ElevatorIOSpark implements ElevatorIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        elevator,
+        elevatorMotor1,
         5,
         () ->
-            elevator.configure(
+            elevatorMotor1.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    tryUntilOk(
+        elevatorMotor2,
+        5,
+        () ->
+            elevatorMotor2.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    ifOk(elevator, encoder::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevator, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(elevatorMotor1, encoder1::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(elevatorMotor1, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevator,
-        new DoubleSupplier[] {elevator::getAppliedOutput, elevator::getBusVoltage},
+        elevatorMotor1,
+        new DoubleSupplier[] {elevatorMotor1::getAppliedOutput, elevatorMotor1::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(elevator, elevator::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(elevatorMotor1, elevatorMotor1::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    ifOk(elevatorMotor2, encoder2::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(elevatorMotor2, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(
+        elevatorMotor2,
+        new DoubleSupplier[] {elevatorMotor2::getAppliedOutput, elevatorMotor2::getBusVoltage},
+        (values) -> inputs.appliedVolts = values[0] * values[1]);
+    ifOk(elevatorMotor2, elevatorMotor2::getOutputCurrent, (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    elevator.setVoltage(volts);
+    elevatorMotor1.setVoltage(volts);
+    elevatorMotor2.setVoltage(volts);
   }
 }
