@@ -171,11 +171,12 @@ public class RobotContainer {
     // TODO: Angelina add comments
     controller.povUp().whileTrue(elevator.runPercent(0.5));
     controller.povDown().whileTrue(elevator.runPercent(-0.5));
+
     controller.triangle().whileTrue(
-        Commands.parallel(
-            intake.runPercent(0.75),
-            new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-        ) 
+         //Commands.parallel(
+             intake.runPercent(0.75)
+             //new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
+    //)
     ); //intake in lights go green
     controller.cross().whileTrue(intake.runPercent(-0.75));
 

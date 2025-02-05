@@ -5,8 +5,13 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.CANrange;
+
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.LEDStrip;
+
+import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -28,6 +33,13 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("CANRange", isTriggered());
     Logger.recordOutput("CANRangeDistance", getDistance());
+
+    // Logic for leds and CANrange when a coral in the intake
+    if (isTriggered()) {
+      runPercent(0);
+      new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getSegment(0, 3));
+    }
+     
   }
 
   public Command runPercent(double percent) {
