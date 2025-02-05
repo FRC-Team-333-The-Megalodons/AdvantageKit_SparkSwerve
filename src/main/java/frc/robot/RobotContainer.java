@@ -173,9 +173,10 @@ public class RobotContainer {
         Commands.parallel(
             intake.runPercent(0.75),
             new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-        )
-    );
+        ) 
+    ); //intake in lights go green
     controller.cross().whileTrue(intake.runPercent(-0.75));
+
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
