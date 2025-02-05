@@ -16,9 +16,9 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -36,6 +36,7 @@ import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
@@ -165,10 +166,15 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    //TODO: Angelina add comments
+    // TODO: Angelina add comments
     controller.povUp().whileTrue(elevator.runPercent(0.5));
     controller.povDown().whileTrue(elevator.runPercent(-0.5));
-    controller.triangle().whileTrue(intake.runPercent(0.75));
+    controller.triangle().whileTrue(
+        Commands.parallel(
+            intake.runPercent(0.75),
+            new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
+        )
+    );
     controller.cross().whileTrue(intake.runPercent(-0.75));
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
