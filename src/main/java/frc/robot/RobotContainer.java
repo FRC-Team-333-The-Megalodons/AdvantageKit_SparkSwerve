@@ -14,9 +14,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -129,6 +129,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    NamedCommands.registerCommand("Intake", getAutonomousCommand());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -165,13 +166,13 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    //TODO: Angelina add comments
-    controller.povUp().whileTrue(elevator.runPercent(0.5));
-    controller.povDown().whileTrue(elevator.runPercent(-0.5));
-    controller.triangle().whileTrue(intake.runPercent(0.75));
-    controller.cross().whileTrue(intake.runPercent(-0.75));
-    controller.R1().whileTrue(wrist.runPercent(0.2));
-    controller.L1().whileTrue(wrist.runPercent(-0.2));
+    // TODO: Angelina add comments
+    controller.povUp().whileTrue(elevator.runPercent(0.5)); // Elevator goes up
+    controller.povDown().whileTrue(elevator.runPercent(-0.5)); // Elevator goes down
+    controller.triangle().whileTrue(intake.runPercent(0.75).until(intake, isTriggered())); // Intaking a coral
+    controller.cross().whileTrue(intake.runPercent(-0.75)); // Outtaking a coral
+    controller.R1().whileTrue(wrist.runPercent(0.2)); //
+    controller.L1().whileTrue(wrist.runPercent(-0.2)); //
 
     // Reset gyro to 0° when B button is pressed
     controller
