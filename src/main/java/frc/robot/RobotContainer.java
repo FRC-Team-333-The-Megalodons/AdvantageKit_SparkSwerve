@@ -38,6 +38,7 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
+import frc.robot.subsystems.wrist.WristIOSpark;
 import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -75,7 +76,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
-        wrist = new Wrist(new WristIOTalonFX());
+        wrist = new Wrist(new WristIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 

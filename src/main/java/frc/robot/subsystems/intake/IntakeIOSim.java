@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 public class IntakeIOSim implements IntakeIO {
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.004, motorReduction),
-          DCMotor.getNEO(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(1), 0.004, motorReduction),
+          DCMotor.getNeoVortex(1));
 
   private double appliedVolts = 0.0;
   private double speed = Double.MIN_VALUE;

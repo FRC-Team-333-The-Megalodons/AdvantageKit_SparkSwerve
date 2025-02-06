@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.wrist;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.wrist.WristConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -17,11 +17,11 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
-public class IntakeIOSpark implements IntakeIO {
-  private final SparkFlex intake = new SparkFlex(intakeCanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = intake.getEncoder();
+public class WristIOSpark implements WristIO {
+  private final SparkFlex wrist = new SparkFlex(wristCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = wrist.getEncoder();
 
-  public IntakeIOSpark() {
+  public WristIOSpark() {
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -33,31 +33,31 @@ public class IntakeIOSpark implements IntakeIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        intake,
+        wrist,
         5,
         () ->
-            intake.configure(
+            wrist.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    ifOk(intake, encoder::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(intake, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+  public void updateInputs(WristIOInputs inputs) {
+    ifOk(wrist, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(wrist, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        intake,
-        new DoubleSupplier[] {intake::getAppliedOutput, intake::getBusVoltage},
+        wrist,
+        new DoubleSupplier[] {wrist::getAppliedOutput, wrist::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(intake, intake::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(wrist, wrist::getOutputCurrent, (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    intake.setVoltage(volts);
+    wrist.setVoltage(volts);
   }
 
   @Override
   public void setSpeed(double speed) {
-    intake.set(speed);
+    wrist.set(speed);
   }
 }
