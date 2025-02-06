@@ -231,6 +231,17 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
+    controller
+        .R1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY() * 5,
+                () -> -controller.getLeftX() * 5,
+                () -> new Rotation2d(1, 1)));
+
+    // controller.L1().whileTrue(drive.aimAtCoral(0,0,Rotation2d.fromDegrees(drive)));
+
     // Switch to X pattern
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 

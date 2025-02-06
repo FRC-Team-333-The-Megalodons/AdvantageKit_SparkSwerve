@@ -337,4 +337,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public boolean isNearCoralStation() {
     return (getPose().getX() < 3.0) ? true : false;
   }
+  /*public Command aimAtCoral(double vx,double vy, double omega){
+    return run(()-> runVelocity(new ChassisSpeeds(vx, vy, omega)));
+  }*/
 }
