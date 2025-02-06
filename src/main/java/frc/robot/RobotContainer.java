@@ -63,6 +63,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -79,6 +80,7 @@ public class RobotContainer {
   private Intake intake;
   private final LEDStrip led;
   private SwerveDriveSimulation driveSimulation = null;
+  private DriveCommands driveCommands;
 
   public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
   public static List<PhotonTrackedTarget> backCameraTargets = new ArrayList<>();
@@ -256,19 +258,13 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
-                controller
+    controller
         .R1()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY() * 5,
-                () -> -controller.getLeftX() * 5,
-                () -> new Rotation2d(1, 1)));
+        .whileTrue(driveCommands.faceTheCoralStation(new PhotonCamera("rear_limelight"), drive));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
 
-  
   static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));
   static List<Integer> redReefTags = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11));
 
