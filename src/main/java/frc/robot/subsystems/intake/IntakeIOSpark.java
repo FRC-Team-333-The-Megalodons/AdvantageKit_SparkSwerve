@@ -10,15 +10,15 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class IntakeIOSpark implements IntakeIO {
-  private final SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
+  private final SparkFlex intake = new SparkFlex(intakeCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = intake.getEncoder();
 
   public IntakeIOSpark() {
