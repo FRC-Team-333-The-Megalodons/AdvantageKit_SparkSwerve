@@ -23,11 +23,11 @@ import edu.wpi.first.units.measure.Voltage;
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
  */
 public class WristIOTalonFX implements WristIO {
-  private final TalonFX wrist = new TalonFX(wristCanId);
-  private final StatusSignal<Angle> positionRot = wrist.getPosition();
-  private final StatusSignal<AngularVelocity> velocityRotPerSec = wrist.getVelocity();
-  private final StatusSignal<Voltage> appliedVolts = wrist.getMotorVoltage();
-  private final StatusSignal<Current> currentAmps = wrist.getSupplyCurrent();
+  private final TalonFX wristTalonFX = new TalonFX(wristCanId);
+  private final StatusSignal<Angle> positionRot = wristTalonFX.getPosition();
+  private final StatusSignal<AngularVelocity> velocityRotPerSec = wristTalonFX.getVelocity();
+  private final StatusSignal<Voltage> appliedVolts = wristTalonFX.getMotorVoltage();
+  private final StatusSignal<Current> currentAmps = wristTalonFX.getSupplyCurrent();
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
@@ -37,11 +37,11 @@ public class WristIOTalonFX implements WristIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    tryUntilOk(5, () -> wrist.getConfigurator().apply(config, 0.25));
+    tryUntilOk(5, () -> wristTalonFX.getConfigurator().apply(config, 0.25));
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, positionRot, velocityRotPerSec, appliedVolts, currentAmps);
-    wrist.optimizeBusUtilization();
+    wristTalonFX.optimizeBusUtilization();
   }
 
   @Override
@@ -56,6 +56,6 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setVoltage(double volts) {
-    wrist.setControl(voltageRequest.withOutput(volts));
+    wristTalonFX.setControl(voltageRequest.withOutput(volts));
   }
 }
