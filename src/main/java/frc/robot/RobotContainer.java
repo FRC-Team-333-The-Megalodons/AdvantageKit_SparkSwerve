@@ -256,6 +256,14 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
+                controller
+        .R1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY() * 5,
+                () -> -controller.getLeftX() * 5,
+                () -> new Rotation2d(1, 1)));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
