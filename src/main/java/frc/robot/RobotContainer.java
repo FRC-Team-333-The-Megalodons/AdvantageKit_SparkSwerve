@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -37,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
-import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -75,8 +76,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Intake intake;
-  private final LED led;
+  private Intake intake;
+  private final LEDStrip led;
   private SwerveDriveSimulation driveSimulation = null;
 
   public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
@@ -87,7 +88,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardChooser<Command> ledChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -111,7 +111,7 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIOSpark());
 
-        led = new LED();
+        led = new LEDStrip();
 
         break;
       case SIM:
@@ -140,8 +140,7 @@ public class RobotContainer {
                     camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
 
         intake = new Intake(new IntakeIOSim());
-
-        led = new LED();
+        led = new LEDStrip();
 
         break;
       default:
@@ -158,14 +157,13 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIO() {});
 
-        led = new LED();
+        led = new LEDStrip();
 
         break;
     }
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    ledChooser = new LoggedDashboardChooser<>("LED Controles");
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -186,9 +184,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     addCommandsToDashboard();
-
-    ledChooser.addOption("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
-    ledChooser.addOption("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
   }
 
   /**
@@ -207,19 +202,24 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Default roller command, control with triggers
+    // Commented out until something can be plugged into Can ID 5
     intake.setDefaultCommand(
         intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
     // Eject game pieve when triangle is held
+    // Commented out until something can be plugged into Can ID 5
+
     controller
         .triangle()
         .whileTrue(
             drive.isNearCoralStation()
                 ? intake
                     .runPercent(-0.333)
+                    .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kRed)))
                     .until(intake::isTriggered)
-                    .andThen(new RunCommand(() -> led.setLEDs(0, 255, 0), led))
-                : intake.runPercent(0).alongWith(new RunCommand(() -> led.setLEDs(0, 0, 0), led)));
+                    .andThen(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
+                : intake.runPercent(0))
+        .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
 
     // Lock to 0°
     controller
@@ -227,20 +227,9 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> new Rotation2d()));
-
-    controller
-        .R1()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY() * 5,
-                () -> -controller.getLeftX() * 5,
-                () -> new Rotation2d(1, 1)));
-
-    // controller.L1().whileTrue(drive.aimAtCoral(0,0,Rotation2d.fromDegrees(drive)));
 
     // Switch to X pattern
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -264,13 +253,14 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
 
+  
   static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));
   static List<Integer> redReefTags = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11));
 
@@ -357,8 +347,10 @@ public class RobotContainer {
   }
 
   public void addCommandsToDashboard() {
-    SmartDashboard.putData("Blue", new RunCommand(() -> led.setLEDs(0, 0, 255), led));
-    SmartDashboard.putData("Orange", new RunCommand(() -> led.setLEDs(252, 25, 3), led));
-    SmartDashboard.putData("White", new RunCommand(() -> led.setLEDs(255, 255, 255), led));
+    SmartDashboard.putData(
+        "Blue Segmented",
+        new RunCommand(() -> led.makeSegmentColorCommand(Color.kBlue, LEDStrip.getSegment(4, 3))));
+    SmartDashboard.putData(
+        "Blue Whole", new RunCommand(() -> led.makeWholeColorCommand(Color.kAqua)));
   }
 }
