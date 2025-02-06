@@ -5,6 +5,10 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.CANrange;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -15,6 +19,9 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
+  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
+  PIDController pid = new PIDController(0.001, 0, 0)
+
 
   /** Creates a new IntakeIO. */
   public Intake(IntakeIO io) {
@@ -28,10 +35,13 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
     Logger.recordOutput("CANRange", isTriggered());
     Logger.recordOutput("CANRangeDistance", getDistance());
+    Logger.recordOutput("WristEncoder", wristEncoder.get());
+    SmartDashboard.putNumber("WristEncoder", getPosition());
   }
 
   public Command runPercent(double percent) {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+    wristEncoder.set(pid.calculate(wristEncoder.getDistance(), setpoint));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -46,5 +56,13 @@ public class Intake extends SubsystemBase {
 
   public double getDistance() {
     return canRange.getDistance().getValueAsDouble();
+  }
+
+  public double getPosition() {
+    return wristEncoder.get();
+  }
+
+  public boolean rotationForWrist() {
+    return (getPosition() >= 0);
   }
 }

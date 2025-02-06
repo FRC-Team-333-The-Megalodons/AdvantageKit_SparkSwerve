@@ -256,7 +256,7 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
-                controller
+    controller
         .R1()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
@@ -268,7 +268,6 @@ public class RobotContainer {
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
 
-  
   static List<Integer> blueReefTags = new ArrayList<>(Arrays.asList(17, 18, 19, 20, 21, 22));
   static List<Integer> redReefTags = new ArrayList<>(Arrays.asList(6, 7, 8, 9, 10, 11));
 
