@@ -31,12 +31,15 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.endEffecter.EndEffecter;
+import frc.robot.subsystems.endEffecter.EndEffecterIO;
+import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
+import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -51,7 +54,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
-  private final Intake intake;
+  private final EndEffecter endEffecter;
   private final Wrist wrist;
   // private final Vision vision;
 
@@ -74,9 +77,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSpark());
-        intake = new Intake(new IntakeIOSpark());
+        endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
-        // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
       case SIM:
@@ -89,9 +91,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSim());
-        intake = new Intake(new IntakeIOSim());
+        endEffecter = new EndEffecter(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
-        // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
       default:
@@ -103,10 +104,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        elevator = new Elevator(new ElevatorIOSim());
-        intake = new Intake(new IntakeIOSim());
-        wrist = new Wrist(new WristIOSim());
-        // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
+        elevator = new Elevator(new ElevatorIO() {});
+        endEffecter = new EndEffecter(new EndEffecterIO() {});
+        wrist = new Wrist(new WristIO() {});
         break;
     }
 
@@ -168,8 +168,8 @@ public class RobotContainer {
     controller.povUp().whileTrue(elevator.runPercent(0.333)); // up
     controller.povDown().whileTrue(elevator.runPercent(-0.333).until(elevator::lowerLimit)); // down
 
-    controller.triangle().whileTrue(intake.runPercent(0.5)); // forward
-    controller.cross().whileTrue(intake.runPercent(-0.5)); // reverse
+    controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
+    controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse
 
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up
     controller.L1().whileTrue(wrist.runPercent(-0.5)); // down

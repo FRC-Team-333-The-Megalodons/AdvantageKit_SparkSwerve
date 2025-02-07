@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.climber;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.climber.ClimberConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -17,11 +17,11 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
-public class IntakeIOSpark implements IntakeIO {
-  private final SparkFlex intake = new SparkFlex(intakeCanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = intake.getEncoder();
+public class ClimberIOSpark implements ClimberIO {
+  private final SparkFlex climber = new SparkFlex(climberCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = climber.getEncoder();
 
-  public IntakeIOSpark() {
+  public ClimberIOSpark() {
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -33,31 +33,31 @@ public class IntakeIOSpark implements IntakeIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        intake,
+        climber,
         5,
         () ->
-            intake.configure(
+            climber.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
-    ifOk(intake, encoder::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(intake, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+  public void updateInputs(ClimberIOInputs inputs) {
+    ifOk(climber, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(climber, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        intake,
-        new DoubleSupplier[] {intake::getAppliedOutput, intake::getBusVoltage},
+        climber,
+        new DoubleSupplier[] {climber::getAppliedOutput, climber::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(intake, intake::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(climber, climber::getOutputCurrent, (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    intake.setVoltage(volts);
+    climber.setVoltage(volts);
   }
 
   @Override
   public void setSpeed(double speed) {
-    intake.set(speed);
+    climber.set(speed);
   }
 }
