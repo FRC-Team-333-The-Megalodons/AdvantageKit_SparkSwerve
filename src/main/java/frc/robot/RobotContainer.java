@@ -149,7 +149,8 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     elevator.setDefaultCommand(
-        elevator.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+        elevator.runTeleop(
+            () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
 
     // Lock to 0° when A button is held
     controller
@@ -164,11 +165,10 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // TODO: Angelina add comments
-    controller.povUp().whileTrue(elevator.runPercent(0.5)); // down
-    controller.povDown().whileTrue(elevator.runPercent(-0.5)); // up
+    controller.povUp().whileTrue(elevator.runPercent(0.333)); // up
+    controller.povDown().whileTrue(elevator.runPercent(-0.333).until(elevator::lowerLimit)); // down
 
-    controller.triangle().whileTrue(intake.runPercent(0.5).until(intake::isTriggered)); // forward
+    controller.triangle().whileTrue(intake.runPercent(0.5)); // forward
     controller.cross().whileTrue(intake.runPercent(-0.5)); // reverse
 
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up

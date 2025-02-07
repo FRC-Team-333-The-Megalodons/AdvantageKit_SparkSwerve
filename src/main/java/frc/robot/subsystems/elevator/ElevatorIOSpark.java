@@ -51,6 +51,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+    // Elevator Motors
     ifOk(elevatorMotor1, encoder1::getPosition, (value) -> inputs.positionRad = value);
     ifOk(elevatorMotor1, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
