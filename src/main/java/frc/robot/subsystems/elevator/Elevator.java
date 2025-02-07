@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import static frc.robot.subsystems.elevator.ElevatorConstants.*;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,7 +18,8 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private DigitalInput lowerLimitSwitch = new DigitalInput(ElevatorConstants.limitSwitchId);
+  private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
+  private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -32,19 +35,19 @@ public class Elevator extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public boolean getLimitSwitchState() {
-    return lowerLimitSwitch.get();
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-    Logger.recordOutput("LowerLimitSwitch", isTriggered());
+    Logger.recordOutput("UpperLimitSwitch", lowerLimit());
   }
 
-  public boolean isTriggered() {
-    return lowerLimitSwitch.get(); // TODO: make logic for 2 limit switches
+  public boolean lowerLimit() {
+    return lowerLimitSwitch.get();
+  }
+
+  public boolean upperLimit() {
+    return upperLimitSwitch.get();
   }
 }

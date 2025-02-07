@@ -39,7 +39,6 @@ import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
-import frc.robot.subsystems.wrist.WristIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -166,14 +165,14 @@ public class RobotContainer {
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // TODO: Angelina add comments
-    controller.povUp().whileTrue(elevator.runPercent(0.5));
-    controller.povDown().whileTrue(elevator.runPercent(-0.5));
+    controller.povUp().whileTrue(elevator.runPercent(0.5)); // down
+    controller.povDown().whileTrue(elevator.runPercent(-0.5)); // up
 
-    controller.triangle().whileTrue(intake.runPercent(0.75));
-    controller.cross().whileTrue(intake.runPercent(-0.75));
+    controller.triangle().whileTrue(intake.runPercent(0.5).until(intake::isTriggered)); // forward
+    controller.cross().whileTrue(intake.runPercent(-0.5)); // reverse
 
-    controller.R1().whileTrue(wrist.runPercent(0.2));
-    controller.L1().whileTrue(wrist.runPercent(-0.2));
+    controller.R1().whileTrue(wrist.runPercent(0.5)); // up
+    controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
 
     // Reset gyro to 0° when B button is pressed
     controller
