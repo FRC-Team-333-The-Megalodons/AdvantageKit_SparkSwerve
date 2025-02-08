@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.drive.Drive;
@@ -63,7 +64,6 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -223,6 +223,14 @@ public class RobotContainer {
                 : intake.runPercent(0))
         .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
 
+    controller
+        .circle()
+        .whileTrue(
+            new RunCommand(
+                () ->
+                    IntakeCommands.intakeWithSensor(intake, 0.5)
+                        .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)))));
+
     // Lock to 0°
     controller
         .cross()
@@ -258,9 +266,9 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
-    controller
-        .R1()
-        .whileTrue(driveCommands.faceTheCoralStation(new PhotonCamera("rear_limelight"), drive));
+    // controller
+    //     .R1()
+    //     .whileTrue(driveCommands.faceTheCoralStation(new PhotonCamera("rear_limelight"), drive));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
