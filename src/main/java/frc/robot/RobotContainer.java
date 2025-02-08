@@ -167,10 +167,16 @@ public class RobotContainer {
 
     controller
         .povUp()
-        .whileTrue(elevator.runPercent(0.4).until(elevator::lowerLimit)); // .until(elevator::isTriggeredLowLimit));
+        .whileTrue(
+            elevator
+                .runPercent(0.4)
+                .until(elevator::lowerLimit)); // .until(elevator::isTriggeredLowLimit));
     controller
         .povDown()
-        .whileTrue(elevator.runPercent(-0.4).until(elevator::upperLimit)); // .until(elevator::isTriggeredTopLimit));
+        .whileTrue(
+            elevator
+                .runPercent(-0.4)
+                .until(elevator::upperLimit)); // .until(elevator::isTriggeredTopLimit));
 
     controller
         .triangle()
