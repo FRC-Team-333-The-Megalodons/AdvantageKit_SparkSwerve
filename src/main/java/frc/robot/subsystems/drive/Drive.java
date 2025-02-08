@@ -340,4 +340,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   /*public Command aimAtCoral(double vx,double vy, double omega){
     return run(()-> runVelocity(new ChassisSpeeds(vx, vy, omega)));
   }*/
+
+  public void runVelocity(int i, int j, Rotation2d fromDegrees) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'runVelocity'");
+  }
 }
