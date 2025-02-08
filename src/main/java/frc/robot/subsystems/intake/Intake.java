@@ -5,8 +5,6 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.CANrange;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,8 +18,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
   private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
-  PIDController pid = new PIDController(0.001, 0, 0)
-
+  // private IntakeIOSpark intakeIOSpark = new IntakeIOSpark();
 
   /** Creates a new IntakeIO. */
   public Intake(IntakeIO io) {
@@ -41,7 +38,6 @@ public class Intake extends SubsystemBase {
 
   public Command runPercent(double percent) {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
-    wristEncoder.set(pid.calculate(wristEncoder.getDistance(), setpoint));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -49,6 +45,12 @@ public class Intake extends SubsystemBase {
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 6.0),
         () -> io.setVoltage(0.0));
   }
+
+  public Command runIntake(double setPoint) {
+    return run(() -> io.runWristPIDController(getPosition(), setPoint));
+  }
+
+  //
 
   public boolean isTriggered() {
     return canRange.getIsDetected().getValue();
