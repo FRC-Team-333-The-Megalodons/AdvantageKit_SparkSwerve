@@ -22,4 +22,6 @@ public interface WristIO {
   public default void setVoltage(double volts) {}
 
   public default void setSpeed(double speed) {}
+  
+  public default void runWristPIDController(double sensor, double setPoint) {}
 }
