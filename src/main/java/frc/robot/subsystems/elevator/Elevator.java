@@ -17,7 +17,8 @@ public class Elevator extends SubsystemBase {
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   private DigitalInput maxUpLimitSwitch = new DigitalInput(ElevatorConstants.maxUpLimitSwitchID);
-  private DigitalInput maxTopUpLimitSwitch = new DigitalInput(ElevatorConstants.maxTopUpLimitSwitchID);
+  private DigitalInput maxTopUpLimitSwitch =
+      new DigitalInput(ElevatorConstants.maxTopUpLimitSwitchID);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -45,17 +46,28 @@ public class Elevator extends SubsystemBase {
   public boolean isTriggeredLowLimit() {
     return maxUpLimitSwitch.get();
   }
+
   public boolean isTriggeredTopLimit() {
     return maxTopUpLimitSwitch.get();
   }
 
   public boolean isOkToMoveElevatorUp() {
     // Add your logic here
+    if (isTriggeredTopLimit()) {
+      return false;
+    } else if (isTriggeredLowLimit()) {
+      return true;
+    }
     return true; // Placeholder return value
   }
 
   public boolean isOkToMoveElevatorDown() {
     // Add your logic here
+    if (isTriggeredLowLimit()) {
+      return false;
+    } else if (isTriggeredTopLimit()) {
+      return true;
+    }
     return true; // Placeholder return value
   }
 
@@ -72,10 +84,10 @@ public class Elevator extends SubsystemBase {
         return;
       }
     }
-    ElevatorIO.set(speed);
+    io.setVoltage(4.0 * speed);
   }
 
   private void stopElevator() {
-    ElevatorIO.set(0);
+    io.setVoltage(0.0);
   }
 }
