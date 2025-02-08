@@ -49,6 +49,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
@@ -207,6 +208,9 @@ public class RobotContainer {
     // Commented out until something can be plugged into Can ID 5
     intake.setDefaultCommand(
         intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+
+    // Running wrist encoder
+    controller.circle().whileTrue(intake.runIntake(IntakeConstants.setPoint));
 
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5

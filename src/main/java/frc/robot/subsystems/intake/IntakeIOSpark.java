@@ -14,12 +14,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class IntakeIOSpark implements IntakeIO {
-  private final SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = intake.getEncoder();
+  private SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
+  private RelativeEncoder encoder = intake.getEncoder();
+  private PIDController pid = new PIDController(1.4, 0, 0);
 
   public IntakeIOSpark() {
     var config = new SparkMaxConfig();
@@ -54,5 +56,10 @@ public class IntakeIOSpark implements IntakeIO {
   @Override
   public void setVoltage(double volts) {
     intake.setVoltage(volts);
+  }
+
+  @Override
+  public void runWristPIDController(double sensor, double setPoint) {
+    intake.set(pid.calculate(sensor, setPoint));
   }
 }
