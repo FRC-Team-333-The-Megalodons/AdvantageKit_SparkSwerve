@@ -17,8 +17,8 @@ public class Elevator extends SubsystemBase {
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   private DigitalInput maxUpLimitSwitch = new DigitalInput(ElevatorConstants.maxUpLimitSwitchID);
-  private DigitalInput maxTopUpLimitSwitch =
-      new DigitalInput(ElevatorConstants.maxTopUpLimitSwitchID);
+  private DigitalInput maxDownLimitSwitch =
+      new DigitalInput(ElevatorConstants.maxDownLimitSwitchDigitalInputID);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -43,36 +43,35 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("TopLimitSwitch", isTriggeredTopLimit());
   }
 
-  public boolean isTriggeredLowLimit() {
-    return maxUpLimitSwitch.get();
+  public boolean isTriggeredTopLimit() {
+    return (maxUpLimitSwitch.get());
   }
 
-  public boolean isTriggeredTopLimit() {
-    return maxTopUpLimitSwitch.get();
+  public boolean isTriggeredLowLimit() {
+    return (maxDownLimitSwitch.get());
   }
 
   public boolean isOkToMoveElevatorUp() {
     // Add your logic here
     if (isTriggeredTopLimit()) {
       return false;
-    } else if (isTriggeredLowLimit()) {
+    } else if (isTriggeredLowLimit()) { // add encoder logic here too
       return true;
     }
-    return true; // Placeholder return value
+    return false; // Placeholder return value
   }
 
   public boolean isOkToMoveElevatorDown() {
     // Add your logic here
     if (isTriggeredLowLimit()) {
       return false;
-    } else if (isTriggeredTopLimit()) {
+    } else if (isTriggeredTopLimit()) { // add encoder logic here too
       return true;
     }
-    return true; // Placeholder return value
+    return false; // Placeholder return value
   }
 
   public void runElevator(double speed) {
-    // Negative number means moving trolley out; positive number means moving trolley in.
     if (speed < 0) {
       if (!isOkToMoveElevatorUp()) {
         stopElevator();
@@ -89,5 +88,13 @@ public class Elevator extends SubsystemBase {
 
   private void stopElevator() {
     io.setVoltage(0.0);
+  }
+
+    public boolean lowerLimit() {
+    return maxDownLimitSwitch.get() ? false : true;
+  }
+
+  public boolean upperLimit() {
+    return maxUpLimitSwitch.get() ? false : true;
   }
 }
