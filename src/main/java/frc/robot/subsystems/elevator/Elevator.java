@@ -16,7 +16,8 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private DigitalInput lowerLimitSwitch = new DigitalInput(ElevatorConstants.limitSwitchId);
+  private DigitalInput maxUpLimitSwitch = new DigitalInput(ElevatorConstants.maxUpLimitSwitchID);
+  private DigitalInput maxTopUpLimitSwitch = new DigitalInput(ElevatorConstants.maxTopUpLimitSwitchID);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -32,19 +33,49 @@ public class Elevator extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public boolean getLimitSwitchState() {
-    return lowerLimitSwitch.get();
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-    Logger.recordOutput("LowerLimitSwitch", isTriggered());
+    Logger.recordOutput("LowerLimitSwitch", isTriggeredLowLimit());
+    Logger.recordOutput("TopLimitSwitch", isTriggeredTopLimit());
   }
 
-  public boolean isTriggered() {
-    return lowerLimitSwitch.get(); // TODO: make logic for 2 limit switches
+  public boolean isTriggeredLowLimit() {
+    return maxUpLimitSwitch.get();
+  }
+  public boolean isTriggeredTopLimit() {
+    return maxTopUpLimitSwitch.get();
+  }
+
+  public boolean isOkToMoveElevatorUp() {
+    // Add your logic here
+    return true; // Placeholder return value
+  }
+
+  public boolean isOkToMoveElevatorDown() {
+    // Add your logic here
+    return true; // Placeholder return value
+  }
+
+  public void runElevator(double speed) {
+    // Negative number means moving trolley out; positive number means moving trolley in.
+    if (speed < 0) {
+      if (!isOkToMoveElevatorUp()) {
+        stopElevator();
+        return;
+      }
+    } else if (speed > 0) {
+      if (!isOkToMoveElevatorDown()) {
+        stopElevator();
+        return;
+      }
+    }
+    ElevatorIO.set(speed);
+  }
+
+  private void stopElevator() {
+    ElevatorIO.set(0);
   }
 }

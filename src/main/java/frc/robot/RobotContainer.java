@@ -164,8 +164,8 @@ public class RobotContainer {
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // TODO: Angelina add comments
-    controller.povUp().whileTrue(elevator.runPercent(0.5));
-    controller.povDown().whileTrue(elevator.runPercent(-0.5));
+    controller.povUp().whileTrue(elevator.runPercent(0.5).until(() -> elevator.isTriggeredTopLimit()));
+    controller.povDown().whileTrue(elevator.runPercent(-0.5).until(() -> elevator.isTriggeredLowLimit()));
 
     controller
         .triangle()
