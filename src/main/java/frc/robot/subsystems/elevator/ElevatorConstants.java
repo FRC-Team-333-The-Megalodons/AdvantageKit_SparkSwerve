@@ -12,4 +12,9 @@ public class ElevatorConstants {
   public static final int upperLimitSwitchId = 8;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+
+  // Setpoints
+  public static final double L4 = 320.0;
+  public static final double L3 = 160.0;
+  public static final double L2 = 60.0;
 }

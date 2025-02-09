@@ -173,8 +173,8 @@ public class RobotContainer {
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.l4Pos)
-                .withTimeout(3.0)
-                .andThen(elevator.runPercent(0.333).until(elevator::upperLimit)));
+                .withTimeout(2.0)
+                .andThen(elevator.runPercent(0.333).until(elevator::upperLimit))); // score l4
 
     controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
     controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse

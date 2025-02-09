@@ -81,4 +81,13 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void setElevator(double currentPos, double targetPos) {
     elevatorMotor1.set(pidController.calculate(currentPos, targetPos));
   }
+
+  @Override
+  public void resetEncoder() {
+    encoder1.setPosition(0);
+  }
+
+  public double getElevatorPosition() {
+    return encoder1.getPosition();
+  }
 }

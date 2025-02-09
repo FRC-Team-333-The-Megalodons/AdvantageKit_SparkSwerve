@@ -42,10 +42,16 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("LowerLimitSwitch", lowerLimit());
     Logger.recordOutput("UpperLimitSwitch", upperLimit());
+    Logger.recordOutput("Elevator Pos", io.getElevatorPosition());
   }
 
   public boolean lowerLimit() {
-    return lowerLimitSwitch.get() ? false : true;
+    if (lowerLimitSwitch.get()) {
+      return false;
+    } else {
+      io.resetEncoder();
+      return true;
+    }
   }
 
   public boolean upperLimit() {
