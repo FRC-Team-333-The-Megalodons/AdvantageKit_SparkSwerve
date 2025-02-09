@@ -14,12 +14,14 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class WristIOSpark implements WristIO {
   private final SparkFlex wrist = new SparkFlex(wristCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = wrist.getEncoder();
+  private final PIDController pid = new PIDController(1.5, 0.0, 0.0);
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();
@@ -59,5 +61,10 @@ public class WristIOSpark implements WristIO {
   @Override
   public void setSpeed(double speed) {
     wrist.set(speed);
+  }
+
+  @Override
+  public void setWrist(double currentPos, double targetPos) {
+    wrist.set(-pid.calculate(currentPos, targetPos));
   }
 }

@@ -9,19 +9,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.endEffecter.EndEffecter;
 
-public class IntakeCommands {
+public class EndEffecterCommands {
 
-  private IntakeCommands() {}
+  private EndEffecterCommands() {}
 
-  public static Command intakeWithSensor(EndEffecter intake, double seconds) {
+  public static Command intakeWithSensor(EndEffecter endEffecter, double seconds) {
     return Commands.run(
         () -> {
-          if (!intake.isTriggered()) {
-            intake.runPercent(0.5);
+          if (!endEffecter.isTriggered()) {
+            endEffecter.runPercent(0.5);
           } else {
-            new WaitCommand(seconds).andThen(intake.runPercent(0.0));
+            new WaitCommand(seconds).andThen(endEffecter.runPercent(0.0));
           }
         },
-        intake);
+        endEffecter);
   }
 }

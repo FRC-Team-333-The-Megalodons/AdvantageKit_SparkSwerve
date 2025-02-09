@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -22,6 +23,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex elevatorMotor2 = new SparkFlex(elevatorMotor2CanId, MotorType.kBrushless);
   private final RelativeEncoder encoder1 = elevatorMotor1.getEncoder();
   private final RelativeEncoder encoder2 = elevatorMotor2.getEncoder();
+  private final PIDController pidController = new PIDController(0.5, 0.0, 0.0);
 
   public ElevatorIOSpark() {
     var config = new SparkFlexConfig();
@@ -73,5 +75,10 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void setVoltage(double volts) {
     elevatorMotor1.setVoltage(volts);
     elevatorMotor2.setVoltage(volts);
+  }
+
+  @Override
+  public void setElevator(double currentPos, double targetPos) {
+    elevatorMotor1.set(pidController.calculate(currentPos, targetPos));
   }
 }

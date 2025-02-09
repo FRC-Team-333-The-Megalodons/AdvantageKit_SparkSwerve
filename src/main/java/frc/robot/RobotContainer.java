@@ -39,6 +39,7 @@ import frc.robot.subsystems.endEffecter.EndEffecterIO;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
@@ -148,9 +149,9 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    elevator.setDefaultCommand(
-        elevator.runTeleop(
-            () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
+    // elevator.setDefaultCommand(
+    //     elevator.runTeleop(
+    //         () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
 
     // Lock to 0° when A button is held
     controller
@@ -165,14 +166,27 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller.povUp().whileTrue(elevator.runPercent(0.333)); // up
+    controller.povUp().whileTrue(elevator.runPercent(0.333).until(elevator::upperLimit)); // up
     controller.povDown().whileTrue(elevator.runPercent(-0.333).until(elevator::lowerLimit)); // down
+    controller
+        .povRight()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.l4Pos)
+                .withTimeout(3.0)
+                .andThen(elevator.runPercent(0.333).until(elevator::upperLimit)));
 
     controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
     controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse
+    controller
+        .circle()
+        .whileTrue(
+            endEffecter.runPercent(0.5).until(endEffecter::isTriggered)); // fancy intake code
 
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up
     controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
+    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.l4Pos)); // L4 angle
+    controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homePos)); // home angle
 
     // Reset gyro to 0° when B button is pressed
     controller
