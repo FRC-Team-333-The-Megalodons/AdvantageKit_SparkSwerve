@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.photonvision.PhotonCamera;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -312,8 +313,19 @@ public class DriveCommands {
           }
         });
   }*/
+  public static Command aimAtTheTarget(PhotonCamera camera, Drive drive) {
+    return Commands.run(
+        () -> {
+          for (var result : camera.getAllUnreadResults()) {
+            if (result.hasTargets()) {
+              joystickDriveAtAngle(
+                  drive, () -> 0, () -> 0, () -> new Rotation2d(result.getBestTarget().getYaw()));
+            }
+          }
+        });
+  }
 
-  /*public Command faceTheCoralStation(PhotonCamera camera, Drive drive) {
+  public static Command faceTheCoralStation(PhotonCamera camera, Drive drive) {
     int aprilTag = camera.getLatestResult().getBestTarget().getFiducialId();
     if (amBlueAlliance() && (aprilTag == 13 || aprilTag == 12)) {
       return aimAtTheTarget(camera, drive);
@@ -325,9 +337,9 @@ public class DriveCommands {
             drive.stop(); // Not sure if this will work, more math may be required.
           });
     }
-  }*/
+  }
 
-  public boolean amBlueAlliance() {
+  public static boolean amBlueAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
   }
 }

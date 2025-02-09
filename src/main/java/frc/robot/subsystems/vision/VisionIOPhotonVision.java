@@ -68,7 +68,7 @@ public class VisionIOPhotonVision implements VisionIO {
         SmartDashboard.putBoolean(HAS_TARGET_LABEL, true);
         LEDStrip.setLEDs(Color.kYellow, ledSegment);
       } else {
-
+ 
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
         SmartDashboard.putBoolean(HAS_TARGET_LABEL, false);
         LEDStrip.setLEDs(Color.kBlack, ledSegment);
