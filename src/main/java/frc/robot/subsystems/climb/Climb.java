@@ -4,14 +4,47 @@
 
 package frc.robot.subsystems.climb;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Climb extends SubsystemBase {
-  /** Creates a new climb. */
-  public Climb() {}
+  private final ClimbIO io;
+  private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
+
+  public Climb(ClimbIO io) {
+    this.io = io;
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Climb", inputs);
+    // Logger.recordOutput("ClimbEncoder", climbEncoder.get());
+    // SmartDashboard.putNumber("ClimbEncoder", getPosition());
   }
+
+  public Command runPercent(double percent) {
+    return runEnd(() -> io.setVoltage(percent * 6.0), () -> io.setVoltage(0.0));
+  }
+
+  public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
+    return runEnd(
+        () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
+        () -> io.setVoltage(0.0));
+  }
+
+  // public Command runClimb(double setPoint) {
+  //   return run(() -> io.runWristPIDController(getPosition(), setPoint));
+  // }
+
+  // public double getPosition() {
+  //   return climbEncoder.get();
+  // }
+
+  // public boolean rotationForClimb() {
+  //   return (getPosition() >= 0);
+  // }
 }
