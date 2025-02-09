@@ -14,6 +14,10 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+
+import edu.wpi.first.math.controller.PIDController;
+
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -24,10 +28,15 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
   private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
+  
+
+
+  private final RelativeEncoder encoder = elevatorMotorLeader.getEncoder();  // it just doesnt work it shows red for some reason
+  private PIDController elevatorPIDController = new PIDController(1.4, 0, 0); 
+  public final MotorControllerGroup elevatorMotors = new MotorControllerGroup(elevatorMotorLeader, elevatorMotorFollower);
+
 
   public ElevatorIOSpark() {
-
-    // elevatorMotorFollower.follow(elevatorMotorLeader);
 
     // elevatorMotorLeader.restoreFactoryDefaults();
     // elevatorMotorFollower.restoreFactoryDefaults();
@@ -46,7 +55,6 @@ public class ElevatorIOSpark implements ElevatorIO {
     // elevatorPIDController.setI(0.0);
     // elevatorPIDController.setD(0.0);
     // elevatorPIDController.setFF(0.0);
-
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config

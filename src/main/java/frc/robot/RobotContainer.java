@@ -37,6 +37,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -170,26 +171,23 @@ public class RobotContainer {
         .whileTrue(
             elevator
                 .runPercent(0.4)
-                .until(elevator::lowerLimit)); // .until(elevator::isTriggeredLowLimit));
+                .until(elevator::isAtLowerLimit));
     controller
         .povDown()
         .whileTrue(
             elevator
                 .runPercent(-0.4)
-                .until(elevator::upperLimit)); // .until(elevator::isTriggeredTopLimit));
+                .until(elevator::isAtUpperLimit));
 
     controller
         .triangle()
         .whileTrue(
-            // Commands.parallel(
-            intake.runPercent(0.9)
-            // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-            // )
-            ); // intake in lights go green
+            intake.runPercent(0.9)); 
     controller.cross().whileTrue(intake.runPercent(-0.9));
 
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
+    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.l4Pos));
 
     // Reset gyro to 0° when B button is pressed
     controller

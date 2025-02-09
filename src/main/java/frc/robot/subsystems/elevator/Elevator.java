@@ -16,9 +16,9 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private DigitalInput maxUpLimitSwitch = new DigitalInput(ElevatorConstants.maxUpLimitSwitchID);
-  private DigitalInput maxDownLimitSwitch =
-      new DigitalInput(ElevatorConstants.maxDownLimitSwitchDigitalInputID);
+  private DigitalInput topLimitSwitch = new DigitalInput(ElevatorConstants.topLimitSwitchID);
+  private DigitalInput bottomLimitSwitch = new DigitalInput(ElevatorConstants.bottomLimitSwitchID);
+  
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -39,17 +39,23 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-    Logger.recordOutput("LowerLimitSwitch", lowerLimit());
-    Logger.recordOutput("TopLimitSwitch", upperLimit());
+    Logger.recordOutput("LowerLimitSwitch", isAtLowerLimit());
+    Logger.recordOutput("TopLimitSwitch", isAtUpperLimit());   
   }
 
-  // public boolean isTriggeredTopLimit() {
-  //   return (maxUpLimitSwitch.get());
-  // }
+  public boolean isAtLowerLimit() {
+    return bottomLimitSwitch.get() ? false : true;
+  }
 
-  // public boolean isTriggeredLowLimit() {
-  //   return (maxDownLimitSwitch.get());
-  // }
+  public boolean isAtUpperLimit() {    // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS EMBERASSING
+    return topLimitSwitch.get() ? false : true;
+  }
+
+  private void stopElevator() {
+    io.setVoltage(0.0);
+    }
+
+  
 
   // public boolean isOkToMoveElevatorUp() {
   //   // Add your logic here
@@ -86,15 +92,4 @@ public class Elevator extends SubsystemBase {
   //   io.setVoltage(4.0 * speed);
   // }
 
-  // private void stopElevator() {
-  //   io.setVoltage(0.0);
-  // }
-
-  public boolean lowerLimit() {
-    return maxDownLimitSwitch.get() ? false : true;
-  }
-
-  public boolean upperLimit() {
-    return maxUpLimitSwitch.get() ? false : true;
-  }
 }

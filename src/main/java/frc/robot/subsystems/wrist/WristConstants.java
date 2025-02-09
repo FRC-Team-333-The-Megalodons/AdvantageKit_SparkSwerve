@@ -9,4 +9,6 @@ public class WristConstants {
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
   public static final double setPoint = 0.731;
+
+  public static final double l4Pos = 0.333;
 }
