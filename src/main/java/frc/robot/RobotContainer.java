@@ -172,24 +172,20 @@ public class RobotContainer {
         .whileTrue(
             elevator
                 .runPercent(0.4)
-                .until(elevator::upperLimit)); // .until(elevator::isTriggeredLowLimit));
+                .until(elevator::isAtLowerLimit));
     controller
         .povDown()
         .whileTrue(
             elevator
                 .runPercent(-0.4)
-                .until(elevator::lowerLimit)); // .until(elevator::isTriggeredTopLimit));
+                .until(elevator::isAtUpperLimit));
 
     // Running intake
     controller
         .triangle()
         .whileTrue(
-            // Commands.parallel(
-            intake.runPercent(0.9)
-            // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-            // )
-            ); // intake in lights go green
-    // controller.cross().whileTrue(intake.runPercent(-0.9));
+            intake.runPercent(0.9)); 
+    controller.cross().whileTrue(intake.runPercent(-0.9));
 
     // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));

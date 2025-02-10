@@ -45,4 +45,8 @@ public class Wrist extends SubsystemBase {
   public boolean rotationForWrist() {
     return (getPosition() >= 0);
   }
+
+  public Command setWristPosition(double setpoint) {
+    return runEnd(() -> io.setWrist(getPosition(), setpoint), () -> io.setVoltage(0.0));
+  }
 }

@@ -65,7 +65,7 @@ public class WristIOSpark implements WristIO {
   }
 
   @Override
-  public void runWristPIDController(double sensor, double setPoint) {
-    wristFlex.set(pid.calculate(sensor, setPoint));
+  public void setWrist(double currentPos, double targetPos) {
+    wristFlex.set(-pid.calculate(currentPos, targetPos));
   }
 }
