@@ -18,12 +18,35 @@ import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ElevatorIOSpark implements ElevatorIO {
-  private final SparkFlex elevatorMotor1 = new SparkFlex(elevatorMotor1CanId, MotorType.kBrushless);
-  private final SparkFlex elevatorMotor2 = new SparkFlex(elevatorMotor2CanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder1 = elevatorMotor1.getEncoder();
-  private final RelativeEncoder encoder2 = elevatorMotor2.getEncoder();
+  private final SparkFlex elevatorMotorLeader =
+      new SparkFlex(elevatorMotorLeaderCanId, MotorType.kBrushless);
+  private final SparkFlex elevatorMotorFollower =
+      new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
+  private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
 
   public ElevatorIOSpark() {
+
+    // elevatorMotorFollower.follow(elevatorMotorLeader);
+
+    // elevatorMotorLeader.restoreFactoryDefaults();
+    // elevatorMotorFollower.restoreFactoryDefaults();
+
+    // elevatorMotorLeader.setIdleMode(IdleMode.kBrake);
+    // elevatorMotorFollower.setIdleMode(IdleMode.kBrake);
+
+    // elevatorMotorLeader.burnFlash();
+    // elevatorMotorFollower.burnFlash();
+
+    // elevatorPIDController = elevatorMotorLeader.getEncoder();
+    // RelativeEncoder = elevatorMotorLeader.getEncoder();
+
+    // elevatorPIDController.setFeedbackDevice(alternateEncoder);
+    // elevatorPIDController.setP(0.1);
+    // elevatorPIDController.setI(0.0);
+    // elevatorPIDController.setD(0.0);
+    // elevatorPIDController.setFF(0.0);
+
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -35,42 +58,52 @@ public class ElevatorIOSpark implements ElevatorIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        elevatorMotor1,
+        elevatorMotorLeader,
         5,
         () ->
-            elevatorMotor1.configure(
+            elevatorMotorLeader.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     tryUntilOk(
-        elevatorMotor2,
+        elevatorMotorFollower,
         5,
         () ->
-            elevatorMotor2.configure(
+            elevatorMotorFollower.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    ifOk(elevatorMotor1, encoder1::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotor1, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(elevatorMotorLeader, encoder1::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(elevatorMotorLeader, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevatorMotor1,
-        new DoubleSupplier[] {elevatorMotor1::getAppliedOutput, elevatorMotor1::getBusVoltage},
+        elevatorMotorLeader,
+        new DoubleSupplier[] {
+          elevatorMotorLeader::getAppliedOutput, elevatorMotorLeader::getBusVoltage
+        },
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(elevatorMotor1, elevatorMotor1::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(
+        elevatorMotorLeader,
+        elevatorMotorLeader::getOutputCurrent,
+        (value) -> inputs.currentAmps = value);
 
-    ifOk(elevatorMotor2, encoder2::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotor2, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(elevatorMotorFollower, encoder2::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(elevatorMotorFollower, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevatorMotor2,
-        new DoubleSupplier[] {elevatorMotor2::getAppliedOutput, elevatorMotor2::getBusVoltage},
+        elevatorMotorFollower,
+        new DoubleSupplier[] {
+          elevatorMotorFollower::getAppliedOutput, elevatorMotorFollower::getBusVoltage
+        },
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(elevatorMotor2, elevatorMotor2::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(
+        elevatorMotorFollower,
+        elevatorMotorFollower::getOutputCurrent,
+        (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    elevatorMotor1.setVoltage(volts);
-    elevatorMotor2.setVoltage(volts);
+    elevatorMotorLeader.setVoltage(volts);
+    elevatorMotorFollower.setVoltage(volts);
   }
 }

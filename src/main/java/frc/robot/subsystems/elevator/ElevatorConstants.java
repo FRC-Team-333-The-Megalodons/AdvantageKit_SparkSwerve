@@ -6,10 +6,10 @@ package frc.robot.subsystems.elevator;
 
 /** Add your docs here. */
 public class ElevatorConstants {
-  public static final int elevatorMotor1CanId = 8;
-  public static final int elevatorMotor2CanId = 9;
+  public static final int elevatorMotorLeaderCanId = 8;
+  public static final int elevatorMotorFollowerCanId = 9;
   public static final int maxUpLimitSwitchID = 8;
-  public static final int maxTopUpLimitSwitchID = 9;
+  public static final int maxDownLimitSwitchDigitalInputID = 9;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
 }

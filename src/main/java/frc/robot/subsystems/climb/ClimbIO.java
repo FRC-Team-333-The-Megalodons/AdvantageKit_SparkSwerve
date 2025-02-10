@@ -23,4 +23,3 @@ public interface ClimbIO {
 
   public default void setSpeed(double speed) {}
 }
-

@@ -21,5 +21,4 @@ public interface ElevatorIO {
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
-
 }

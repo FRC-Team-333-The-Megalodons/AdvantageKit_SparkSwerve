@@ -15,20 +15,18 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
-
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ClimbIOSpark implements ClimbIO {
   private final SparkFlex climbFlex = new SparkFlex(climbCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = climbFlex.getEncoder();
-  //private PIDController pid = new PIDController(1.4, 0, 0);
+  // private PIDController pid = new PIDController(1.4, 0, 0);
 
   public ClimbIOSpark() {
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
-    
+
     tryUntilOk(
         climbFlex,
         5,

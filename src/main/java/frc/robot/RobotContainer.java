@@ -16,6 +16,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -35,6 +37,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -163,26 +166,40 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // TODO: Angelina add comments
+    // Running elevator
     controller
         .povUp()
-        .whileTrue(elevator.runPercent(0.5).until(() -> elevator.isTriggeredTopLimit()));
+        .whileTrue(
+            elevator
+                .runPercent(0.4)
+                .until(elevator::upperLimit)); // .until(elevator::isTriggeredLowLimit));
     controller
         .povDown()
-        .whileTrue(elevator.runPercent(-0.5).until(() -> elevator.isTriggeredLowLimit()));
+        .whileTrue(
+            elevator
+                .runPercent(-0.4)
+                .until(elevator::lowerLimit)); // .until(elevator::isTriggeredTopLimit));
 
+    // Running intake
     controller
         .triangle()
         .whileTrue(
             // Commands.parallel(
-            intake.runPercent(0.75)
+            intake.runPercent(0.9)
             // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
             // )
             ); // intake in lights go green
-    controller.cross().whileTrue(intake.runPercent(-0.75));
+    // controller.cross().whileTrue(intake.runPercent(-0.9));
 
+    // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
+
+    controller.povLeft().whileTrue(wrist.runWrist(WristConstants.setPointL4)); // L4 angle
+    controller.povRight().whileTrue(wrist.runWrist(WristConstants.setPointL2L3)); // L2,3 angle
+    controller.cross().whileTrue(wrist.runWrist(WristConstants.setPointHome)); // home position
+    controller.create().whileTrue(wrist.runWrist(WristConstants.setPointAlgae)); // algae angle
+
 
     // Reset gyro to 0° when B button is pressed
     controller
