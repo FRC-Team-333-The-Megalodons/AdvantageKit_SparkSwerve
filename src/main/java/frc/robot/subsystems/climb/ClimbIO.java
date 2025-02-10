@@ -4,14 +4,22 @@
 
 package frc.robot.subsystems.climb;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLog;
 
-public class ClimbIO extends SubsystemBase {
-  /** Creates a new ClimbIO. */
-  public ClimbIO() {}
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+public interface ClimbIO {
+  @AutoLog
+  public static class ClimbIOInputs {
+    public double positionRad = 0.0;
+    public double velocityRadPerSec = 0.0;
+    public double appliedVolts = 0.0;
+    public double currentAmps = 0.0;
   }
+
+  /** Update the set of loggable inputs. */
+  public default void updateInputs(ClimbIOInputs inputs) {}
+
+  /** Run open loop at the specified voltage. */
+  public default void setVoltage(double volts) {}
+
+  public default void setSpeed(double speed) {}
 }

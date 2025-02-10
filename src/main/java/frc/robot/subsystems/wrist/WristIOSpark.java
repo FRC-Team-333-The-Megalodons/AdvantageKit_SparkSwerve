@@ -22,7 +22,7 @@ import java.util.function.DoubleSupplier;
 public class WristIOSpark implements WristIO {
   private final SparkFlex wristFlex = new SparkFlex(wristCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = wristFlex.getEncoder();
-  private PIDController pid = new PIDController(1.4, 0, 0);
+  private PIDController pid = new PIDController(1.5, 0, 0);
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();

@@ -4,14 +4,8 @@
 
 package frc.robot.subsystems.climb;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-public class ClimbConstants extends SubsystemBase {
-  /** Creates a new ClimbConstants. */
-  public ClimbConstants() {}
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+public class ClimbConstants {
+  public static final int climbCanId = 40;
+  public static final double motorReduction = 1.0;
+  public static final int currentLimit = 40;
 }

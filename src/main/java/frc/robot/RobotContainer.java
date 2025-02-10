@@ -166,6 +166,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    // Running elevator
     controller
         .povUp()
         .whileTrue(
@@ -179,15 +180,22 @@ public class RobotContainer {
                 .runPercent(-0.4)
                 .until(elevator::isAtUpperLimit));
 
+    // Running intake
     controller
         .triangle()
         .whileTrue(
             intake.runPercent(0.9)); 
     controller.cross().whileTrue(intake.runPercent(-0.9));
 
+    // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
-    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.l4Pos));
+
+    controller.povLeft().whileTrue(wrist.runWrist(WristConstants.setPointL4)); // L4 angle
+    controller.povRight().whileTrue(wrist.runWrist(WristConstants.setPointL2L3)); // L2,3 angle
+    controller.cross().whileTrue(wrist.runWrist(WristConstants.setPointHome)); // home position
+    controller.create().whileTrue(wrist.runWrist(WristConstants.setPointAlgae)); // algae angle
+
 
     // Reset gyro to 0° when B button is pressed
     controller

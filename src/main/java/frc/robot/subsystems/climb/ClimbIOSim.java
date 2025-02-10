@@ -4,14 +4,34 @@
 
 package frc.robot.subsystems.climb;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static frc.robot.subsystems.climb.ClimbConstants.*;
 
-public class ClimbIOSim extends SubsystemBase {
-  /** Creates a new ClimbIOSim. */
-  public ClimbIOSim() {}
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+
+public class ClimbIOSim implements ClimbIO {
+  private DCMotorSim sim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.004, motorReduction),
+          DCMotor.getCIM(1));
+
+  private double appliedVolts = 0.0;
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void updateInputs(ClimbIOInputs inputs) {
+    sim.setInputVoltage(appliedVolts);
+    sim.update(0.02);
+
+    inputs.positionRad = sim.getAngularPositionRad();
+    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVolts = appliedVolts;
+    inputs.currentAmps = sim.getCurrentDrawAmps();
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 }
