@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
@@ -68,7 +69,7 @@ public class VisionIOPhotonVision implements VisionIO {
         SmartDashboard.putBoolean(HAS_TARGET_LABEL, true);
         LEDStrip.setLEDs(Color.kYellow, ledSegment);
       } else {
- 
+
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
         SmartDashboard.putBoolean(HAS_TARGET_LABEL, false);
         LEDStrip.setLEDs(Color.kBlack, ledSegment);
@@ -119,6 +120,18 @@ public class VisionIOPhotonVision implements VisionIO {
     for (int id : tagIds) {
       inputs.tagIds[i++] = id;
     }
+  }
+
+  @Override
+  public double getYaw() {
+    var results = camera.getAllUnreadResults();
+    double yaw = 0;
+    for (PhotonPipelineResult result : results) {
+
+      var target = result.getBestTarget();
+      yaw = target.getYaw();
+    }
+    return yaw;
   }
 
   // Add more specific field elements here
