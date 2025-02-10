@@ -18,7 +18,6 @@ public class Elevator extends SubsystemBase {
 
   private DigitalInput topLimitSwitch = new DigitalInput(ElevatorConstants.topLimitSwitchID);
   private DigitalInput bottomLimitSwitch = new DigitalInput(ElevatorConstants.bottomLimitSwitchID);
-  
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -40,22 +39,32 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("LowerLimitSwitch", isAtLowerLimit());
-    Logger.recordOutput("TopLimitSwitch", isAtUpperLimit());   
+    Logger.recordOutput("TopLimitSwitch", isAtUpperLimit());
   }
 
   public boolean isAtLowerLimit() {
     return bottomLimitSwitch.get() ? false : true;
   }
 
-  public boolean isAtUpperLimit() {    // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS EMBERASSING
+  public boolean
+      isAtUpperLimit() { // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS
+    // EMBERASSING
     return topLimitSwitch.get() ? false : true;
   }
 
   private void stopElevator() {
     io.setVoltage(0.0);
-    }
+  }
 
-  
+  public void resetEncoder(){
+    if(bottomLimitSwitch.get() == true){
+      io.setValue(0);
+    }
+  }
+
+  public Command setElevatorPosition(double setpoint) {
+    return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
+  }
 
   // public boolean isOkToMoveElevatorUp() {
   //   // Add your logic here

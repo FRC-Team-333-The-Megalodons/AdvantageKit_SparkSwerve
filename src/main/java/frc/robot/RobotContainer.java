@@ -167,35 +167,47 @@ public class RobotContainer {
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Running elevator
+    // controller.povUp().whileTrue(elevator.runPercent(0.4).until(elevator::isAtLowerLimit));
+    // controller.povDown().whileTrue(elevator.runPercent(-0.4).until(elevator::isAtUpperLimit));
+
     controller
         .povUp()
         .whileTrue(
             elevator
                 .runPercent(0.4)
-                .until(elevator::isAtLowerLimit));
+                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
     controller
         .povDown()
         .whileTrue(
             elevator
                 .runPercent(-0.4)
-                .until(elevator::isAtUpperLimit));
+                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
 
     // Running intake
     controller
         .triangle()
         .whileTrue(
-            intake.runPercent(0.9)); 
-    controller.cross().whileTrue(intake.runPercent(-0.9));
+            // Commands.parallel(
+            intake.runPercent(0.9)
+            // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
+            // )
+            ); // intake in lights go green
+    // controller.cross().whileTrue(intake.runPercent(-0.9));
 
     // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
-    controller.povLeft().whileTrue(wrist.runWrist(WristConstants.setPointL4)); // L4 angle
-    controller.povRight().whileTrue(wrist.runWrist(WristConstants.setPointL2L3)); // L2,3 angle
-    controller.cross().whileTrue(wrist.runWrist(WristConstants.setPointHome)); // home position
-    controller.create().whileTrue(wrist.runWrist(WristConstants.setPointAlgae)); // algae angle
-
+    controller.povLeft().whileTrue(wrist.setWristPosition(WristConstants.setPointL4)); // L4 angle
+    controller
+        .povRight()
+        .whileTrue(wrist.setWristPosition(WristConstants.setPointL2L3)); // L2,3 angle
+    controller
+        .cross()
+        .whileTrue(wrist.setWristPosition(WristConstants.setPointHome)); // home position
+    controller
+        .create()
+        .whileTrue(wrist.setWristPosition(WristConstants.setPointAlgae)); // algae angle
 
     // Reset gyro to 0° when B button is pressed
     controller

@@ -22,6 +22,8 @@ public class Wrist extends SubsystemBase {
     Logger.processInputs("Wrist", inputs);
     Logger.recordOutput("WristEncoder", wristEncoder.get());
     SmartDashboard.putNumber("WristEncoder", getPosition());
+    Logger.recordOutput("AtTargetWrist", io.atTarget());
+    SmartDashboard.putBoolean("AtTargetWrist", io.atTarget());
   }
 
   public Command runPercent(double percent) {
@@ -34,10 +36,6 @@ public class Wrist extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public Command runWrist(double setPoint) {
-    return runEnd(() -> io.runWristPIDController(getPosition(), setPoint), () -> io.setVoltage(0));
-  }
-
   public double getPosition() {
     return wristEncoder.get();
   }
@@ -47,6 +45,6 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command setWristPosition(double setpoint) {
-    return runEnd(() -> io.setWrist(getPosition(), setpoint), () -> io.setVoltage(0.0));
+    return runEnd(() -> io.runWristPIDController(getPosition(), setpoint), () -> io.setVoltage(0));
   }
 }

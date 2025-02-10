@@ -13,5 +13,5 @@ public class WristConstants {
   public static final double setPointHome = 0.477;
   public static final double setPointL2L3 = 0.429;
   public static final double setPointL4 = 0.348;
-  public static final double setPointAlgae = 0;
+  public static final double setPointAlgae = 0.029;
 }

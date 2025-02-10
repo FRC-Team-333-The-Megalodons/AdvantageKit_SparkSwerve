@@ -14,10 +14,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-
 import edu.wpi.first.math.controller.PIDController;
-
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -28,13 +26,10 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
   private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
-  
 
-
-  private final RelativeEncoder encoder = elevatorMotorLeader.getEncoder();  // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(1.4, 0, 0); 
-  public final MotorControllerGroup elevatorMotors = new MotorControllerGroup(elevatorMotorLeader, elevatorMotorFollower);
-
+  private final RelativeEncoder encoder =
+      elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
+  private PIDController elevatorPIDController = new PIDController(1.4, 0, 0);
 
   public ElevatorIOSpark() {
 
@@ -78,7 +73,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             elevatorMotorFollower.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        config.follow(elevatorMotorLeader);
+
   }
+
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
@@ -112,6 +110,16 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
-    elevatorMotorFollower.setVoltage(volts);
+    //elevatorMotorFollower.setVoltage(volts);
+  }
+
+  @Override
+  public void setValue(double value){
+    encoder1.setPosition(value);
+  }
+
+  @Override
+  public void runElevatorPIDController( double setPoint) {
+    elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
   }
 }
