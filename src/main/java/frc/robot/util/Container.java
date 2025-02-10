@@ -19,11 +19,13 @@ public class Container {
         public SparkFlex getLeader(){
             return m_sparkFlexArray.get(0);//Leader Must be The First[0] in the Array and then the followers
         }
-        // public void setLeader(){
+        public void setLeader(int indexOfSparkFlex){
+            var config = new SparkFlexConfig();
+            config.follow(m_sparkFlexArray.get(indexOfSparkFlex));
+        }
+        // public void invert(int indexOfSparkFlex){
         //     var config = new SparkFlexConfig();
-        //     for(SparkFlex sparkFlex : m_sparkFlexArray){
-        //         config.fol
-        //     }
+        //     config.in
         // }
         // public void setIdleMode(IdleMode idleMode){
         //     if(idleMode == m_lastIdleMode){return;} 
