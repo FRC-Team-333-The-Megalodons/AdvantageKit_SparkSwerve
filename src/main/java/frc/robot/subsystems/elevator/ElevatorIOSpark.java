@@ -24,6 +24,8 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorLeaderCanId, MotorType.kBrushless);
   private final SparkFlex elevatorMotorFollower =
       new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
+  private final SparkFlex elevatorMotorFollower2 =
+      new SparkFlex(elevatorMotorFollower2CanId, MotorType.kBrushless);
   private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
   private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
 
@@ -74,6 +76,14 @@ public class ElevatorIOSpark implements ElevatorIO {
             elevatorMotorFollower.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
         config.follow(elevatorMotorLeader);
+
+    tryUntilOk(
+          elevatorMotorFollower2,
+          5,
+          () ->
+              elevatorMotorFollower2.configure(
+                  config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+          config.follow(elevatorMotorFollower);
 
   }
 
