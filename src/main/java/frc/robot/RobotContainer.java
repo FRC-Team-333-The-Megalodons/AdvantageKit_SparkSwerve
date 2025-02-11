@@ -24,6 +24,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSpark;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -57,7 +61,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final EndEffecter endEffecter;
   private final Wrist wrist;
-  // private final Vision vision;
+  private final Climber climber;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -80,6 +84,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
+        climber = new Climber(new ClimberIOSpark());
         break;
 
       case SIM:
@@ -94,6 +99,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         endEffecter = new EndEffecter(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
+        climber = new Climber(new ClimberIOSim());
         break;
 
       default:
@@ -108,6 +114,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIO() {});
         endEffecter = new EndEffecter(new EndEffecterIO() {});
         wrist = new Wrist(new WristIO() {});
+        climber = new Climber(new ClimberIO() {});
         break;
     }
 
@@ -166,16 +173,18 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    // Swerve controls
     controller.povUp().whileTrue(elevator.runPercent(0.333).until(elevator::upperLimit)); // up
     controller.povDown().whileTrue(elevator.runPercent(-0.333).until(elevator::lowerLimit)); // down
     controller
         .povRight()
         .whileTrue(
             wrist
-                .setWristPosition(WristConstants.l4Pos)
+                .setWristPosition(WristConstants.coralL4Setpoint)
                 .withTimeout(2.0)
                 .andThen(elevator.runPercent(0.333).until(elevator::upperLimit))); // score l4
 
+    // End Effecter controls
     controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
     controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse
     controller
@@ -183,10 +192,15 @@ public class RobotContainer {
         .whileTrue(
             endEffecter.runPercent(0.5).until(endEffecter::isTriggered)); // fancy intake code
 
+    // Wrist controls
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up
     controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
-    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.l4Pos)); // L4 angle
-    controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homePos)); // home angle
+    // controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4 angle
+    // controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homeSetpoint)); // home angle
+
+    // Climber controls
+    controller.L2().whileTrue(climber.runPercent(1.0));
+    controller.R2().whileTrue(climber.runPercent(-1.0));
 
     // Reset gyro to 0° when B button is pressed
     controller

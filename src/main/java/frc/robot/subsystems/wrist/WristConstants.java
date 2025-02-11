@@ -11,7 +11,8 @@ public class WristConstants {
   public static final int currentLimit = 40;
 
   // Wrist Setpoints
-  public static final double homePos = 0.479;
-  public static final double l23Pos = 0.4;
-  public static final double l4Pos = 0.333;
+  public static final double homeSetpoint = 0.479;
+  public static final double coralL23Setpoint = 0.4;
+  public static final double coralL4Setpoint = 0.333;
+  public static final double algaeSetpoint = 0.0;
 }

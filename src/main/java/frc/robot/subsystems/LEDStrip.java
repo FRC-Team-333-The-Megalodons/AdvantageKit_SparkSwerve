@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDStrip extends SubsystemBase {
-  private static final CANdle candle = new CANdle(7);
+  private static final CANdle candle = new CANdle(42);
 
   /*
   // Team colors

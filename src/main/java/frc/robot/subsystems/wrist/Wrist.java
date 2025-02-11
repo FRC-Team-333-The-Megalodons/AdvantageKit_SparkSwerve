@@ -1,6 +1,5 @@
 package frc.robot.subsystems.wrist;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -9,7 +8,6 @@ import org.littletonrobotics.junction.Logger;
 public class Wrist extends SubsystemBase {
   private final WristIO io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
-  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(0);
 
   public Wrist(WristIO io) {
     this.io = io;
@@ -19,7 +17,7 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Wrist", inputs);
-    Logger.recordOutput("WristEncoder", getPosition());
+    Logger.recordOutput("WristEncoder", inputs.positionAbs);
   }
 
   public Command runPercent(double percent) {
@@ -33,10 +31,6 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command setWristPosition(double setpoint) {
-    return runEnd(() -> io.setWrist(getPosition(), setpoint), () -> io.setVoltage(0.0));
-  }
-
-  public double getPosition() {
-    return wristEncoder.get();
+    return runEnd(() -> io.setWrist(inputs.positionAbs, setpoint), () -> io.setVoltage(0.0));
   }
 }

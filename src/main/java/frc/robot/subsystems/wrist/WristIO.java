@@ -13,6 +13,7 @@ public interface WristIO {
     public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public double positionAbs = 0.0;
   }
 
   /** Update the set of loggable inputs. */

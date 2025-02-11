@@ -6,15 +6,18 @@ package frc.robot.subsystems.elevator;
 
 /** Add your docs here. */
 public class ElevatorConstants {
-  public static final int elevatorMotor1CanId = 8;
-  public static final int elevatorMotor2CanId = 9;
+  public static final int toplEvatorMotorCanId = 7;
+  public static final int leftElevatorMotorCanId = 8;
+  public static final int rightElevatorMotorCanId = 9;
   public static final int lowerLimitSwitchId = 9;
   public static final int upperLimitSwitchId = 8;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
 
   // Setpoints
-  public static final double L4 = 320.0;
-  public static final double L3 = 160.0;
-  public static final double L2 = 60.0;
+  public static final double coralL4Setpoint = 320.0;
+  public static final double coralL3Setpoint = 160.0;
+  public static final double coralL2Setpoint = 60.0;
+  public static final double aglaeL2Setpoint = 0.0;
+  public static final double aglaeL3Setpoint = 0.0;
 }

@@ -19,10 +19,10 @@ import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ElevatorIOSpark implements ElevatorIO {
-  private final SparkFlex elevatorMotor1 = new SparkFlex(elevatorMotor1CanId, MotorType.kBrushless);
-  private final SparkFlex elevatorMotor2 = new SparkFlex(elevatorMotor2CanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder1 = elevatorMotor1.getEncoder();
-  private final RelativeEncoder encoder2 = elevatorMotor2.getEncoder();
+  private final SparkFlex topElevatorMotor = new SparkFlex(toplEvatorMotorCanId, MotorType.kBrushless);
+  private final SparkFlex leftElevatorMotor = new SparkFlex(leftElevatorMotorCanId, MotorType.kBrushless);
+  private final SparkFlex rightElevatorMotor = new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
   private final PIDController pidController = new PIDController(0.5, 0.0, 0.0);
 
   public ElevatorIOSpark() {
@@ -37,57 +37,66 @@ public class ElevatorIOSpark implements ElevatorIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        elevatorMotor1,
+        topElevatorMotor,
         5,
         () ->
-            elevatorMotor1.configure(
+            topElevatorMotor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     tryUntilOk(
-        elevatorMotor2,
+        leftElevatorMotor,
         5,
         () ->
-            elevatorMotor2.configure(
+            leftElevatorMotor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     // Elevator Motors
-    ifOk(elevatorMotor1, encoder1::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotor1, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(topElevatorMotor, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(topElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevatorMotor1,
-        new DoubleSupplier[] {elevatorMotor1::getAppliedOutput, elevatorMotor1::getBusVoltage},
+        topElevatorMotor,
+        new DoubleSupplier[] {topElevatorMotor::getAppliedOutput, topElevatorMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(elevatorMotor1, elevatorMotor1::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(topElevatorMotor, topElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
-    ifOk(elevatorMotor2, encoder2::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotor2, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(leftElevatorMotor, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(leftElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevatorMotor2,
-        new DoubleSupplier[] {elevatorMotor2::getAppliedOutput, elevatorMotor2::getBusVoltage},
+        leftElevatorMotor,
+        new DoubleSupplier[] {leftElevatorMotor::getAppliedOutput, leftElevatorMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(elevatorMotor2, elevatorMotor2::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(leftElevatorMotor, leftElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    ifOk(rightElevatorMotor, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(rightElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(
+        rightElevatorMotor,
+        new DoubleSupplier[] {rightElevatorMotor::getAppliedOutput, rightElevatorMotor::getBusVoltage},
+        (values) -> inputs.appliedVolts = values[0] * values[1]);
+    ifOk(rightElevatorMotor, rightElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    elevatorMotor1.setVoltage(volts);
-    elevatorMotor2.setVoltage(volts);
+    topElevatorMotor.setVoltage(volts);
+    leftElevatorMotor.setVoltage(volts);
+    rightElevatorMotor.setVoltage(volts);
   }
 
   @Override
   public void setElevator(double currentPos, double targetPos) {
-    elevatorMotor1.set(pidController.calculate(currentPos, targetPos));
+    topElevatorMotor.set(pidController.calculate(currentPos, targetPos));
   }
 
   @Override
   public void resetEncoder() {
-    encoder1.setPosition(0);
+    encoder.setPosition(0);
   }
 
   public double getElevatorPosition() {
-    return encoder1.getPosition();
+    return encoder.getPosition();
   }
 }
