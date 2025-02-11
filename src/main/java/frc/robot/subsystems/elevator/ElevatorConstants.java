@@ -13,4 +13,7 @@ public class ElevatorConstants {
   public static final int elevatorMotorFollower2CanId = 7;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+
+  public static final double ELEVATOR_MAX_HEIGHT = 0.0;
+  public static final double ELEVATOR_MIN_HEIGHT = 0.0;
 }
