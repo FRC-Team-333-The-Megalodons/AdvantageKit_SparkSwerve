@@ -30,13 +30,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
+import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import org.photonvision.PhotonCamera;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -313,31 +313,26 @@ public class DriveCommands {
           }
         });
   }*/
-  public static Command aimAtTheTarget(PhotonCamera camera, Drive drive) {
+  public static Command aimAtTheTarget(Vision vision, Drive drive) {
     return Commands.run(
         () -> {
-          for (var result : camera.getAllUnreadResults()) {
-            if (result.hasTargets()) {
-              joystickDriveAtAngle(
-                  drive, () -> 0, () -> 0, () -> new Rotation2d(result.getBestTarget().getYaw()));
-            }
-          }
+          joystickDriveAtAngle(drive, () -> 0, () -> 0, () -> new Rotation2d(vision.getYaw()));
         });
   }
 
-  public static Command faceTheCoralStation(PhotonCamera camera, Drive drive) {
-    int aprilTag = camera.getLatestResult().getBestTarget().getFiducialId();
-    if (amBlueAlliance() && (aprilTag == 13 || aprilTag == 12)) {
-      return aimAtTheTarget(camera, drive);
-    } else if (!amBlueAlliance() && (aprilTag == 1 || aprilTag == 2)) {
-      return aimAtTheTarget(camera, drive);
-    } else {
-      return Commands.run(
-          () -> {
-            drive.stop(); // Not sure if this will work, more math may be required.
-          });
-    }
-  }
+  // public static Command faceTheCoralStation(Vision camera, Drive drive) {
+  //   int aprilTag = camera.getLatestResult().getBestTarget().getFiducialId();
+  //   if (amBlueAlliance() && (aprilTag == 13 || aprilTag == 12)) {
+  //     return aimAtTheTarget(camera, drive);
+  //   } else if (!amBlueAlliance() && (aprilTag == 1 || aprilTag == 2)) {
+  //     return aimAtTheTarget(camera, drive);
+  //   } else {
+  //     return Commands.run(
+  //         () -> {
+  //           drive.stop(); // Not sure if this will work, more math may be required.
+  //         });
+  //   }
+  // }
 
   public static boolean amBlueAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;

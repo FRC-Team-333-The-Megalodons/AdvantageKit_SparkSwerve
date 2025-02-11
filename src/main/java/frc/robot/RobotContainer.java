@@ -64,7 +64,6 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -262,10 +261,7 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
-    controller
-        .R1()
-        .whileTrue(
-            DriveCommands.aimAtTheTarget(new PhotonCamera(VisionConstants.camera1Name), drive));
+    controller.R1().whileTrue(DriveCommands.aimAtTheTarget(vision, drive));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }

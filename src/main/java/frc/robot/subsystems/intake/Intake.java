@@ -6,7 +6,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -33,7 +32,6 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("CANRange", isTriggered());
     Logger.recordOutput("CANRangeDistance", getDistance());
     Logger.recordOutput("WristEncoder", wristEncoder.get());
-    SmartDashboard.putNumber("WristEncoder", getPosition());
   }
 
   public Command runPercent(double percent) {

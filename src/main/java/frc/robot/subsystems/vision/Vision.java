@@ -33,6 +33,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
+  private VisionIOPhotonVision photonCamera;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
@@ -40,7 +41,7 @@ public class Vision extends SubsystemBase {
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-
+    this.photonCamera = new VisionIOPhotonVision(camera1Name, robotToCamera0);
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
@@ -65,12 +66,16 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  public double getYaw() {
+    return photonCamera.getYaw();
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
-      SmartDashboard.putNumber("Rear Camera Yaw", io[i].getYaw());
+      SmartDashboard.putNumber("Rear Camera Yaw", photonCamera.getYaw());
     }
 
     // Initialize logging values
