@@ -15,7 +15,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -75,18 +74,16 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             elevatorMotorFollower.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-        config.follow(elevatorMotorLeader);
+    config.follow(elevatorMotorLeader);
 
     tryUntilOk(
-          elevatorMotorFollower2,
-          5,
-          () ->
-              elevatorMotorFollower2.configure(
-                  config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-          config.follow(elevatorMotorFollower);
-
+        elevatorMotorFollower2,
+        5,
+        () ->
+            elevatorMotorFollower2.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    config.follow(elevatorMotorFollower);
   }
-
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
@@ -120,16 +117,16 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
-    //elevatorMotorFollower.setVoltage(volts);
+    // elevatorMotorFollower.setVoltage(volts);
   }
 
   @Override
-  public void setValue(double value){
+  public void setValue(double value) {
     encoder1.setPosition(value);
   }
 
   @Override
-  public void runElevatorPIDController( double setPoint) {
+  public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
   }
 }

@@ -43,11 +43,11 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isAtLowerLimit() {
-    return bottomLimitSwitch.get() ? false : true;
-  }
+    io.resetEncoder();  // Reset the encoder first
+    return !bottomLimitSwitch.get();  // Return the opposite of the limit switch status
+}
 
-  public boolean
-      isAtUpperLimit() { // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS
+  public boolean isAtUpperLimit() { // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS
     // EMBERASSING
     return topLimitSwitch.get() ? false : true;
   }
@@ -56,8 +56,8 @@ public class Elevator extends SubsystemBase {
     io.setVoltage(0.0);
   }
 
-  public void resetEncoder(){
-    if(bottomLimitSwitch.get() == true){
+  public void resetEncoder() {
+    if (bottomLimitSwitch.get() == true) {
       io.setValue(0);
     }
   }
@@ -66,39 +66,39 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
   }
 
-  // public boolean isOkToMoveElevatorUp() {
-  //   // Add your logic here
-  //   if (isTriggeredTopLimit()) {
-  //     return false;
-  //   } else if (isTriggeredLowLimit()) { // add encoder logic here too
-  //     return true;
-  //   }
-  //   return false; // Placeholder return value
-  // }
+  public boolean isOkToMoveElevatorUp() {
+    // Add your logic here
+    if (isAtUpperLimit()) {
+      return false;
+    } else if (isAtLowerLimit()) { // add encoder logic here too
+      return true;
+    }
+    return false; // Placeholder return value
+  }
 
-  // public boolean isOkToMoveElevatorDown() {
-  //   // Add your logic here
-  //   if (isTriggeredLowLimit()) {
-  //     return false;
-  //   } else if (isTriggeredTopLimit()) { // add encoder logic here too
-  //     return true;
-  //   }
-  //   return false; // Placeholder return value
-  // }
+  public boolean isOkToMoveElevatorDown() {
+    // Add your logic here
+    if (isAtUpperLimit()) {
+      return false;
+    } else if (isAtLowerLimit()) { // add encoder logic here too
+      return true;
+    }
+    return false; // Placeholder return value
+  }
 
-  // public void runElevator(double speed) {
-  //   if (speed < 0) {
-  //     if (!isOkToMoveElevatorUp()) {
-  //       stopElevator();
-  //       return;
-  //     }
-  //   } else if (speed > 0) {
-  //     if (!isOkToMoveElevatorDown()) {
-  //       stopElevator();
-  //       return;
-  //     }
-  //   }
-  //   io.setVoltage(4.0 * speed);
-  // }
+  public void runElevator(double speed) {
+    if (speed < 0) {
+      if (!isOkToMoveElevatorUp()) {
+        stopElevator();
+        return;
+      }
+    } else if (speed > 0) {
+      if (!isOkToMoveElevatorDown()) {
+        stopElevator();
+        return;
+      }
+    }
+    io.setVoltage(4.0 * speed);
+  }
 
 }
