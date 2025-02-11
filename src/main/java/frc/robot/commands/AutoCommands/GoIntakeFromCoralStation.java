@@ -5,15 +5,20 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+import frc.robot.subsystems.LEDStrip;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 public class GoIntakeFromCoralStation extends SequentialCommandGroup {
-  /** Creates a new GoIntakeFromCoralStation. */
-  public GoIntakeFromCoralStation() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands();
+
+  public GoIntakeFromCoralStation(Intake intake, Wrist wrist, Elevator elevator , LEDStrip ledStrip) {
+
+    addCommands(
+     wrist.setWristPosition(WristConstants.setPointHome),
+     elevator.runPercent(0.5).until(() -> elevator.isElevatorAtCoralPickupPos()),
+     intake.runPercent(IntakeConstants.intakeForwardSpeed).until(() -> intake.isTriggered()).alongWith(ledStrip.setColor(LEDStrip.LEDColor.GREEN))
+    );
   }
 }

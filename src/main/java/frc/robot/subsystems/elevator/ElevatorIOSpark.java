@@ -117,7 +117,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
-    // elevatorMotorFollower.setVoltage(volts);
+    elevatorMotorFollower.setVoltage(volts);
   }
 
   @Override

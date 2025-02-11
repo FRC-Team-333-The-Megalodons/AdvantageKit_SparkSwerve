@@ -78,6 +78,10 @@ public class Elevator extends SubsystemBase {
     return io.getPosition() >= ElevatorConstants.ELEVATOR_MIN_HEIGHT;    // add values in the constants file
   }
 
+  public boolean isElevatorAtCoralPickupPos() {
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_CORAL_PICKUP;   // add values in the constants file
+  }
+
   public boolean isOkToMoveElevatorUp() {
     // Add your logic here
     if (isAtUpperLimit()) {

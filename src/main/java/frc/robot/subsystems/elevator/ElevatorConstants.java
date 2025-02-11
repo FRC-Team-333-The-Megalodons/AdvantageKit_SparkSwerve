@@ -16,4 +16,5 @@ public class ElevatorConstants {
 
   public static final double ELEVATOR_MAX_HEIGHT = 0.0;
   public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+  public static final double ELEVATOR_CORAL_PICKUP = 0.0;
 }
