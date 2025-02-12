@@ -16,13 +16,13 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GoHome extends SequentialCommandGroup {
-  /** Creates a new GoHome. */
   public GoHome(Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
   addCommands(
+    ledStrip.setColor(LEDColor.BLUE),
     wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION),
     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION),
-    ledStrip.setColor(LEDColor.BLUE)
+    ledStrip.setColor(LEDColor.ORANGE)
   );
   }
 }

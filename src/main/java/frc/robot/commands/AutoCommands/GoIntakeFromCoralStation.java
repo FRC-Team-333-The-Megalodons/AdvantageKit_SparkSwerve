@@ -12,12 +12,12 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
-public class GoIntakeFromCoralStation extends SequentialCommandGroup {
 
+public class GoIntakeFromCoralStation extends SequentialCommandGroup {
   public GoIntakeFromCoralStation(Intake intake, Wrist wrist, Elevator elevator , LEDStrip ledStrip) {
 
     addCommands(
-      ledStrip.setColor(LEDColor.RED),
+      ledStrip.setColor(LEDColor.BLUE),
       wrist.setWristPosition(WristConstants.WRIST_CORAL_PICKUP_POS),
       elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS),
       intake.runPercent(0.5).until(intake::isTriggered).alongWith(ledStrip.setColor(LEDColor.GREEN))

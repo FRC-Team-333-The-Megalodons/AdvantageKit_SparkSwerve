@@ -13,11 +13,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GoRemoveAlgaeL2 extends SequentialCommandGroup {
-  /** Creates a new GoRemoveAlgaeL2. */
   public GoRemoveAlgaeL2(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
     addCommands(
       ledStrip.setColor(LEDColor.RED),

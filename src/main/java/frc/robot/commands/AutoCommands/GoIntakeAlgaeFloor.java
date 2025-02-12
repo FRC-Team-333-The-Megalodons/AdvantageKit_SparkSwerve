@@ -14,11 +14,10 @@ import frc.robot.subsystems.LEDStrip.LEDColor;
 import frc.robot.subsystems.wrist.Wrist;
 
 public class GoIntakeAlgaeFloor extends SequentialCommandGroup {
-  /** Creates a new GoIntakeAlgaeFloor. */
   public GoIntakeAlgaeFloor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
-      ledStrip.setColor(LEDColor.RED),
+      ledStrip.setColor(LEDColor.ORANGE),
       wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS),
       elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_FLOOR_POS),
       intake.runPercent(0.5).until(intake::isTriggered).alongWith(ledStrip.setColor(LEDColor.GREEN))
