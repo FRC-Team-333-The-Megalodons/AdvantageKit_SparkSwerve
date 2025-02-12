@@ -194,16 +194,16 @@ public class RobotContainer {
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
-    controller.povLeft().whileTrue(wrist.setWristPosition(WristConstants.setPointL4)); // L4 angle
+    controller.povLeft().whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
     controller
         .povRight()
-        .whileTrue(wrist.setWristPosition(WristConstants.setPointL2L3)); // L2,3 angle
+        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3 angle
     controller
         .cross()
-        .whileTrue(wrist.setWristPosition(WristConstants.setPointHome)); // home position
+        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
     controller
         .create()
-        .whileTrue(wrist.setWristPosition(WristConstants.setPointAlgae)); // algae angle
+        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
 
     // Reset gyro to 0° when B button is pressed
     controller
