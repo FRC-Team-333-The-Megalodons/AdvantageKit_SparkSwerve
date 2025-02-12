@@ -117,7 +117,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
-    // elevatorMotorFollower.setVoltage(volts);
+    elevatorMotorFollower.setVoltage(volts);
   }
 
   @Override
@@ -128,5 +128,9 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
+  }
+  @Override
+  public double getPosition(){
+    return encoder1.getPosition();
   }
 }

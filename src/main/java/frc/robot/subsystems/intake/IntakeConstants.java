@@ -10,4 +10,5 @@ public class IntakeConstants {
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 30;
   public static final int canRangeId = 5;
+  public static final double intakeForwardSpeed = 0.9;
 }

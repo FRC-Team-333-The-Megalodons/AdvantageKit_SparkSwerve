@@ -166,10 +166,6 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Running elevator
-    // controller.povUp().whileTrue(elevator.runPercent(0.4).until(elevator::isAtLowerLimit));
-    // controller.povDown().whileTrue(elevator.runPercent(-0.4).until(elevator::isAtUpperLimit));
-
     controller
         .povUp()
         .whileTrue(

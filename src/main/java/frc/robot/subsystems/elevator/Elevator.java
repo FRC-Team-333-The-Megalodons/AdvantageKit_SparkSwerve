@@ -40,15 +40,19 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("LowerLimitSwitch", isAtLowerLimit());
     Logger.recordOutput("TopLimitSwitch", isAtUpperLimit());
+
   }
 
   public boolean isAtLowerLimit() {
-    io.resetEncoder();  // Reset the encoder first
-    return !bottomLimitSwitch.get();  // Return the opposite of the limit switch status
-}
+    if (bottomLimitSwitch.get()) {
+      return false;
+    } else {
+      io.resetEncoder();
+      return true;
+    }
+  }
 
-  public boolean isAtUpperLimit() { // IDKK WHY IT DOESNT WORK KMS I WANNA DIE PLS SHOOT ME WTH THIS IS
-    // EMBERASSING
+  public boolean isAtUpperLimit() {
     return topLimitSwitch.get() ? false : true;
   }
 
@@ -66,11 +70,23 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
   }
 
+  public boolean isElevatorAtMaxHeightPos() {
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;   // add values in the constants file
+  }
+
+  public boolean isElevatorAtMinHeightPos() {
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_MIN_HEIGHT;    // add values in the constants file
+  }
+
+  public boolean isElevatorAtCoralPickupPos() {
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_CORAL_PICKUP;   // add values in the constants file
+  }
+
   public boolean isOkToMoveElevatorUp() {
     // Add your logic here
     if (isAtUpperLimit()) {
       return false;
-    } else if (isAtLowerLimit()) { // add encoder logic here too
+    } else if (isElevatorAtMinHeightPos()) { // add encoder logic here too
       return true;
     }
     return false; // Placeholder return value
@@ -80,7 +96,7 @@ public class Elevator extends SubsystemBase {
     // Add your logic here
     if (isAtUpperLimit()) {
       return false;
-    } else if (isAtLowerLimit()) { // add encoder logic here too
+    } else if (isElevatorAtMaxHeightPos()) { // add encoder logic here too
       return true;
     }
     return false; // Placeholder return value
