@@ -18,14 +18,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -142,6 +141,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    updateDashboard();
   }
 
   /**
@@ -162,8 +162,6 @@ public class RobotContainer {
     // elevator.setDefaultCommand(
     //     elevator.runTeleop(
     //         () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
-
-    LEDStrip.setLEDs(Color.kBlack);
 
     // Lock to 0° when A button is held
     controller
@@ -223,6 +221,38 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+  }
+
+  public void updateDashboard() {
+    // Basic Bitch Commands
+    SmartDashboard.putData("Intake", endEffecter.runPercent(0.5));
+    SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5));
+    SmartDashboard.putData("WristUp", wrist.runPercent(0.5));
+    SmartDashboard.putData("WristDown", wrist.runPercent(-0.5));
+    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.333));
+    SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.333));
+    SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
+    SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
+
+    // Advanced Commands
+    SmartDashboard.putData(
+        "IntakeCoral", endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
+    SmartDashboard.putData("WristHomePos", wrist.setWristPosition(WristConstants.homeSetpoint));
+    SmartDashboard.putData("WristL23Pos", wrist.setWristPosition(WristConstants.coralL23Setpoint));
+    SmartDashboard.putData("WristL4Pos", wrist.setWristPosition(WristConstants.coralL4Setpoint));
+    SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.algaeSetpoint));
+    SmartDashboard.putData(
+        "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint));
+    SmartDashboard.putData(
+        "ElevatorCoralL2Pos", elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint));
+    SmartDashboard.putData(
+        "ElevatorCoralL3Pos", elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint));
+    SmartDashboard.putData(
+        "ElevatorCoralL4Pos", elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint));
+    SmartDashboard.putData(
+        "ElevatorAlgaeL2Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint));
+    SmartDashboard.putData(
+        "ElevatorAlgaeL3Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint));
   }
 
   /**

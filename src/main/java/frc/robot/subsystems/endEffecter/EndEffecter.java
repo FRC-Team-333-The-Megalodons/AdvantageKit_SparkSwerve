@@ -45,8 +45,13 @@ public class EndEffecter extends SubsystemBase {
   }
 
   public boolean isTriggered() {
-    LEDStrip.setLEDs(Color.kGreen);
-    return canRange.getIsDetected().getValue();
+    if (getDistance() < 0.5) {
+      LEDStrip.setLEDs(Color.kGreen);
+      return true;
+    } else {
+      LEDStrip.setLEDs(Color.kBlack);
+      return false;
+    }
   }
 
   public double getDistance() {

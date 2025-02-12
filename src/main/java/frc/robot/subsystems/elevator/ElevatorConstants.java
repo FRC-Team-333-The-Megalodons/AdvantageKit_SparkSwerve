@@ -15,6 +15,7 @@ public class ElevatorConstants {
   public static final int currentLimit = 40;
 
   // Setpoints
+  public static final double homeSetpoint = 0.0;
   public static final double coralL4Setpoint = 320.0;
   public static final double coralL3Setpoint = 160.0;
   public static final double coralL2Setpoint = 60.0;
