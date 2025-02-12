@@ -30,7 +30,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   private final RelativeEncoder encoder =
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(1, 0.3, 0);
+  private PIDController elevatorPIDController = new PIDController(0.6, 0.3, 0);
 
   public ElevatorIOSpark() {
 
