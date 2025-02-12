@@ -28,7 +28,7 @@ public interface ElevatorIO {
 
   public default void resetEncoder() {}
 
-  public default double getPosition(){
+  public default double getPosition() {
     return 0.0;
   }
 }

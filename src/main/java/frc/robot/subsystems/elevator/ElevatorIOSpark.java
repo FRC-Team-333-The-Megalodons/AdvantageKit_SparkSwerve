@@ -30,27 +30,10 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   private final RelativeEncoder encoder =
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(1.4, 0, 0);
+  private PIDController elevatorPIDController = new PIDController(1, 0.3, 0);
 
   public ElevatorIOSpark() {
 
-    // elevatorMotorLeader.restoreFactoryDefaults();
-    // elevatorMotorFollower.restoreFactoryDefaults();
-
-    // elevatorMotorLeader.setIdleMode(IdleMode.kBrake);
-    // elevatorMotorFollower.setIdleMode(IdleMode.kBrake);
-
-    // elevatorMotorLeader.burnFlash();
-    // elevatorMotorFollower.burnFlash();
-
-    // elevatorPIDController = elevatorMotorLeader.getEncoder();
-    // RelativeEncoder = elevatorMotorLeader.getEncoder();
-
-    // elevatorPIDController.setFeedbackDevice(alternateEncoder);
-    // elevatorPIDController.setP(0.1);
-    // elevatorPIDController.setI(0.0);
-    // elevatorPIDController.setD(0.0);
-    // elevatorPIDController.setFF(0.0);
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -129,8 +112,9 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
   }
+
   @Override
-  public double getPosition(){
+  public double getPosition() {
     return encoder1.getPosition();
   }
 }

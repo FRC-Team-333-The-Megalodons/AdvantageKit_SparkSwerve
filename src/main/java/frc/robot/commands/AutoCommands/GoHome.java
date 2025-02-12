@@ -5,12 +5,12 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.LEDStrip.LEDColor;
-import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -18,11 +18,10 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 public class GoHome extends SequentialCommandGroup {
   public GoHome(Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
-  addCommands(
-    ledStrip.setColor(LEDColor.BLUE),
-    wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION),
-    elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION),
-    ledStrip.setColor(LEDColor.ORANGE)
-  );
+    addCommands(
+        ledStrip.setColor(LEDColor.BLUE),
+        wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION),
+        ledStrip.setColor(LEDColor.ORANGE));
   }
 }
