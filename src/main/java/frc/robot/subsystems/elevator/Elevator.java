@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.elevator.ElevatorConstants;
+
 
 public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
@@ -79,7 +81,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isElevatorAtCoralPickupPos() {
-    return io.getPosition() >= ElevatorConstants.ELEVATOR_CORAL_PICKUP;   // add values in the constants file
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS;   // add values in the constants file
   }
 
   public boolean isOkToMoveElevatorUp() {

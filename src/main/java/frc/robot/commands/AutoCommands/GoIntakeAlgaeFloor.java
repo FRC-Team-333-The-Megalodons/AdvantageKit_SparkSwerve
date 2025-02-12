@@ -5,17 +5,23 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.LEDStrip;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeConstants;
-import frc.robot.subsystems.intake.IntakeIOSpark;
+import frc.robot.subsystems.wrist.WristConstants;
+import frc.robot.subsystems.LEDStrip;
+import frc.robot.subsystems.LEDStrip.LEDColor;
+import frc.robot.subsystems.wrist.Wrist;
 
 public class GoIntakeAlgaeFloor extends SequentialCommandGroup {
   /** Creates a new GoIntakeAlgaeFloor. */
-  public GoIntakeAlgaeFloor(Intake intake, IntakeIOSpark intakeIOSpark, LEDStrip ledStrip) {
+  public GoIntakeAlgaeFloor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
-      intake.runPercent(IntakeConstants.intakeForwardSpeed).until(() -> intake.isTriggered()).alongWith(ledStrip.setColor(LEDStrip.LEDColor.GREEN))
+      ledStrip.setColor(LEDColor.RED),
+      wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS),
+      elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_FLOOR_POS),
+      intake.runPercent(0.5).until(intake::isTriggered).alongWith(ledStrip.setColor(LEDColor.GREEN))
     );
 
   }
