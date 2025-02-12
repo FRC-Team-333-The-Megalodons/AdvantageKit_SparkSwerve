@@ -35,6 +35,10 @@ public class Elevator extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
+  public Command setElevatorPosition(double setpoint) {
+    return runEnd(() -> io.setElevator(inputs.position, setpoint), () -> io.setVoltage(0.0));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

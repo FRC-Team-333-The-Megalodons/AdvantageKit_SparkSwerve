@@ -48,7 +48,6 @@ public class WristIOTalonFX implements WristIO {
   public void updateInputs(WristIOInputs inputs) {
     BaseStatusSignal.refreshAll(positionRot, velocityRotPerSec, appliedVolts, currentAmps);
 
-    inputs.positionRad = Units.rotationsToRadians(positionRot.getValueAsDouble());
     inputs.velocityRadPerSec = Units.rotationsToRadians(velocityRotPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();

@@ -18,12 +18,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -35,6 +37,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
@@ -160,6 +163,8 @@ public class RobotContainer {
     //     elevator.runTeleop(
     //         () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
 
+    LEDStrip.setLEDs(Color.kBlack);
+
     // Lock to 0° when A button is held
     controller
         .R3()
@@ -175,17 +180,22 @@ public class RobotContainer {
 
     // Swerve controls
     controller.povUp().whileTrue(elevator.runPercent(0.333).until(elevator::upperLimit)); // up
-    controller.povDown().whileTrue(elevator.runPercent(-0.333).until(elevator::lowerLimit)); // down
+    controller.povDown().whileTrue(elevator.runPercent(-0.1).until(elevator::lowerLimit)); // down
     controller
         .povRight()
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.coralL4Setpoint)
                 .withTimeout(2.0)
-                .andThen(elevator.runPercent(0.333).until(elevator::upperLimit))); // score l4
+                .andThen(
+                    elevator
+                        .setElevatorPosition(ElevatorConstants.coralL2Setpoint)
+                        .until(elevator::upperLimit))); // score l4
+    controller.povLeft().whileTrue(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint));
 
     // End Effecter controls
     controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
+    // controller.triangle().whileTrue(EndEffecterCommands.intakeCoral(endEffecter));
     controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse
     controller
         .circle()
@@ -195,12 +205,13 @@ public class RobotContainer {
     // Wrist controls
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up
     controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
-    // controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4 angle
-    // controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homeSetpoint)); // home angle
+    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4 angle
+    controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homeSetpoint)); // home angle
+    controller.touchpad().whileTrue(wrist.setWristPosition(WristConstants.algaeSetpoint));
 
     // Climber controls
-    controller.L2().whileTrue(climber.runPercent(1.0));
-    controller.R2().whileTrue(climber.runPercent(-1.0));
+    // controller.L2().whileTrue(climber.runPercent(1.0));
+    // controller.R2().whileTrue(climber.runPercent(-1.0));
 
     // Reset gyro to 0° when B button is pressed
     controller

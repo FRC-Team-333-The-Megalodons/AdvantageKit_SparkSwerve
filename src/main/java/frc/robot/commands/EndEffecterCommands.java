@@ -24,4 +24,11 @@ public class EndEffecterCommands {
         },
         endEffecter);
   }
+
+  public static Command intakeCoral(EndEffecter endEffecter) {
+    return Commands.runEnd(
+        () -> endEffecter.runPercent(0.5).until(endEffecter::isTriggered),
+        () -> endEffecter.runPercent(0.0),
+        endEffecter);
+  }
 }

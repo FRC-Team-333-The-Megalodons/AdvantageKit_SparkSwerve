@@ -7,8 +7,10 @@ package frc.robot.subsystems.endEffecter;
 import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
 
 import com.ctre.phoenix6.hardware.CANrange;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.LEDStrip;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -43,6 +45,7 @@ public class EndEffecter extends SubsystemBase {
   }
 
   public boolean isTriggered() {
+    LEDStrip.setLEDs(Color.kGreen);
     return canRange.getIsDetected().getValue();
   }
 

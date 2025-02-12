@@ -46,7 +46,6 @@ public class WristIOSpark implements WristIO {
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-    ifOk(wrist, internalEncoder::getPosition, (value) -> inputs.positionRad = value);
     ifOk(wrist, internalEncoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         wrist,
