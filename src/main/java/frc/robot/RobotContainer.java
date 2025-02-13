@@ -44,6 +44,11 @@ import frc.robot.subsystems.endEffecter.EndEffecter;
 import frc.robot.subsystems.endEffecter.EndEffecterIO;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIO;
@@ -64,6 +69,7 @@ public class RobotContainer {
   private final EndEffecter endEffecter;
   private final Wrist wrist;
   private final Climber climber;
+  private final Vision vision;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -87,6 +93,11 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
         climber = new Climber(new ClimberIOSpark());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         break;
 
       case SIM:
@@ -102,6 +113,11 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
         climber = new Climber(new ClimberIOSim());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+                new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
         break;
 
       default:
@@ -117,6 +133,7 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIO() {});
         wrist = new Wrist(new WristIO() {});
         climber = new Climber(new ClimberIO() {});
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
