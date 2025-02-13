@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
+import frc.robot.commands.photonCamera.PhotonVisonCamera;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -55,7 +56,7 @@ import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +82,8 @@ public class RobotContainer {
   private final LEDStrip led;
   private SwerveDriveSimulation driveSimulation = null;
   private DriveCommands driveCommands;
+  // private final VisionIOPhotonVision photonCamera = new VisionIOPhotonVision(camera1Name,
+  // robotToCamera1);
 
   public static List<PhotonTrackedTarget> frontCameraTargets = new ArrayList<>();
   public static List<PhotonTrackedTarget> backCameraTargets = new ArrayList<>();
@@ -90,6 +93,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final PhotonVisonCamera photonVisonCamera = new PhotonVisonCamera();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -108,8 +112,8 @@ public class RobotContainer {
         this.vision =
             new Vision(
                 drive,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                new VisionIOPhotonVision(VisionConstants.camera0Name, robotToCamera0),
+                new VisionIOPhotonVision(VisionConstants.camera1Name, robotToCamera1));
 
         intake = new Intake(new IntakeIOSpark());
 
@@ -261,7 +265,7 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
-    controller.R1().whileTrue(DriveCommands.aimAtTheTarget(vision, drive));
+    controller.R1().whileTrue(DriveCommands.aimAtTheTarget(photonVisonCamera, drive));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }
@@ -352,6 +356,7 @@ public class RobotContainer {
   }
 
   public void addCommandsToDashboard() {
+    SmartDashboard.putData("AimATTarget", drive);
     SmartDashboard.putData(
         "Blue Segmented",
         new RunCommand(() -> led.makeSegmentColorCommand(Color.kBlue, LEDStrip.getSegment(4, 3))));

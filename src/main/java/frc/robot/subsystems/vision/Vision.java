@@ -24,7 +24,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
@@ -33,15 +32,16 @@ import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
-  private VisionIOPhotonVision photonCamera;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  // private final VisionIOPhotonVision photonCamera;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
+
     this.consumer = consumer;
     this.io = io;
-    this.photonCamera = new VisionIOPhotonVision(camera1Name, robotToCamera0);
+    // this.photonCamera = new VisionIOPhotonVision(camera1Name, robotToCamera1);
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
@@ -66,16 +66,13 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
-  public double getYaw() {
-    return photonCamera.getYaw();
-  }
-
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
-      SmartDashboard.putNumber("Rear Camera Yaw", photonCamera.getYaw());
+      // Logger.recordOutput("Rear Camera Yaw", photonCamera.getYaw());
+      // SmartDashboard.getNumber("Rear Camera Yaw", photonCamera.getYaw());
     }
 
     // Initialize logging values

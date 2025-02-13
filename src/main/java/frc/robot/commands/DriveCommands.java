@@ -28,9 +28,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.photonCamera.PhotonVisonCamera;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
-import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -313,10 +313,11 @@ public class DriveCommands {
           }
         });
   }*/
-  public static Command aimAtTheTarget(Vision vision, Drive drive) {
+  public static Command aimAtTheTarget(PhotonVisonCamera photonVisonCamera, Drive drive) {
     return Commands.run(
         () -> {
-          joystickDriveAtAngle(drive, () -> 0, () -> 0, () -> new Rotation2d(vision.getYaw()));
+          joystickDriveAtAngle(
+              drive, () -> 0, () -> 0, () -> Rotation2d.fromDegrees(photonVisonCamera.getYaw()));
         });
   }
 

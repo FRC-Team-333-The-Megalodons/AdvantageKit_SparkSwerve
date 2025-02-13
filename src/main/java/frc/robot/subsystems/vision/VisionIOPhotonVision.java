@@ -122,15 +122,11 @@ public class VisionIOPhotonVision implements VisionIO {
     }
   }
 
-  @Override
   public double getYaw() {
     var results = camera.getAllUnreadResults();
     double yaw = 0;
     for (PhotonPipelineResult result : results) {
-      if (result.hasTargets()) {
-        var target = result.getBestTarget();
-        yaw = target.getYaw();
-      }
+      yaw = result.getBestTarget().getYaw();
     }
     return yaw;
   }
