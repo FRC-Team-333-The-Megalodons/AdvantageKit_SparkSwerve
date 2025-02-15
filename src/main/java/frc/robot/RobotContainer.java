@@ -31,13 +31,13 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -194,19 +194,34 @@ public class RobotContainer {
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
-    controller
-        .povLeft()
-        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
-    controller
-        .povRight()
-        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3 angle
+    // controller
+    //     .povLeft()
+    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
+    // controller
+    //     .povRight()
+    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3
+    // angle
+    // controller
+    //     .cross()
+    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
+    // controller
+    //     .create()
+    //     .whileTrue(
+    //         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
+
     controller
         .cross()
-        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
-    controller
-        .create()
         .whileTrue(
-            wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
+            elevator
+                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
+                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+
+    controller
+        .circle()
+        .whileTrue(
+            elevator
+                .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
+                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
 
     // Reset gyro to 0° when B button is pressed
     controller

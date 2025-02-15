@@ -10,18 +10,18 @@ public class WristConstants {
   public static final int currentLimit = 40;
 
   // Wrist set points
-  public static final double WRIST_HOME_POSITION = 0.477;
+  public static final double WRIST_HOME_POSITION = 0.4725;
 
-  public static final double WRIST_CORAL_PICKUP_POS = 0.0;
-  public static final double WRIST_ALGAE_PICKUP_FLOOR_POS = 0.029;
+  public static final double WRIST_CORAL_PICKUP_POS = 0.4725;
+  public static final double WRIST_ALGAE_PICKUP_FLOOR_POS = 0.9352;
 
-  public static final double WRIST_ALGAE_PICKUP_L2_POS = 0.0;
-  public static final double WRIST_ALGAE_PICKUP_L3_POS = 0.0;
+  public static final double WRIST_ALGAE_PICKUP_L2_POS = 0.001952;
+  public static final double WRIST_ALGAE_PICKUP_L3_POS = 0.01462;
 
-  public static final double WRIST_ALGAE_SCORE_POS = 0.0;
+  public static final double WRIST_ALGAE_SCORE_POS = 0.9352;
 
-  public static final double WRIST_SCORE_CORAL_L1_POS = 0.0;
-  public static final double WRIST_SCORE_CORAL_L2_POS = 0.429;
-  public static final double WRIST_SCORE_CORAL_L3_POS = 0.429;
-  public static final double WRIST_SCORE_CORAL_L4_POS = 0.348;
+  public static final double WRIST_SCORE_CORAL_L1_POS = 0.4725;
+  public static final double WRIST_SCORE_CORAL_L2_POS = 0.42276;
+  public static final double WRIST_SCORE_CORAL_L3_POS = 0.42276;
+  public static final double WRIST_SCORE_CORAL_L4_POS = 0.353;
 }

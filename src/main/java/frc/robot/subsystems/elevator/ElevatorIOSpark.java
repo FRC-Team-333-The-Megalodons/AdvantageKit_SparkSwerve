@@ -25,32 +25,17 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
   private final SparkFlex elevatorMotorFollower2 =
       new SparkFlex(elevatorMotorFollower2CanId, MotorType.kBrushless);
+
   private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
   private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
+  private final RelativeEncoder encoder3 = elevatorMotorFollower2.getEncoder();
 
   private final RelativeEncoder encoder =
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(1.4, 0, 0);
+  private PIDController elevatorPIDController = new PIDController(0.6, 0.4, 0);
 
   public ElevatorIOSpark() {
 
-    // elevatorMotorLeader.restoreFactoryDefaults();
-    // elevatorMotorFollower.restoreFactoryDefaults();
-
-    // elevatorMotorLeader.setIdleMode(IdleMode.kBrake);
-    // elevatorMotorFollower.setIdleMode(IdleMode.kBrake);
-
-    // elevatorMotorLeader.burnFlash();
-    // elevatorMotorFollower.burnFlash();
-
-    // elevatorPIDController = elevatorMotorLeader.getEncoder();
-    // RelativeEncoder = elevatorMotorLeader.getEncoder();
-
-    // elevatorPIDController.setFeedbackDevice(alternateEncoder);
-    // elevatorPIDController.setP(0.1);
-    // elevatorPIDController.setI(0.0);
-    // elevatorPIDController.setD(0.0);
-    // elevatorPIDController.setFF(0.0);
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -118,6 +103,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
     elevatorMotorFollower.setVoltage(volts);
+    elevatorMotorFollower2.setVoltage(volts);
   }
 
   @Override
@@ -128,6 +114,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
+    elevatorMotorFollower.set(elevatorPIDController.calculate(encoder2.getPosition(), setPoint));
+    elevatorMotorFollower2.set(elevatorPIDController.calculate(encoder3.getPosition(), setPoint));
   }
 
   @Override
