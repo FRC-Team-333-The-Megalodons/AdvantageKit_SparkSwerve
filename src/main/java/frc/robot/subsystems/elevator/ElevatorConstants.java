@@ -17,7 +17,7 @@ public class ElevatorConstants {
   public static final double ELEVATOR_MAX_HEIGHT = 345.9714;
   public static final double ELEVATOR_MIN_HEIGHT = -5.88259;
 
-  public static final double ELEVATOR_HOME_POSITION =  -5.88259;
+  public static final double ELEVATOR_HOME_POSITION = -5.88259;
 
   public static final double ELEVATOR_CORAL_PICKUP_POS = -5.88259;
   public static final double ELEVATOR_ALGAE_PICKUP_FLOOR_POS = 0.0;
@@ -31,5 +31,4 @@ public class ElevatorConstants {
   public static final double ELEVATOR_SCORE_CORAL_L2_POS = 63.2797;
   public static final double ELEVATOR_SCORE_CORAL_L3_POS = 163.7695;
   public static final double ELEVATOR_SCORE_CORAL_L4_POS = 345.4402;
-  
 }
