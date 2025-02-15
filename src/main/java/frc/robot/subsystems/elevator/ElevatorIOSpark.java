@@ -129,8 +129,9 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
   }
+
   @Override
-  public double getPosition(){
+  public double getPosition() {
     return encoder1.getPosition();
   }
 }

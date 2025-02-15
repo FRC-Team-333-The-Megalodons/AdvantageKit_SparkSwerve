@@ -17,10 +17,9 @@ public class GoScoreAlgaePros extends SequentialCommandGroup {
   public GoScoreAlgaePros(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
-      ledStrip.setColor(LEDColor.BLUE),
-      wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_POS),
-      elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_POS),
-      ledStrip.setColor(LEDColor.ORANGE)
-    );
+        ledStrip.setColor(LEDColor.BLUE),
+        wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_POS),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_POS),
+        ledStrip.setColor(LEDColor.ORANGE));
   }
 }

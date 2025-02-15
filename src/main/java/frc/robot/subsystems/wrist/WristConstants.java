@@ -20,9 +20,8 @@ public class WristConstants {
 
   public static final double WRIST_ALGAE_SCORE_POS = 0.0;
 
-
   public static final double WRIST_SCORE_CORAL_L1_POS = 0.0;
-  public static final double WRIST_SCORE_CORAL_L2_POS = 0.0;
+  public static final double WRIST_SCORE_CORAL_L2_POS = 0.429;
   public static final double WRIST_SCORE_CORAL_L3_POS = 0.429;
   public static final double WRIST_SCORE_CORAL_L4_POS = 0.348;
 }

@@ -17,10 +17,9 @@ public class GoScoreCoralL1 extends SequentialCommandGroup {
   public GoScoreCoralL1(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
-      ledStrip.setColor(LEDColor.BLUE),
-      wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS),
-      elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS),
-      ledStrip.setColor(LEDColor.ORANGE)
-    );
+        ledStrip.setColor(LEDColor.BLUE),
+        wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS),
+        ledStrip.setColor(LEDColor.ORANGE));
   }
 }

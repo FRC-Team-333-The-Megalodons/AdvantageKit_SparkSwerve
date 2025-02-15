@@ -13,4 +13,22 @@ public class ElevatorConstants {
   public static final int elevatorMotorFollower2CanId = 7;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+
+  public static final double ELEVATOR_MAX_HEIGHT = 0.0;
+  public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+
+  public static final double ELEVATOR_HOME_POSITION = 0.0;
+
+  public static final double ELEVATOR_CORAL_PICKUP_POS = 0.0;
+  public static final double ELEVATOR_ALGAE_PICKUP_FLOOR_POS = 0.0;
+
+  public static final double ELEVATOR_ALGAE_SCORE_POS = 0.0;
+
+  public static final double ELEVATOR_ALGAE_PICKUP_L2_POS = 0.0;
+  public static final double ELEVATOR_ALGAE_PICKUP_L3_POS = 0.0;
+
+  public static final double ELEVAOTR_SCORE_CORAL_L1_POS = 0.0;
+  public static final double ELEVATOR_SCORE_CORAL_L2_POS = 0.0;
+  public static final double ELEVATOR_SCORE_CORAL_L3_POS = 0.0;
+  public static final double ELEVATOR_SCORE_CORAL_L4_POS = 0.0;
 }
