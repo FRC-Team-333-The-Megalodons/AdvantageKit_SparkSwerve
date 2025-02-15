@@ -61,4 +61,8 @@ public class Elevator extends SubsystemBase {
   public boolean upperLimit() {
     return upperLimitSwitch.get() ? false : true;
   }
+
+  public boolean atSetpoint() {
+    return io.atTarget();
+  }
 }

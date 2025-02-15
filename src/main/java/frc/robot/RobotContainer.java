@@ -116,8 +116,10 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
         break;
 
       default:
@@ -176,11 +178,16 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // elevator.setDefaultCommand(
-    //     elevator.runTeleop(
-    //         () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
+    // Lock to 0° when R3 button is held
+    // controller
+    //     .R3()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Lock to 0° when A button is held
     controller
         .R3()
         .whileTrue(
@@ -188,47 +195,106 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+                () -> vision.getTargetX(0)));
 
-    // Switch to X pattern when X button is pressed
-    controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // Switch to X pattern when L3 button is pressed
+    controller.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Swerve controls
-    controller.povUp().whileTrue(elevator.runPercent(0.333).until(elevator::upperLimit)); // up
-    controller.povDown().whileTrue(elevator.runPercent(-0.1).until(elevator::lowerLimit)); // down
+    // Reef scoring buttons
+    // L1
+    controller
+        .cross()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.homeSetpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint)));
+    // L2
+    controller
+        .circle()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.coralL23Setpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
+    // L3
+    controller
+        .square()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.coralL23Setpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
+    // L4
+    controller
+        .triangle()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.coralL4Setpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint)));
+
+    // Algae scoring buttons
+    // Barge score
+    controller
+        .povUp()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.bargeSetPoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint)));
+    // Processor score
+    controller
+        .povDown()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.processorSetpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint)));
+    // Remove L2
     controller
         .povRight()
         .whileTrue(
             wrist
-                .setWristPosition(WristConstants.coralL4Setpoint)
-                .withTimeout(2.0)
-                .andThen(
-                    elevator
-                        .setElevatorPosition(ElevatorConstants.coralL2Setpoint)
-                        .until(elevator::upperLimit))); // score l4
-    controller.povLeft().whileTrue(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint));
-
-    // End Effecter controls
-    controller.triangle().whileTrue(endEffecter.runPercent(0.5)); // forward
-    // controller.triangle().whileTrue(EndEffecterCommands.intakeCoral(endEffecter));
-    controller.cross().whileTrue(endEffecter.runPercent(-0.5)); // reverse
+                .setWristPosition(WristConstants.aglaeSetpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
+    // Remove L3
     controller
-        .circle()
+        .povLeft()
         .whileTrue(
-            endEffecter.runPercent(0.5).until(endEffecter::isTriggered)); // fancy intake code
+            wrist
+                .setWristPosition(WristConstants.aglaeSetpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
 
-    // Wrist controls
-    controller.R1().whileTrue(wrist.runPercent(0.5)); // up
-    controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
-    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4 angle
-    controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homeSetpoint)); // home angle
-    controller.touchpad().whileTrue(wrist.setWristPosition(WristConstants.algaeSetpoint));
+    // Intake from the coral station
+    controller
+        .R2()
+        .whileTrue(
+            wrist
+                .setWristPosition(WristConstants.homeSetpoint)
+                .until(wrist::atSetpoint)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint))
+                .alongWith(endEffecter.runPercent(0.4))
+                .until(endEffecter::isTriggered));
 
-    // Climber controls
-    // controller.L2().whileTrue(climber.runPercent(1.0));
-    // controller.R2().whileTrue(climber.runPercent(-1.0));
+    // Robot home position
+    controller
+        .L2()
+        .whileTrue(
+            elevator
+                .setElevatorPosition(ElevatorConstants.homeSetpoint)
+                .until(elevator::atSetpoint)
+                .andThen(
+                    wrist.setWristPosition(WristConstants.homeSetpoint).until(wrist::atSetpoint)));
 
-    // Reset gyro to 0° when B button is pressed
+    // Retract
+    controller.R1().whileTrue(climber.runPercent(1.0));
+    // Extract
+    controller.L1().whileTrue(climber.runPercent(-1.0));
+
+    // Reset gyro to 0° when options button is pressed
     controller
         .options()
         .onTrue(
@@ -244,10 +310,10 @@ public class RobotContainer {
     // Basic Bitch Commands
     SmartDashboard.putData("Intake", endEffecter.runPercent(0.5));
     SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5));
-    SmartDashboard.putData("WristUp", wrist.runPercent(0.5));
-    SmartDashboard.putData("WristDown", wrist.runPercent(-0.5));
-    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.333));
-    SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.333));
+    SmartDashboard.putData("WristUp", wrist.runPercent(-0.1));
+    SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
+    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.333).until(elevator::upperLimit));
+    SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
     SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
     SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
 
@@ -257,7 +323,7 @@ public class RobotContainer {
     SmartDashboard.putData("WristHomePos", wrist.setWristPosition(WristConstants.homeSetpoint));
     SmartDashboard.putData("WristL23Pos", wrist.setWristPosition(WristConstants.coralL23Setpoint));
     SmartDashboard.putData("WristL4Pos", wrist.setWristPosition(WristConstants.coralL4Setpoint));
-    SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.algaeSetpoint));
+    SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.aglaeSetpoint));
     SmartDashboard.putData(
         "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint));
     SmartDashboard.putData(

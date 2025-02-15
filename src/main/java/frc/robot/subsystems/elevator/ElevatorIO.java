@@ -29,4 +29,8 @@ public interface ElevatorIO {
   public default double getElevatorPosition() {
     return -1;
   }
+
+  public default boolean atTarget() {
+    return false;
+  }
 }

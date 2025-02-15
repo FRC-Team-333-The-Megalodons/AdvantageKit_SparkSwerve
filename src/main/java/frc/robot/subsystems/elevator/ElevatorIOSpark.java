@@ -91,4 +91,9 @@ public class ElevatorIOSpark implements ElevatorIO {
   public double getElevatorPosition() {
     return encoder.getPosition();
   }
+
+  @Override
+  public boolean atTarget() {
+    return pidController.atSetpoint();
+  }
 }

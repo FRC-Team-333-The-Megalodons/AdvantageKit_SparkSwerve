@@ -21,4 +21,6 @@ public class ElevatorConstants {
   public static final double coralL2Setpoint = 60.0;
   public static final double aglaeL2Setpoint = 0.0;
   public static final double aglaeL3Setpoint = 0.0;
+  public static final double processorSetpoint = 0;
+  public static final double bargeSetPoint = 0;
 }

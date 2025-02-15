@@ -69,4 +69,9 @@ public class WristIOSpark implements WristIO {
   public void setWrist(double currentPos, double targetPos) {
     wrist.set(-pid.calculate(currentPos, targetPos));
   }
+
+  @Override
+  public boolean atTarget() {
+    return pid.atSetpoint();
+  }
 }
