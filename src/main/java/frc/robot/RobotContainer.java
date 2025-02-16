@@ -174,8 +174,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
+            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
             () -> -controller.getRightX()));
 
     // Lock to 0° when R3 button is held
@@ -193,8 +193,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
 
     // Switch to X pattern when L3 button is pressed
@@ -202,13 +202,7 @@ public class RobotContainer {
 
     // Reef scoring buttons
     // L1
-    controller
-        .cross()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.homeSetpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint)));
+    controller.cross().whileTrue(endEffecter.runPercent(0.5));
     // L2
     controller
         .circle()
@@ -269,15 +263,7 @@ public class RobotContainer {
                 .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
 
     // Intake from the coral station
-    controller
-        .R2()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.homeSetpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint))
-                .alongWith(endEffecter.runPercent(0.4))
-                .until(endEffecter::isTriggered));
+    controller.R2().whileTrue(endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
 
     // Robot home position
     controller
@@ -312,7 +298,7 @@ public class RobotContainer {
     SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5));
     SmartDashboard.putData("WristUp", wrist.runPercent(-0.1));
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
-    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.333).until(elevator::upperLimit));
+    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
     SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
     SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));

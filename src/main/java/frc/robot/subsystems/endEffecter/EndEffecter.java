@@ -44,14 +44,19 @@ public class EndEffecter extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
+  // public boolean isTriggered() {
+  //   if (getDistance() < 0.05 && getDistance() > 0.0) {
+  //     LEDStrip.setLEDs(Color.kGreen);
+  //     return true;
+  //   } else {
+  //     LEDStrip.setLEDs(Color.kBlack);
+  //     return false;
+  //   }
+  // }
+
   public boolean isTriggered() {
-    if (getDistance() < 0.5) {
-      LEDStrip.setLEDs(Color.kGreen);
-      return true;
-    } else {
-      LEDStrip.setLEDs(Color.kBlack);
-      return false;
-    }
+    LEDStrip.setLEDs(Color.kGreen);
+    return canRange.getIsDetected().getValue();
   }
 
   public double getDistance() {

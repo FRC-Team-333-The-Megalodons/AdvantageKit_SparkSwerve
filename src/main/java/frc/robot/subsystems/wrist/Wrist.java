@@ -17,7 +17,6 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Wrist", inputs);
-    Logger.recordOutput("WristEncoder", inputs.positionAbs);
   }
 
   public Command runPercent(double percent) {
