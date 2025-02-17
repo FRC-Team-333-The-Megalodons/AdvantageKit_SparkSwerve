@@ -46,7 +46,7 @@ public class Elevator extends SubsystemBase {
     if (bottomLimitSwitch.get()) {
       return false;
     } else {
-      io.resetEncoder();
+      io.setValue(0);;
       return true;
     }
   }

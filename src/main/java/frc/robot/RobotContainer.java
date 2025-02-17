@@ -54,6 +54,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
+  //   private final Climb climb;
   // private final Vision vision;
 
   // Controller
@@ -77,6 +78,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
+        // climb = new Climb(new ClimbIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
@@ -92,6 +94,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+        // climb = new Climb(new ClimbIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
@@ -107,6 +110,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+        // climb = new Climb(new ClimbIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -164,7 +168,7 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller.options().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     controller
         .povUp()
@@ -183,16 +187,64 @@ public class RobotContainer {
     controller
         .triangle()
         .whileTrue(
-            // Commands.parallel(
-            intake.runPercent(0.9)
-            // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-            // )
-            ); // intake in lights go green
-    // controller.cross().whileTrue(intake.runPercent(-0.9));
+            intake.runPercent(0.9));
 
     // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
+
+
+    controller
+    .cross()
+    .whileTrue(
+        elevator
+            .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
+            .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+
+controller
+    .circle()
+    .whileTrue(
+        elevator
+            .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
+            .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+
+// Reset gyro to 0° when B button is pressed
+controller
+    .options()
+    .onTrue(
+        Commands.runOnce(
+                () ->
+                    drive.setPose(
+                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                drive)
+            .ignoringDisable(true));
+
+    // csequantial commands
+
+    // //climber
+    // controller.R1().whileTrue(climb.runPercent(1));
+    // controller.L1().whileTrue(climb.runPercent(-1));
+
+    // //reef scoring coral
+    // controller.triangle().whileTrue(
+    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS).andThen(
+    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS)).onlyWhile(
+    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
+
+    // controller.triangle().whileTrue(
+    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L3_POS).andThen(
+    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)).onlyWhile(
+    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
+
+    // controller.triangle().whileTrue(
+    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L2_POS).andThen(
+    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_L2_POS)).onlyWhile(
+    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
+
+    // controller.triangle().whileTrue(
+    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS).andThen(
+    //     elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS)).onlyWhile(
+    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
 
     // controller
     //     .povLeft()
@@ -208,31 +260,6 @@ public class RobotContainer {
     //     .create()
     //     .whileTrue(
     //         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
-
-    controller
-        .cross()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
-
-    controller
-        .circle()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
-
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .options()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
   }
 
   /**
