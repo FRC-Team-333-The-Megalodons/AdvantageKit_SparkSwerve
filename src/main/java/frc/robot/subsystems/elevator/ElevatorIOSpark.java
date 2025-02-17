@@ -21,19 +21,17 @@ import java.util.function.DoubleSupplier;
 public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex elevatorMotorLeader =
       new SparkFlex(elevatorMotorLeaderCanId, MotorType.kBrushless);
-  private final SparkFlex elevatorMotorFollower =
+  private final SparkFlex elevatorMotorFollower1 =
       new SparkFlex(elevatorMotorFollowerCanId, MotorType.kBrushless);
   private final SparkFlex elevatorMotorFollower2 =
       new SparkFlex(elevatorMotorFollower2CanId, MotorType.kBrushless);
 
-  private final RelativeEncoder encoder1 = elevatorMotorLeader.getEncoder();
-  private final RelativeEncoder encoder2 = elevatorMotorFollower.getEncoder();
-  private final RelativeEncoder encoder3 = elevatorMotorFollower2.getEncoder();
-
-  private final RelativeEncoder encoder =
+  private final RelativeEncoder encoder1 =
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(0.6, 0.4, 0);
+  private PIDController elevatorPIDController = new PIDController(0.5, 0.2, 0);
 
+  private final RelativeEncoder encoder2 = elevatorMotorFollower1.getEncoder();
+  private final RelativeEncoder encoder3 = elevatorMotorFollower2.getEncoder();
   public ElevatorIOSpark() {
 
     var config = new SparkFlexConfig();
@@ -54,10 +52,10 @@ public class ElevatorIOSpark implements ElevatorIO {
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     tryUntilOk(
-        elevatorMotorFollower,
+        elevatorMotorFollower1,
         5,
         () ->
-            elevatorMotorFollower.configure(
+            elevatorMotorFollower1.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     config.follow(elevatorMotorLeader);
 
@@ -67,7 +65,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             elevatorMotorFollower2.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    config.follow(elevatorMotorFollower);
+    config.follow(elevatorMotorFollower1);
   }
 
   @Override
@@ -85,24 +83,24 @@ public class ElevatorIOSpark implements ElevatorIO {
         elevatorMotorLeader::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
 
-    ifOk(elevatorMotorFollower, encoder2::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotorFollower, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(elevatorMotorFollower1, encoder2::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(elevatorMotorFollower1, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        elevatorMotorFollower,
+        elevatorMotorFollower1,
         new DoubleSupplier[] {
-          elevatorMotorFollower::getAppliedOutput, elevatorMotorFollower::getBusVoltage
+          elevatorMotorFollower1::getAppliedOutput, elevatorMotorFollower1::getBusVoltage
         },
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(
-        elevatorMotorFollower,
-        elevatorMotorFollower::getOutputCurrent,
+        elevatorMotorFollower1,
+        elevatorMotorFollower1::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
     elevatorMotorLeader.setVoltage(volts);
-    elevatorMotorFollower.setVoltage(volts);
+    elevatorMotorFollower1.setVoltage(volts);
     elevatorMotorFollower2.setVoltage(volts);
   }
 
@@ -114,7 +112,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void runElevatorPIDController(double setPoint) {
     elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
-    elevatorMotorFollower.set(elevatorPIDController.calculate(encoder2.getPosition(), setPoint));
+    elevatorMotorFollower1.set(elevatorPIDController.calculate(encoder2.getPosition(), setPoint));
     elevatorMotorFollower2.set(elevatorPIDController.calculate(encoder3.getPosition(), setPoint));
   }
 
