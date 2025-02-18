@@ -184,40 +184,36 @@ public class RobotContainer {
                 .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
 
     // Running intake
-    controller
-        .triangle()
-        .whileTrue(
-            intake.runPercent(0.9));
+    controller.triangle().whileTrue(intake.runPercent(0.9));
 
     // Running wrist
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
+    controller
+        .cross()
+        .whileTrue(
+            elevator
+                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
+                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
 
     controller
-    .cross()
-    .whileTrue(
-        elevator
-            .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
-            .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+        .circle()
+        .whileTrue(
+            elevator
+                .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
+                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
 
-controller
-    .circle()
-    .whileTrue(
-        elevator
-            .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
-            .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
-
-// Reset gyro to 0° when B button is pressed
-controller
-    .options()
-    .onTrue(
-        Commands.runOnce(
-                () ->
-                    drive.setPose(
-                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                drive)
-            .ignoringDisable(true));
+    // Reset gyro to 0° when B button is pressed
+    controller
+        .options()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
 
     // csequantial commands
 

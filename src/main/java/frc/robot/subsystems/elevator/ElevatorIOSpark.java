@@ -32,6 +32,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   private final RelativeEncoder encoder2 = elevatorMotorFollower1.getEncoder();
   private final RelativeEncoder encoder3 = elevatorMotorFollower2.getEncoder();
+
   public ElevatorIOSpark() {
 
     var config = new SparkFlexConfig();
@@ -84,7 +85,8 @@ public class ElevatorIOSpark implements ElevatorIO {
         (value) -> inputs.currentAmps = value);
 
     ifOk(elevatorMotorFollower1, encoder2::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(elevatorMotorFollower1, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(
+        elevatorMotorFollower1, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         elevatorMotorFollower1,
         new DoubleSupplier[] {
