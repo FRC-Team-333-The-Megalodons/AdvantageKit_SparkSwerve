@@ -14,6 +14,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
@@ -34,6 +36,8 @@ public class ElevatorIOSpark implements ElevatorIO {
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
 
   private PIDController elevatorPIDController = new PIDController(0.01, 0, 0);
+  private ElevatorFeedforward elevatorfeedForwardController = new ElevatorFeedforward(1,1,0,0);
+
 
   // elevatorMotorLeader = trolleyMotor.getPIDController();
   // elevatorMotorLeader.setFeedbackDevice(trolleyMotor.getEncoder());
