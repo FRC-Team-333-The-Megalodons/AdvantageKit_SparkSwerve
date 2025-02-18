@@ -13,6 +13,7 @@ public interface IntakeIO {
     public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public boolean inRange = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -22,4 +23,8 @@ public interface IntakeIO {
   public default void setVoltage(double volts) {}
 
   public default void runWristPIDController(double sensor, double setPoint) {}
+
+  public default boolean inRange() {
+    return false;
+  }
 }

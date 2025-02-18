@@ -29,13 +29,17 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    Logger.recordOutput("CANRange", isTriggered());
-    Logger.recordOutput("CANRangeDistance", getDistance());
+    // Logger.recordOutput("CANRange", isTriggered());
+    // Logger.recordOutput("CANRangeDistance", getDistance());
     Logger.recordOutput("WristEncoder", wristEncoder.get());
   }
 
   public Command runPercent(double percent) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+    if (!io.inRange()) {
+      return run(() -> io.setVoltage(0.0));
+    } else {
+      return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+    }
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -50,13 +54,13 @@ public class Intake extends SubsystemBase {
 
   //
 
-  public boolean isTriggered() {
-    return canRange.getIsDetected().getValue();
-  }
+  // public boolean isTriggered() {
+  //   return canRange.getIsDetected().getValue();
+  // }
 
-  public double getDistance() {
-    return canRange.getDistance().getValueAsDouble();
-  }
+  // public double getDistance() {
+  //   return canRange.getDistance().getValueAsDouble();
+  // }
 
   public double getPosition() {
     return wristEncoder.get();

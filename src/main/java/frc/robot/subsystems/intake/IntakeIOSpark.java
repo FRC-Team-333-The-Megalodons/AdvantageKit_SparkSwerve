@@ -7,6 +7,7 @@ package frc.robot.subsystems.intake;
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import com.ctre.phoenix6.hardware.CANrange;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -22,6 +23,7 @@ public class IntakeIOSpark implements IntakeIO {
   private SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
   private RelativeEncoder encoder = intake.getEncoder();
   private PIDController pid = new PIDController(1.4, 0, 0);
+  private CANrange canRange = new CANrange(IntakeConstants.canRangeId);
 
   public IntakeIOSpark() {
     var config = new SparkMaxConfig();
@@ -51,6 +53,8 @@ public class IntakeIOSpark implements IntakeIO {
         new DoubleSupplier[] {intake::getAppliedOutput, intake::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(intake, intake::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    inputs.inRange = inRange();
   }
 
   @Override
@@ -61,5 +65,10 @@ public class IntakeIOSpark implements IntakeIO {
   @Override
   public void runWristPIDController(double sensor, double setPoint) {
     intake.set(pid.calculate(sensor, setPoint));
+  }
+
+  @Override
+  public boolean inRange() {
+    return canRange.getIsDetected().getValue();
   }
 }

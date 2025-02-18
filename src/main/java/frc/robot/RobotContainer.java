@@ -218,17 +218,19 @@ public class RobotContainer {
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5
 
-    controller
-        .triangle()
-        .whileTrue(
-            drive.isNearCoralStation()
-                ? intake
-                    .runPercent(-0.333)
-                    .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kRed)))
-                    .until(intake::isTriggered)
-                    .andThen(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
-                : intake.runPercent(0))
-        .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
+    // controller
+    //     .triangle()
+    //     .whileTrue(
+    //         drive.isNearCoralStation()
+    //             ? intake
+    //                 .runPercent(-0.333)
+    //                 .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kRed)))
+    //                 .until(intake::isTriggered)
+    //                 .andThen(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
+    //             : intake.runPercent(0))
+    //     .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
+
+    controller.triangle().whileTrue(intake.runPercent(-0.333));
 
     // Lock to 0°
     controller
@@ -257,15 +259,29 @@ public class RobotContainer {
 
     controller.options().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    controller
-        .L1()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-                () -> vision.getTargetX(0)));
-    controller.R1().whileTrue(DriveCommands.aimAtTheTarget(photonVisonCamera, drive));
+    // controller
+    //     .L1()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+    //             () -> vision.getTargetX(0)));
+    if (PhotonVisonCamera.targetVisible) {
+      controller
+          .R1()
+          .whileTrue(
+              DriveCommands.joystickDriveAtAngle(
+                  drive, () -> 0, () -> 0, () -> Rotation2d.fromDegrees(PhotonVisonCamera.yaw)));
+    }
+    // controller
+    //     .R1()
+    //     .whileTrue(
+    //         DriveCommands.aimAtTheTarget(
+    //             photonVisonCamera,
+    //             drive,
+    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX()));
 
     controller.create().whileTrue(new DriveToClosestReef(drive));
   }

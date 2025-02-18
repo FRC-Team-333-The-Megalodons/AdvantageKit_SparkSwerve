@@ -313,11 +313,12 @@ public class DriveCommands {
           }
         });
   }*/
-  public static Command aimAtTheTarget(PhotonVisonCamera photonVisonCamera, Drive drive) {
+  public static Command aimAtTheTarget(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return Commands.run(
         () -> {
           joystickDriveAtAngle(
-              drive, () -> 0, () -> 0, () -> Rotation2d.fromDegrees(photonVisonCamera.getYaw()));
+              drive, xSupplier, ySupplier, () -> Rotation2d.fromDegrees(PhotonVisonCamera.yaw));
         });
   }
 
