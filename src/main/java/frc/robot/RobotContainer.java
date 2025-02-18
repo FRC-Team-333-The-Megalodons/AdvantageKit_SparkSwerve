@@ -166,62 +166,27 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
-        .povUp()
-        .whileTrue(
-            elevator
-                .runPercent(0.4)
-                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
-    controller
-        .povDown()
-        .whileTrue(
-            elevator
-                .runPercent(-0.4)
-                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
+    controller.povUp().whileTrue(elevator.runPercent(0.4).until(elevator::isAtUpperLimit));
+    controller.povDown().whileTrue(elevator.runPercent(-0.4).until(elevator::isAtLowerLimit));
 
     // Running intake
-    controller
-        .triangle()
-        .whileTrue(
-            // Commands.parallel(
-            intake.runPercent(0.9)
-            // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getBulb(0))
-            // )
-            ); // intake in lights go green
-    // controller.cross().whileTrue(intake.runPercent(-0.9));
-
-    // Running wrist
+    controller.triangle().whileTrue(intake.runPercent(0.9));
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
-
-    // controller
-    //     .povLeft()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
-    // controller
-    //     .povRight()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3
-    // angle
-    // controller
-    //     .cross()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
-    // controller
-    //     .create()
-    //     .whileTrue(
-    //         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
 
     controller
         .cross()
         .whileTrue(
             elevator
                 .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+                .until(() -> elevator.isAtUpperLimit()));
 
     controller
         .circle()
         .whileTrue(
             elevator
                 .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+                .until(() -> elevator.isAtLowerLimit()));
 
     // Reset gyro to 0° when B button is pressed
     controller
