@@ -14,7 +14,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
@@ -35,9 +34,10 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final RelativeEncoder encoder =
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
 
-  private PIDController elevatorPIDController = new PIDController(0.01, 0, 0);
-  private ElevatorFeedforward elevatorfeedForwardController = new ElevatorFeedforward(0,0.6,1.33,0.025);   //0, 0.11, 2.66, 0.05
-
+  private PIDController elevatorPIDController = new PIDController(0.06, 0, 0);
+  private ElevatorFeedforward elevatorfeedForwardController =
+      new ElevatorFeedforward(0, 0.11, 3.6, 0.6); // 0, 0.11, 2.66, 0.05    0, 0.6, 1.33, 0.025
+  // 0, 0.70, 4, 0.2
 
   // elevatorMotorLeader = trolleyMotor.getPIDController();
   // elevatorMotorLeader.setFeedbackDevice(trolleyMotor.getEncoder());
@@ -130,13 +130,35 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void runElevatorPIDController(double setPoint) {
-    elevatorMotorLeader.set(elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
-    elevatorMotorFollower.set(elevatorPIDController.calculate(encoder2.getPosition(), setPoint));
-    elevatorMotorFollower2.set(elevatorPIDController.calculate(encoder3.getPosition(), setPoint));
+    elevatorMotorLeader.setVoltage(
+        elevatorPIDController.calculate(encoder1.getPosition(), setPoint));
+    elevatorMotorFollower.setVoltage(
+        elevatorPIDController.calculate(encoder2.getPosition(), setPoint));
+    elevatorMotorFollower2.setVoltage(
+        elevatorPIDController.calculate(encoder3.getPosition(), setPoint));
+  }
+
+  @Override
+  public void runElevatorPIDControllerFeedForward(double setPoint) {
+    elevatorMotorLeader.setVoltage(
+        elevatorPIDController.calculate(encoder1.getPosition(), setPoint)
+            + elevatorfeedForwardController.calculate(0.5, 1.33));
+    elevatorMotorFollower.setVoltage(
+        elevatorPIDController.calculate(encoder2.getPosition(), setPoint)
+            + elevatorfeedForwardController.calculate(0.5, 1.33));
+    elevatorMotorFollower2.setVoltage(
+        elevatorPIDController.calculate(encoder3.getPosition(), setPoint)
+            + elevatorfeedForwardController.calculate(0.5, 1.33));
   }
 
   @Override
   public double getPosition() {
     return encoder1.getPosition();
+  }
+
+  @Override
+  public Object getDistance() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDistance'");
   }
 }

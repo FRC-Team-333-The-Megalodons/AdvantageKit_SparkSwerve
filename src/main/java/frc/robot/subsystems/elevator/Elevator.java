@@ -69,7 +69,9 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
   }
 
-  
+  public Command setElevatorPositionFeedForward(double setpoint) {
+    return runEnd(() -> io.runElevatorPIDControllerFeedForward(setpoint), () -> io.setVoltage(0));
+  }
 
   public boolean isElevatorAtMaxHeightPos() {
     return io.getPosition()

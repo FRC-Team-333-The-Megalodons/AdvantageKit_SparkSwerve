@@ -26,9 +26,13 @@ public interface ElevatorIO {
 
   public default void runElevatorPIDController(double setPoint) {}
 
+  public default void runElevatorPIDControllerFeedForward(double setPoint) {}
+
   public default void resetEncoder() {}
 
   public default double getPosition() {
     return 0.0;
   }
+
+  public Object getDistance();
 }

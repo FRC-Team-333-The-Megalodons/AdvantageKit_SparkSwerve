@@ -170,7 +170,7 @@ public class RobotContainer {
     controller.povDown().whileTrue(elevator.runPercent(-0.4).until(elevator::isAtLowerLimit));
 
     // Running intake
-    controller.triangle().whileTrue(intake.runPercent(0.9));
+    // controller.triangle().whileTrue(intake.runPercent(0.9));
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
@@ -178,16 +178,22 @@ public class RobotContainer {
         .cross()
         .whileTrue(
             elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
+                .setElevatorPositionFeedForward(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
                 .until(() -> elevator.isAtUpperLimit()));
 
     controller
-        .circle()
+        .triangle()
+        .whileTrue(
+            elevator
+                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
+                .until(() -> elevator.isAtUpperLimit()));
+
+    controller
+        .L2()
         .whileTrue(
             elevator
                 .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
                 .until(() -> elevator.isAtLowerLimit()));
-
     // Reset gyro to 0° when B button is pressed
     controller
         .options()
