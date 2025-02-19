@@ -36,7 +36,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
 
   private PIDController elevatorPIDController = new PIDController(0.01, 0, 0);
-  private ElevatorFeedforward elevatorfeedForwardController = new ElevatorFeedforward(1,1,0,0);
+  private ElevatorFeedforward elevatorfeedForwardController = new ElevatorFeedforward(0,0.6,1.33,0.025);   //0, 0.11, 2.66, 0.05
 
 
   // elevatorMotorLeader = trolleyMotor.getPIDController();
