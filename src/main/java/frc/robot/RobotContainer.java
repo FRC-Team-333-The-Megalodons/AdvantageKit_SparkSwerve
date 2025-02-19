@@ -20,10 +20,12 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -267,13 +269,41 @@ public class RobotContainer {
     //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
     //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
     //             () -> vision.getTargetX(0)));
-    if (PhotonVisonCamera.targetVisible) {
-      controller
-          .R1()
-          .whileTrue(
-              DriveCommands.joystickDriveAtAngle(
-                  drive, () -> 0, () -> 0, () -> Rotation2d.fromDegrees(PhotonVisonCamera.yaw)));
-    }
+    // controller
+    //     .R1()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+    //             () -> Rotation2d.fromDegrees(PhotonVisonCamera.getYaw())));
+    // PIDController controller = new PIDController(0, 0, 0);
+    PIDController pidController = new PIDController(0.5, 0, 0);
+    pidController.enableContinuousInput(-Math.PI, Math.PI);
+    controller
+        .R1()
+        .whileTrue(
+            Commands.run(
+                () ->
+                    drive.runVelocity(
+                        new ChassisSpeeds(
+                            0, 0, pidController.calculate(PhotonVisonCamera.getYaw(), 0))),
+                drive));
+    // controller
+    //     .R1()
+    //     .whileTrue(
+    //         Commands.startRun(
+    //             () -> {
+    //               pidController.reset();
+    //             },
+    //             () -> {
+    //               drive.runVelocity(
+    //                   0,
+    //                   0,
+    //                   Rotation2d.fromDegrees(
+    //                       pidController.calculate(vision.getTargetX(0).getRadians())));
+    //             },
+    //             drive));
     // controller
     //     .R1()
     //     .whileTrue(
