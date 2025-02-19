@@ -24,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOSpark;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -54,8 +57,8 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
-  //   private final Climb climb;
-  // private final Vision vision;
+  private final Climb climb;
+  //   private final Vision vision;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -78,7 +81,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
-        // climb = new Climb(new ClimbIOSpark());
+        climb = new Climb(new ClimbIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
@@ -94,7 +97,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
-        // climb = new Climb(new ClimbIOSim());
+        climb = new Climb(new ClimbIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
@@ -110,7 +113,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
-        // climb = new Climb(new ClimbIOSim());
+        climb = new Climb(new ClimbIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -187,8 +190,8 @@ public class RobotContainer {
     controller.triangle().whileTrue(intake.runPercent(0.9));
 
     // Running wrist
-    controller.R1().whileTrue(wrist.runPercent(0.2));
-    controller.L1().whileTrue(wrist.runPercent(-0.2));
+    // controller.R1().whileTrue(wrist.runPercent(0.2));
+    // controller.L1().whileTrue(wrist.runPercent(-0.2));
 
     controller
         .cross()
@@ -217,9 +220,9 @@ public class RobotContainer {
 
     // csequantial commands
 
-    // //climber
-    // controller.R1().whileTrue(climb.runPercent(1));
-    // controller.L1().whileTrue(climb.runPercent(-1));
+    // climber
+    controller.R1().whileTrue(climb.runPercent(1));
+    controller.L1().whileTrue(climb.runPercent(-1));
 
     // //reef scoring coral
     // controller.triangle().whileTrue(
