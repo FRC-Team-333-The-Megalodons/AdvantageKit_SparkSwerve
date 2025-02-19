@@ -58,7 +58,6 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     // Elevator Motors
     ifOk(topElevatorMotor, encoder::getPosition, (value) -> inputs.position = value);
-    ifOk(topElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         topElevatorMotor,
         new DoubleSupplier[] {topElevatorMotor::getAppliedOutput, topElevatorMotor::getBusVoltage},
@@ -67,6 +66,8 @@ public class ElevatorIOSpark implements ElevatorIO {
         topElevatorMotor,
         topElevatorMotor::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
+
+    inputs.atSetpoint = atSetpoint();
   }
 
   @Override
@@ -93,7 +94,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public boolean atTarget() {
+  public boolean atSetpoint() {
     return pidController.atSetpoint();
   }
 }

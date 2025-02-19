@@ -197,28 +197,30 @@ public class RobotContainer {
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () -> vision.getTargetX(0)));
 
+    // controller.R3().whileTrue(endEffecter.runPercent(-0.5));
+
     // Switch to X pattern when L3 button is pressed
     controller.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reef scoring buttons
     // L1
     controller.cross().whileTrue(endEffecter.runPercent(0.5));
-    // L2
+    // L3
     controller
         .circle()
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.coralL23Setpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
-    // L3
+                .withTimeout(1.0)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
+    // L2
     controller
         .square()
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.coralL23Setpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
+                .withTimeout(1.0)
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
     // L4
     controller
         .triangle()
@@ -226,7 +228,8 @@ public class RobotContainer {
             wrist
                 .setWristPosition(WristConstants.coralL4Setpoint)
                 .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint)));
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint))
+                .until(elevator::upperLimit));
 
     // Algae scoring buttons
     // Barge score
@@ -236,7 +239,8 @@ public class RobotContainer {
             wrist
                 .setWristPosition(WristConstants.bargeSetPoint)
                 .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint)));
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint))
+                .until(elevator::upperLimit));
     // Processor score
     controller
         .povDown()
@@ -245,22 +249,22 @@ public class RobotContainer {
                 .setWristPosition(WristConstants.processorSetpoint)
                 .until(wrist::atSetpoint)
                 .andThen(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint)));
-    // Remove L2
+    // Remove L3
     controller
         .povRight()
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.aglaeSetpoint)
                 .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
-    // Remove L3
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
+    // Remove L2
     controller
         .povLeft()
         .whileTrue(
             wrist
                 .setWristPosition(WristConstants.aglaeSetpoint)
                 .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
+                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
 
     // Intake from the coral station
     controller.R2().whileTrue(endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
@@ -272,8 +276,7 @@ public class RobotContainer {
             elevator
                 .setElevatorPosition(ElevatorConstants.homeSetpoint)
                 .until(elevator::atSetpoint)
-                .andThen(
-                    wrist.setWristPosition(WristConstants.homeSetpoint).until(wrist::atSetpoint)));
+                .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)));
 
     // Retract
     controller.R1().whileTrue(climber.runPercent(1.0));

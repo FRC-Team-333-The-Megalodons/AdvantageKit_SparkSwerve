@@ -34,6 +34,6 @@ public class Wrist extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return io.atTarget();
+    return io.atSetpoint();
   }
 }

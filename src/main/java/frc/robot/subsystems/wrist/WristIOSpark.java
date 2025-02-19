@@ -53,6 +53,8 @@ public class WristIOSpark implements WristIO {
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(wrist, wrist::getOutputCurrent, (value) -> inputs.currentAmps = value);
     ifOk(wrist, externalEncoder::get, (value) -> inputs.positionAbs = value);
+
+    inputs.atSetpoint = atSetpoint();
   }
 
   @Override
@@ -71,7 +73,7 @@ public class WristIOSpark implements WristIO {
   }
 
   @Override
-  public boolean atTarget() {
+  public boolean atSetpoint() {
     return pid.atSetpoint();
   }
 }

@@ -8,6 +8,6 @@ package frc.robot.subsystems.endEffecter;
 public class EndEffecterConstants {
   public static final int endEffecterCanId = 3;
   public static final double motorReduction = 1.0;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 30;
   public static final int canRangeId = 41;
 }

@@ -11,9 +11,11 @@ public interface ElevatorIO {
   @AutoLog
   public static class ElevatorIOInputs {
     public double position = 0.0;
-    public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public boolean upperLimit = false;
+    public boolean lowerLimit = false;
+    public boolean atSetpoint = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -30,7 +32,15 @@ public interface ElevatorIO {
     return -1;
   }
 
-  public default boolean atTarget() {
+  public default boolean atSetpoint() {
+    return false;
+  }
+
+  public default boolean lowerLimit() {
+    return false;
+  }
+
+  public default boolean upperLimit() {
     return false;
   }
 }

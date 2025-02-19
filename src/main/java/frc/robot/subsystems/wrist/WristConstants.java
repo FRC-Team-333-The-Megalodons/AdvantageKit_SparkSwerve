@@ -8,12 +8,12 @@ public class WristConstants {
   public static final int wristCanId = 4;
   public static final int wristEncoderId = 0;
   public static final double motorReduction = 1.0;
-  public static final int currentLimit = 40;
+  public static final int currentLimit = 30;
 
   // Wrist Setpoints
   public static final double homeSetpoint = 0.479;
-  public static final double coralL23Setpoint = 0.422;
-  public static final double coralL4Setpoint = 0.29;
+  public static final double coralL23Setpoint = 0.43;
+  public static final double coralL4Setpoint = 0.25;
   public static final double processorSetpoint = 0.1;
   public static final double bargeSetPoint = 0;
   public static final double aglaeSetpoint = 0.001;

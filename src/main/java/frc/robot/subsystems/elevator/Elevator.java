@@ -63,6 +63,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return io.atTarget();
+    return io.atSetpoint();
   }
 }
