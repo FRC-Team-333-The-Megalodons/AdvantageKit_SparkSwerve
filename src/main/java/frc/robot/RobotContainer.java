@@ -287,7 +287,7 @@ public class RobotContainer {
                 () ->
                     drive.runVelocity(
                         new ChassisSpeeds(
-                            0, 0, pidController.calculate(PhotonVisonCamera.getYaw(), 0))),
+                          drive.isRed() ? controller.getLeftY() : -controller.getLeftY(), drive.isRed() ? controller.getLeftX() : -controller.getLeftX(), pidController.calculate(PhotonVisonCamera.getYaw(), 0))),
                 drive));
     // controller
     //     .R1()
