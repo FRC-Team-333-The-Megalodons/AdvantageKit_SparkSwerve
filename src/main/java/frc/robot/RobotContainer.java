@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -154,6 +155,22 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // NamedCommands.registerCommand("Intake", getAutonomousCommand());
+
+    NamedCommands.registerCommand(
+        "GoL3",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+
+    NamedCommands.registerCommand(
+        "GoHome",
+        wrist
+            .setWristPosition(WristConstants.WRIST_HOME_POSITION)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION))
+            .onlyWhile(() -> !elevator.isAtLowerLimit()));
+
+    NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
     configureButtonBindings();

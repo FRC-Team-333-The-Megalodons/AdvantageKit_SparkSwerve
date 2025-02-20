@@ -9,6 +9,36 @@
           "data": {
             "pathName": "Coral Right"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoL3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Eject"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoHome"
+          }
         }
       ]
     }
