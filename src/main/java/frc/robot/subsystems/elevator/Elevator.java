@@ -88,8 +88,7 @@ public class Elevator extends SubsystemBase {
         >= ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS; // add values in the constants file
   }
 
-  public boolean isOkToMoveElevatorUp() {
-    // Add your logic here
+  public boolean isOkToMoveElevatorUp() {/
     if (isAtUpperLimit()) {
       return false;
     } else if (isElevatorAtMinHeightPos()) {
@@ -122,3 +121,4 @@ public class Elevator extends SubsystemBase {
     io.setVoltage(4.0 * speed);
   }
 }
+ 
