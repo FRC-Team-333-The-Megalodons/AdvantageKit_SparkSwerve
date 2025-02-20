@@ -184,8 +184,8 @@ public class RobotContainer {
     //     .whileTrue(
     //         DriveCommands.joystickDriveAtAngle(
     //             drive,
-    //             () -> -controller.getLeftY(),
-    //             () -> -controller.getLeftX(),
+    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
     //             () -> new Rotation2d()));
 
     controller
@@ -195,7 +195,21 @@ public class RobotContainer {
                 drive,
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-                () -> vision.getTargetX(0)));
+                () -> vision.getYawToTarget(0)));
+
+    // controller
+    //     .R3()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+    //             () ->
+    //                 VisionConstants.aprilTagLayout
+    //                     .getTagPose(3)
+    //                     .get()
+    //                     .getRotation()
+    //                     .toRotation2d()));
 
     // controller.R3().whileTrue(endEffecter.runPercent(-0.5));
 
