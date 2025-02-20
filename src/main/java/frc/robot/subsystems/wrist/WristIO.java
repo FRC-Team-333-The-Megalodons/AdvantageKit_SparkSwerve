@@ -27,7 +27,7 @@ public interface WristIO {
 
   public default void runWristPIDControllerFeedForward(double setPoint) {}
 
-  public default boolean atTarget() {
+  public default boolean atSetpoint() {
     return false;
   }
 }

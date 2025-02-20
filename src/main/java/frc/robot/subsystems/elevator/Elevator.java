@@ -5,6 +5,7 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -40,6 +41,8 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("LowerLimitSwitch", isAtLowerLimit());
     Logger.recordOutput("TopLimitSwitch", isAtUpperLimit());
+    Logger.recordOutput("AtSetpointElevator", io.atSetpoint());
+    SmartDashboard.putBoolean("AtSetpointElevator", io.atSetpoint());
   }
 
   public boolean isAtLowerLimit() {
@@ -109,5 +112,9 @@ public class Elevator extends SubsystemBase {
       }
     }
     io.setVoltage(4.0 * speed);
+  }
+
+  public boolean atSetpoint() {
+    return io.atSetpoint();
   }
 }

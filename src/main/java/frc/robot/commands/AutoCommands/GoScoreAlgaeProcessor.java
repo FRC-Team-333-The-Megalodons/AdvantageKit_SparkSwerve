@@ -13,13 +13,13 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
-public class GoScoreCoralL1 extends SequentialCommandGroup {
-  public GoScoreCoralL1(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
+public class GoScoreAlgaeProcessor extends SequentialCommandGroup {
+  public GoScoreAlgaeProcessor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
         ledStrip.setColor(LEDColor.BLUE),
-        wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS),
+        wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_PROCESSOR_POS).until(wrist::atSetpoint),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_PROCESSOR_POS).until(elevator::atSetpoint),
         ledStrip.setColor(LEDColor.ORANGE));
   }
 }

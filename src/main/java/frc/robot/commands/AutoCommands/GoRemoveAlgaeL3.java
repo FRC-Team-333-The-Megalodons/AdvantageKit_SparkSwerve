@@ -17,8 +17,8 @@ public class GoRemoveAlgaeL3 extends SequentialCommandGroup {
   public GoRemoveAlgaeL3(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
     addCommands(
         ledStrip.setColor(LEDColor.RED),
-        wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L3_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_L3_POS),
+        wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L3_POS).until(wrist::atSetpoint),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_L3_POS).until(elevator::atSetpoint),
         intake
             .runPercent(0.5)
             .until(intake::isTriggered)

@@ -13,16 +13,16 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
-public class GoIntakeAlgaeFloor extends SequentialCommandGroup {
-  public GoIntakeAlgaeFloor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
-
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class GoScoreAlgaeNet extends SequentialCommandGroup {
+  public GoScoreAlgaeNet(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
     addCommands(
-        ledStrip.setColor(LEDColor.ORANGE),
-        wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_FLOOR_POS),
+        ledStrip.setColor(LEDColor.BLUE),
+        wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_NET_POS).until(wrist::atSetpoint),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_NET_POS).until(elevator::atSetpoint),
         intake
             .runPercent(0.5)
             .until(intake::isTriggered)
-            .alongWith(ledStrip.setColor(LEDColor.GREEN)));
+            .alongWith(ledStrip.setColor(LEDColor.ORANGE)));
   }
 }

@@ -18,8 +18,8 @@ public class GoScoreCoralL2 extends SequentialCommandGroup {
 
     addCommands(
         ledStrip.setColor(LEDColor.BLUE),
-        wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS),
+        wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS).until(wrist::atSetpoint),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS).until(elevator::atSetpoint),
         ledStrip.setColor(LEDColor.ORANGE));
   }
 }

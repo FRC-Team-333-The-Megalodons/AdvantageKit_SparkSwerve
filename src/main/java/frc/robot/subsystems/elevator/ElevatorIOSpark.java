@@ -140,4 +140,9 @@ public class ElevatorIOSpark implements ElevatorIO {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getDistance'");
   }
+
+  @Override
+  public boolean atSetpoint() {
+    return elevatorPIDController.atSetpoint();
+  }
 }

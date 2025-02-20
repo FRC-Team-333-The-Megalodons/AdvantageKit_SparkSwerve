@@ -35,4 +35,8 @@ public interface ElevatorIO {
   }
 
   public Object getDistance();
+
+  public default boolean atSetpoint() {
+    return false;
+  }
 }
