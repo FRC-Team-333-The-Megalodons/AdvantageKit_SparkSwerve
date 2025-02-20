@@ -26,7 +26,7 @@ public class WristIOSpark implements WristIO {
   private final RelativeEncoder encoder = wristFlex.getEncoder();
   private PIDController pid = new PIDController(1.25, 0, 0);
   private ElevatorFeedforward wristfeedForwardController =
-      new ElevatorFeedforward(0, 0, 0, 0); 
+      new ElevatorFeedforward(0.0, 0.13, 1.69, 4); 
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();
@@ -77,7 +77,7 @@ public class WristIOSpark implements WristIO {
   public void runWristPIDControllerFeedForward(double setPoint) {
     wristFlex.setVoltage(
         pid.calculate(encoder.getPosition(), setPoint)
-            + wristfeedForwardController.calculate(0, 0));
+            + wristfeedForwardController.calculate(1.69, 0.04));
   }
 
   @Override
