@@ -53,10 +53,8 @@ public class PhotonVisonCamera extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    this.targetVisible = false;
     this.fudicialId = 0;
     this.yaw = 0;
-
     // this.yaw = 0.0;
     this.pitch = 0.0;
     var results = camera.getAllUnreadResults();
@@ -74,6 +72,8 @@ public class PhotonVisonCamera extends SubsystemBase {
 
           this.targetVisible = true;
         }
+      } else {
+        this.targetVisible = false;
       }
     }
 
@@ -85,5 +85,9 @@ public class PhotonVisonCamera extends SubsystemBase {
 
   public static double getYaw() {
     return yaw;
+  }
+
+  public static boolean IsVisible() {
+    return targetVisible;
   }
 }

@@ -25,7 +25,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -261,14 +260,14 @@ public class RobotContainer {
 
     controller.options().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    // controller
-    //     .L1()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-    //             () -> vision.getTargetX(0)));
+    controller
+        .L1()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+                () -> vision.getTargetX(0)));
     // controller
     //     .R1()
     //     .whileTrue(
@@ -277,18 +276,34 @@ public class RobotContainer {
     //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
     //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
     //             () -> Rotation2d.fromDegrees(PhotonVisonCamera.getYaw())));
-    // PIDController controller = new PIDController(0, 0, 0);
-    PIDController pidController = new PIDController(0.5, 0, 0);
-    pidController.enableContinuousInput(-Math.PI, Math.PI);
+    PIDController aimController = new PIDController(0.19, 0, 0);
+    // ProfiledPIDController aimController =
+    //     new ProfiledPIDController(2.0, 0.0, 0, new TrapezoidProfile.Constraints(3.0, 2.0));
+    aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // aimController.setIZone(2);
+    // aimController.setTolerance(1);
     controller
         .R1()
         .whileTrue(
-            Commands.run(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
                 () ->
-                    drive.runVelocity(
-                        new ChassisSpeeds(
-                          drive.isRed() ? controller.getLeftY() : -controller.getLeftY(), drive.isRed() ? controller.getLeftX() : -controller.getLeftX(), pidController.calculate(PhotonVisonCamera.getYaw(), 0))),
-                drive));
+                    PhotonVisonCamera.IsVisible()
+                        ? aimController.calculate(PhotonVisonCamera.getYaw(), 0)
+                        : -controller.getRightX()));
+    // controller
+    //     .R1()
+    //     .whileTrue(
+    //         Commands.run(
+    //             () ->
+    //                 drive.runVelocity(
+    //                     new ChassisSpeeds(
+    //                         drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+    //                         drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+    //                         aimController.calculate(PhotonVisonCamera.getYaw(), 0))),
+    //             drive));
     // controller
     //     .R1()
     //     .whileTrue(
