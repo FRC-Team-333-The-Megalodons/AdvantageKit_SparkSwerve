@@ -41,8 +41,12 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
+
+import static frc.robot.subsystems.wrist.WristConstants.WRIST_HOME_POSITION;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -190,9 +194,16 @@ public class RobotContainer {
     controller.triangle().whileTrue(intake.runPercent(0.9));
 
     // Running wrist
-    // controller.R1().whileTrue(wrist.runPercent(0.2));
-    // controller.L1().whileTrue(wrist.runPercent(-0.2));
+    controller.R1().whileTrue(wrist
+            .setWristPositionFeedForward(WristConstants.WRIST_SCORE_CORAL_L2_POS));
 
+    controller.L1().whileTrue(wrist
+        .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS));
+
+    controller.L2().whileTrue(wrist
+        .setWristPosition(WristConstants.WRIST_HOME_POSITION));
+    
+    //Running elevator
     controller
         .cross()
         .whileTrue(
@@ -221,8 +232,8 @@ public class RobotContainer {
     // csequantial commands
 
     // climber
-    controller.R1().whileTrue(climb.runPercent(1));
-    controller.L1().whileTrue(climb.runPercent(-1));
+    // controller.R1().whileTrue(climb.runPercent(1));
+    // controller.L1().whileTrue(climb.runPercent(-1));
 
     // //reef scoring coral
     // controller.triangle().whileTrue(

@@ -25,7 +25,11 @@ public interface WristIO {
 
   public default void runWristPIDController(double sensor, double setPoint) {}
 
+  public default void runWristPIDControllerFeedForward(double setPoint) {}
+
   public default boolean atTarget() {
     return false;
   }
+
+  //public Object getDistance();
 }
