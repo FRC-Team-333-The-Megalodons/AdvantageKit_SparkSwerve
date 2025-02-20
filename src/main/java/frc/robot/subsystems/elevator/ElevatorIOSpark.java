@@ -14,6 +14,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
@@ -27,8 +29,14 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorFollower2CanId, MotorType.kBrushless);
 
   private final RelativeEncoder encoder1 =
-      elevatorMotorLeader.getEncoder(); // it just doesnt work it shows red for some reason
-  private PIDController elevatorPIDController = new PIDController(0.5, 0.2, 0);
+      elevatorMotorLeader.getEncoder(); 
+  private PIDController elevatorPIDController 
+  = new PIDController(0.06, 0.0, 0);
+  private ElevatorFeedforward elevatorFFController = 
+    new ElevatorFeedforward(0.0, 0.11, 3.6, 0.6);
+    // 0, 0.11, 2.66, 0.05    0, 0.6, 1.33, 0.025
+
+
 
   private final RelativeEncoder encoder2 = elevatorMotorFollower1.getEncoder();
   private final RelativeEncoder encoder3 = elevatorMotorFollower2.getEncoder();
@@ -118,6 +126,18 @@ public class ElevatorIOSpark implements ElevatorIO {
     elevatorMotorFollower2.set(elevatorPIDController.calculate(encoder3.getPosition(), setPoint));
   }
 
+  @Override
+  public void runElevatorPIDFFController(double setPoint) {
+    elevatorMotorLeader.set(
+        elevatorPIDController.calculate(encoder1.getPosition(), setPoint)
+            + elevatorFFController.calculate(setPoint));
+    elevatorMotorFollower1.set(
+        elevatorPIDController.calculate(encoder2.getPosition(), setPoint)
+            + elevatorFFController.calculate(setPoint));
+    elevatorMotorFollower2.set(
+        elevatorPIDController.calculate(encoder3.getPosition(), setPoint)
+            + elevatorFFController.calculate(setPoint));
+  }
   @Override
   public double getPosition() {
     return encoder1.getPosition();

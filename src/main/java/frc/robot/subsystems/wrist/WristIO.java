@@ -30,6 +30,4 @@ public interface WristIO {
   public default boolean atTarget() {
     return false;
   }
-
-  //public Object getDistance();
 }
