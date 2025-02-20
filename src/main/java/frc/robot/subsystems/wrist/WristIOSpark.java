@@ -15,7 +15,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
@@ -26,7 +25,7 @@ public class WristIOSpark implements WristIO {
   private final RelativeEncoder encoder = wristFlex.getEncoder();
   private PIDController pid = new PIDController(1.25, 0, 0);
   private ElevatorFeedforward wristfeedForwardController =
-      new ElevatorFeedforward(0.0, 0.13, 1.69, 4); 
+      new ElevatorFeedforward(0.0, 0.13, 1.69, 4);
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();
@@ -84,6 +83,4 @@ public class WristIOSpark implements WristIO {
   public boolean atTarget() {
     return pid.atSetpoint();
   }
-
-  
 }

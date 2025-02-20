@@ -33,5 +33,6 @@ public interface ElevatorIO {
   public default double getPosition() {
     return 0.0;
   }
+
   public Object getDistance();
 }

@@ -24,8 +24,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command runPercent(double percent) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), 
-    () -> io.setVoltage(0.0));
+    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -68,25 +67,21 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setElevatorPosition(double setpoint) {
-    return runEnd(
-      () -> io.runElevatorPIDController(setpoint), 
-       () -> io.setVoltage(0));
+    return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
   }
 
   public boolean isElevatorAtMaxHeightPos() {
-    return io.getPosition()
-        >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
   }
 
   public boolean isElevatorAtMinHeightPos() {
-    return io.getPosition()
-        >= ElevatorConstants.ELEVATOR_MIN_HEIGHT; 
+    return io.getPosition() >= ElevatorConstants.ELEVATOR_MIN_HEIGHT;
   }
 
   public boolean isOkToMoveElevatorUp() {
     if (isAtUpperLimit()) {
       return false;
-    } else if (isElevatorAtMinHeightPos()) { 
+    } else if (isElevatorAtMinHeightPos()) {
       return true;
     }
     return false;

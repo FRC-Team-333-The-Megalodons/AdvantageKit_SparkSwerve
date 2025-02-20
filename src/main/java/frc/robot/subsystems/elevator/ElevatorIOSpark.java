@@ -14,7 +14,6 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
@@ -28,15 +27,10 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex elevatorMotorRight =
       new SparkFlex(elevatorMotorRightCanId, MotorType.kBrushless);
 
-  private final RelativeEncoder encoder1 =
-      elevatorMotorTop.getEncoder(); 
-  private PIDController elevatorPIDController 
-  = new PIDController(0.06, 0.0, 0);
-  private ElevatorFeedforward elevatorFFController = 
-    new ElevatorFeedforward(0.0, 0.11, 3.6, 0.6);
-    // 0, 0.11, 2.66, 0.05    0, 0.6, 1.33, 0.025
-
-
+  private final RelativeEncoder encoder1 = elevatorMotorTop.getEncoder();
+  private PIDController elevatorPIDController = new PIDController(0.06, 0.0, 0);
+  private ElevatorFeedforward elevatorFFController = new ElevatorFeedforward(0.0, 0.11, 3.6, 0.6);
+  // 0, 0.11, 2.66, 0.05    0, 0.6, 1.33, 0.025
 
   private final RelativeEncoder encoder2 = elevatorMotorLeft.getEncoder();
   private final RelativeEncoder encoder3 = elevatorMotorRight.getEncoder();
@@ -83,9 +77,7 @@ public class ElevatorIOSpark implements ElevatorIO {
     ifOk(elevatorMotorTop, encoder1::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         elevatorMotorTop,
-        new DoubleSupplier[] {
-          elevatorMotorTop::getAppliedOutput, elevatorMotorTop::getBusVoltage
-        },
+        new DoubleSupplier[] {elevatorMotorTop::getAppliedOutput, elevatorMotorTop::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(
         elevatorMotorTop,
@@ -93,8 +85,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         (value) -> inputs.currentAmps = value);
 
     ifOk(elevatorMotorLeft, encoder2::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(
-        elevatorMotorLeft, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(elevatorMotorLeft, encoder2::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         elevatorMotorLeft,
         new DoubleSupplier[] {
@@ -138,6 +129,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         elevatorPIDController.calculate(encoder3.getPosition(), setPoint)
             + elevatorFFController.calculate(setPoint));
   }
+
   @Override
   public double getPosition() {
     return encoder1.getPosition();
