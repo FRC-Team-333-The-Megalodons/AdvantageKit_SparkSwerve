@@ -23,6 +23,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.AutoCommands.GoHome;
+import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
+import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
+import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
+import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
+import frc.robot.commands.AutoCommands.GoScoreCoralL2;
+import frc.robot.commands.AutoCommands.GoScoreCoralL3;
+import frc.robot.commands.AutoCommands.GoScoreCoralL4;
+import frc.robot.commands.AutoCommands.RunningClimberBackwards;
+import frc.robot.commands.AutoCommands.RunningClimberForward;
+import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
+import frc.robot.commands.AutoCommands.RunningIntakeForward;
+import frc.robot.commands.AutoCommands.RunningRampDown;
+import frc.robot.commands.AutoCommands.RunningRampUp;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
@@ -62,7 +76,9 @@ public class RobotContainer {
   //   private final Vision vision;
 
   // Controller
-  private final CommandPS5Controller controller = new CommandPS5Controller(0);
+  private final CommandPS5Controller driveController = new CommandPS5Controller(0);
+  private final CommandPS5Controller operatorController = new CommandPS5Controller(1);
+
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -154,118 +170,83 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
 
     elevator.setDefaultCommand(
-        elevator.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+        elevator.runTeleop(() -> driveController.getR2Axis(), () -> driveController.getL2Axis()));
 
     // Lock to 0° when A button is held
-    controller
-        .R3()
+    driveController
+        .L3()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.options().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // Switch to X pattern when X button is pressed(locking wheels)
+    driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    controller
+    // Running elevator drive controller
+    driveController
         .povUp()
         .whileTrue(
             elevator
-                .runPercent(0.4)
+                .runPercent(0.1)
                 .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
-    controller
+    driveController
         .povDown()
         .whileTrue(
             elevator
-                .runPercent(-0.4)
+                .runPercent(-0.1)
                 .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
 
-    // Running intake
-    controller.triangle().whileTrue(intake.runPercent(0.9));
 
-    // Running wrist
-    controller
-        .R1()
-        .whileTrue(wrist.setWristPositionFeedForward(WristConstants.WRIST_SCORE_CORAL_L2_POS));
+    // Running wrist drive controller
+    driveController.povLeft().whileTrue(wrist.runPercent(-0.4));
+    driveController.povRight().whileTrue(wrist.runPercent(0.4));
 
-    controller.L1().whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS));
+    // Running climber drive controller
+    driveController.R1().whileTrue(climb.runPercent(1));
+    driveController.L1().whileTrue(climb.runPercent(-1));
 
-    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION));
 
-    // Running elevator
-    controller
-        .cross()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
 
-    controller
-        .circle()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
+    // Running end effector operator controller
+    operatorController.cross().whileTrue(new RunningIntakeBackwards(intake, null));
+    operatorController.R2().whileTrue(new RunningIntakeForward(intake, null));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .options()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // Scoring Reef operator controller
+    // L4
+    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, null));
+    // L3
+    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, null));
+    // L2
+    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator, null));
 
-    // csequantial commands
+    // Scoring and removing algae operator controller
+    // Removing L3
+    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator, null));
+    // Removing L2
+    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator, null));
+    // Scoring to the NET
+    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator, null));
+    // Scoring Processor
+    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator, null));
+    
+    // Home position operator controller
+    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake, null));
 
-    // climber
-    // controller.R1().whileTrue(climb.runPercent(1));
-    // controller.L1().whileTrue(climb.runPercent(-1));
+    // Running climber operator controller
+    operatorController.L1().whileTrue(new RunningClimberBackwards(climb, null));
+    operatorController.R1().whileTrue(new RunningClimberForward(climb, null));
 
-    // //reef scoring coral
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L3_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L2_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_L2_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller
-    //     .povLeft()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
-    // controller
-    //     .povRight()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3
-    // angle
-    // controller
-    //     .cross()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
-    // controller
-    //     .create()
-    //     .whileTrue(
-    //         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
+    //Running ramp operator controller
+    operatorController.options().whileTrue(new RunningRampDown(null, null));
+    operatorController.create().whileTrue(new RunningRampUp(null, null));
   }
 
   /**
