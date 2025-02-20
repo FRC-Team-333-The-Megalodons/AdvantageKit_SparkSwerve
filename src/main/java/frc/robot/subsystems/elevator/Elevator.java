@@ -24,7 +24,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command runPercent(double percent) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+    return runEnd(() -> io.setVoltage(percent * 12.0), 
+    () -> io.setVoltage(0.0));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -67,42 +68,37 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setElevatorPosition(double setpoint) {
-    return runEnd(() -> io.runElevatorPIDController(setpoint), () -> io.setVoltage(0));
+    return runEnd(
+      () -> io.runElevatorPIDController(setpoint), 
+       () -> io.setVoltage(0));
   }
 
   public boolean isElevatorAtMaxHeightPos() {
     return io.getPosition()
-        >= ElevatorConstants.ELEVATOR_MAX_HEIGHT; // add values in the constants file
+        >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
   }
 
   public boolean isElevatorAtMinHeightPos() {
     return io.getPosition()
-        >= ElevatorConstants.ELEVATOR_MIN_HEIGHT; // add values in the constants file
-  }
-
-  public boolean isElevatorAtCoralPickupPos() {
-    return io.getPosition()
-        >= ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS; // add values in the constants file
+        >= ElevatorConstants.ELEVATOR_MIN_HEIGHT; 
   }
 
   public boolean isOkToMoveElevatorUp() {
-    // Add your logic here
     if (isAtUpperLimit()) {
       return false;
-    } else if (isElevatorAtMinHeightPos()) { // add encoder logic here too
+    } else if (isElevatorAtMinHeightPos()) { 
       return true;
     }
-    return false; // Placeholder return value
+    return false;
   }
 
   public boolean isOkToMoveElevatorDown() {
-    // Add your logic here
     if (isAtUpperLimit()) {
       return false;
-    } else if (isElevatorAtMaxHeightPos()) { // add encoder logic here too
+    } else if (isElevatorAtMaxHeightPos()) {
       return true;
     }
-    return false; // Placeholder return value
+    return false;
   }
 
   public void runElevator(double speed) {

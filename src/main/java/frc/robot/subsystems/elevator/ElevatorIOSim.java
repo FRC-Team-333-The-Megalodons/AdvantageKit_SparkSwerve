@@ -35,4 +35,10 @@ public class ElevatorIOSim implements ElevatorIO {
   public void setVoltage(double volts) {
     appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
+
+  @Override
+  public Object getDistance() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDistance'");
+  }
 }
