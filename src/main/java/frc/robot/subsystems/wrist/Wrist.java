@@ -20,8 +20,7 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Wrist", inputs);
-    Logger.recordOutput("WristEncoder", wristEncoder.get());
-    SmartDashboard.putNumber("WristEncoder", getPosition());
+    Logger.recordOutput("WristEncoder", getPosition());
     Logger.recordOutput("AtTargetWrist", io.atTarget());
     SmartDashboard.putBoolean("AtTargetWrist", io.atTarget());
   }

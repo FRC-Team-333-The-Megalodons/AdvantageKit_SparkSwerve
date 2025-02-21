@@ -193,13 +193,13 @@ public class RobotContainer {
 
     controller
         .triangle()
-        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS))
         .whileTrue(
-            Commands.sequence(
-                wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS),
-                elevator
-                    .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
-                    .until(() -> elevator.isAtUpperLimit())));
+            wrist
+                .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS)
+                .alongWith(
+                    elevator
+                        .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
+                        .until(() -> elevator.isAtUpperLimit())));
 
     controller.circle().whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS));
 
