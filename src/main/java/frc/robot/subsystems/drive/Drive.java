@@ -49,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.DriveConstants.PoseStates;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,6 +57,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
+  public static DriveConstants.PoseStates poseStates;
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -112,6 +114,7 @@ public class Drive extends SubsystemBase {
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
+    poseStates = PoseStates.DEFAULT;
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
@@ -212,6 +215,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+    enablePoseState();
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
@@ -364,5 +368,28 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  public static boolean isRed() {
+    var alliance = DriverStation.getAlliance();
+    return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+  }
+
+  public void enablePoseState() {
+    double magnitudeX = poseEstimator.getEstimatedPosition().getMeasureX().baseUnitMagnitude();
+    double magnitudeY = poseEstimator.getEstimatedPosition().getMeasureY().baseUnitMagnitude();
+    boolean isAtMaxStationXRange =
+        magnitudeX > 0 && magnitudeX < DriveConstants.FieldConstants.MAX_CORAL_X_MAG;
+    if (isAtMaxStationXRange
+        && (magnitudeY > DriveConstants.FieldConstants.HALF_FILED_Y_MAG
+            && magnitudeY < DriveConstants.FieldConstants.MAX_Y_MAG)) {
+      poseStates = PoseStates.LEFT_CORAL_STATION;
+    } else if (isAtMaxStationXRange
+        && (magnitudeY < DriveConstants.FieldConstants.HALF_FILED_Y_MAG
+            && magnitudeY > DriveConstants.FieldConstants.MIN_Y_MAG)) {
+      poseStates = PoseStates.RIGHT_CORAL_STATION;
+    } else {
+      poseStates = PoseStates.PROCESSOR;
+    }
   }
 }

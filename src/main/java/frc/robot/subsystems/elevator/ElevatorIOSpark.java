@@ -19,9 +19,12 @@ import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ElevatorIOSpark implements ElevatorIO {
-  private final SparkFlex topElevatorMotor = new SparkFlex(toplEvatorMotorCanId, MotorType.kBrushless);
-  private final SparkFlex leftElevatorMotor = new SparkFlex(leftElevatorMotorCanId, MotorType.kBrushless);
-  private final SparkFlex rightElevatorMotor = new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
+  private final SparkFlex topElevatorMotor =
+      new SparkFlex(toplEvatorMotorCanId, MotorType.kBrushless);
+  private final SparkFlex leftElevatorMotor =
+      new SparkFlex(leftElevatorMotorCanId, MotorType.kBrushless);
+  private final SparkFlex rightElevatorMotor =
+      new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
   private final PIDController pidController = new PIDController(0.5, 0.0, 0.0);
 
@@ -60,23 +63,36 @@ public class ElevatorIOSpark implements ElevatorIO {
         topElevatorMotor,
         new DoubleSupplier[] {topElevatorMotor::getAppliedOutput, topElevatorMotor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(topElevatorMotor, topElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(
+        topElevatorMotor,
+        topElevatorMotor::getOutputCurrent,
+        (value) -> inputs.currentAmps = value);
 
     ifOk(leftElevatorMotor, encoder::getPosition, (value) -> inputs.positionRad = value);
     ifOk(leftElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         leftElevatorMotor,
-        new DoubleSupplier[] {leftElevatorMotor::getAppliedOutput, leftElevatorMotor::getBusVoltage},
+        new DoubleSupplier[] {
+          leftElevatorMotor::getAppliedOutput, leftElevatorMotor::getBusVoltage
+        },
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(leftElevatorMotor, leftElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(
+        leftElevatorMotor,
+        leftElevatorMotor::getOutputCurrent,
+        (value) -> inputs.currentAmps = value);
 
     ifOk(rightElevatorMotor, encoder::getPosition, (value) -> inputs.positionRad = value);
     ifOk(rightElevatorMotor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
         rightElevatorMotor,
-        new DoubleSupplier[] {rightElevatorMotor::getAppliedOutput, rightElevatorMotor::getBusVoltage},
+        new DoubleSupplier[] {
+          rightElevatorMotor::getAppliedOutput, rightElevatorMotor::getBusVoltage
+        },
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(rightElevatorMotor, rightElevatorMotor::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(
+        rightElevatorMotor,
+        rightElevatorMotor::getOutputCurrent,
+        (value) -> inputs.currentAmps = value);
   }
 
   @Override

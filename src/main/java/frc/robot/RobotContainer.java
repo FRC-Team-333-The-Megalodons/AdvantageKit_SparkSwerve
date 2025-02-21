@@ -29,6 +29,7 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSpark;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -160,7 +161,21 @@ public class RobotContainer {
     //     elevator.runTeleop(
     //         () -> controller.getR2Axis(), () -> controller.getL2Axis())); // R2 up, L2 down
 
-    // Lock to 0° when A button is held
+    switch (Drive.poseStates) {
+      case RIGHT_CORAL_STATION:
+        DriveConstants.desiredAngle = 45.0;
+        break;
+      case LEFT_CORAL_STATION:
+        DriveConstants.desiredAngle = -45;
+        break;
+
+      case PROCESSOR:
+        DriveConstants.desiredAngle = -90;
+        break;
+      default:
+        DriveConstants.desiredAngle = 0;
+        break;
+    }
     controller
         .R3()
         .whileTrue(
@@ -168,7 +183,17 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+                () -> Rotation2d.fromDegrees(DriveConstants.desiredAngle)));
+
+    // Lock to 0° when A button is held
+    // controller
+    //     .R3()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
     controller.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -195,7 +220,8 @@ public class RobotContainer {
     // Wrist controls
     controller.R1().whileTrue(wrist.runPercent(0.5)); // up
     controller.L1().whileTrue(wrist.runPercent(-0.5)); // down
-    // controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4 angle
+    // controller.L2().whileTrue(wrist.setWristPosition(WristConstants.coralL4Setpoint)); // L4
+    // angle
     // controller.R2().whileTrue(wrist.setWristPosition(WristConstants.homeSetpoint)); // home angle
 
     // Climber controls
