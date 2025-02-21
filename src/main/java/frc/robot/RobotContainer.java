@@ -188,15 +188,6 @@ public class RobotContainer {
     //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
     //             () -> new Rotation2d()));
 
-    controller
-        .R3()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-                () -> vision.getYawToTarget(0)));
-
     // controller
     //     .R3()
     //     .whileTrue(

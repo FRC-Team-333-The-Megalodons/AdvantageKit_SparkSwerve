@@ -64,10 +64,6 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
-  public Rotation2d getYawToTarget(int cameraIndex) {
-    return inputs[cameraIndex].yawToTarget;
-  }
-
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
@@ -103,31 +99,31 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        boolean rejectPose =
-            observation.tagCount() == 0 // Must have at least one tag
-                || (observation.tagCount() == 1
-                    && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-                || Math.abs(observation.pose().getZ())
-                    > maxZError // Must have realistic Z coordinate
+        boolean rejectPose = observation.tagCount() == 0; // Must have at least one tag
+        // || ( // observation.tagCount() == 1
+        // observation.ambiguity() > maxAmbiguity); // Cannot be high ambiguity
+        //     || Math.abs(observation.pose().getZ())
+        //         > maxZError // Must have realistic Z coordinate
 
-                // Must be within the field boundaries
-                || observation.pose().getX() < 0.0
-                || observation.pose().getX() > aprilTagLayout.getFieldLength()
-                || observation.pose().getY() < 0.0
-                || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+        //     // Must be within the field boundaries
+        // || observation.pose().getX() < 0.0
+        // || observation.pose().getX() > aprilTagLayout.getFieldLength()
+        // || observation.pose().getY() < 0.0
+        // || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
         // Add pose to log
-        robotPoses.add(observation.pose());
+        // robotPoses.add(observation.pose());
         if (rejectPose) {
           robotPosesRejected.add(observation.pose());
+          continue;
         } else {
           robotPosesAccepted.add(observation.pose());
         }
 
         // Skip if rejected
-        if (rejectPose) {
-          continue;
-        }
+        // if (rejectPose) {
+        //   continue;
+        // }
 
         // Calculate standard deviations
         double stdDevFactor =
