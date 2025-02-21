@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class Wrist extends SubsystemBase {
   private final WristIO io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
-  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
+  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(0);
 
   public Wrist(WristIO io) {
     this.io = io;

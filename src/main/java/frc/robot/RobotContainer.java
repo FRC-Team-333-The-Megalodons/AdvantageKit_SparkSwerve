@@ -34,10 +34,13 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -54,6 +57,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
+  private final Hopper hopper;
   // private final Vision vision;
 
   // Controller
@@ -77,6 +81,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
+        hopper = new Hopper(new HopperIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
@@ -92,6 +97,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+        hopper = new Hopper(new HopperIOSpark());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
@@ -107,6 +113,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+        hopper = new Hopper(new HopperIOSpark());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -169,8 +176,11 @@ public class RobotContainer {
     controller.povUp().whileTrue(elevator.runPercent(0.4).until(elevator::isAtUpperLimit));
     controller.povDown().whileTrue(elevator.runPercent(-0.4).until(elevator::isAtLowerLimit));
 
+    controller.R2().whileTrue(hopper.runPercent(0.2));
+    controller.L2().whileTrue(hopper.runPercent(-0.2));
+
     // Running intake
-    // controller.triangle().whileTrue(intake.runPercent(0.9));
+    controller.touchpad().whileTrue(intake.runPercent(0.9));
     controller.R1().whileTrue(wrist.runPercent(0.2));
     controller.L1().whileTrue(wrist.runPercent(-0.2));
 
@@ -183,10 +193,15 @@ public class RobotContainer {
 
     controller
         .triangle()
+        .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS))
         .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
-                .until(() -> elevator.isAtUpperLimit()));
+            Commands.sequence(
+                wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS),
+                elevator
+                    .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS)
+                    .until(() -> elevator.isAtUpperLimit())));
+
+    controller.circle().whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS));
 
     controller
         .L2()
