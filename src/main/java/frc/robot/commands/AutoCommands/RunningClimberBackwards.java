@@ -5,17 +5,15 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.LEDStrip;
-import frc.robot.subsystems.LEDStrip.LEDColor;
 import frc.robot.subsystems.climb.Climb;
 
 public class RunningClimberBackwards extends SequentialCommandGroup {
-  public RunningClimberBackwards(Climb climb, LEDStrip ledStrip) {
+  public RunningClimberBackwards(Climb climb /* , LEDStrip ledStrip*/) {
 
     addCommands(
-        ledStrip.setColor(LEDColor.BLUE),
-        climb
-        .runPercent(-1)
-        .alongWith(ledStrip.setColor(LEDColor.ORANGE)));
+        // ledStrip.setColor(LEDColor.BLUE),
+        climb.runPercent(-1)
+        // .alongWith(ledStrip.setColor(LEDColor.ORANGE))
+        );
   }
 }

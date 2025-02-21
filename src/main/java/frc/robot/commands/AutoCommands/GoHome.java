@@ -5,8 +5,6 @@
 package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.LEDStrip;
-import frc.robot.subsystems.LEDStrip.LEDColor;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
@@ -17,15 +15,16 @@ import frc.robot.subsystems.wrist.WristConstants;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GoHome extends SequentialCommandGroup {
-  public GoHome(Wrist wrist, Elevator elevator, Intake intake, LEDStrip ledStrip) {
+  public GoHome(Wrist wrist, Elevator elevator, Intake intake /* , LEDStrip ledStrip*/) {
 
     addCommands(
-        ledStrip.setColor(LEDColor.BLUE),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION).until(elevator::atSetpoint),
+        //  ledStrip.setColor(LEDColor.BLUE),
+        elevator
+            .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
+            .until(elevator::atSetpoint),
         wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION).until(wrist::atSetpoint),
-        intake
-            .runPercent(0.5)
-            .until(intake::isTriggered)
-            .alongWith(ledStrip.setColor(LEDColor.GREEN)));
+        intake.runPercent(0.5).until(intake::isTriggered)
+        //    .alongWith(ledStrip.setColor(LEDColor.GREEN))
+        );
   }
 }

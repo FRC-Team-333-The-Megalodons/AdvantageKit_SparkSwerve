@@ -27,7 +27,6 @@ public class ElevatorConstants {
   public static final double ELEVATOR_ALGAE_SCORE_PROCESSOR_POS = 8;
   public static final double ELEVATOR_ALGAE_SCORE_NET_POS = 210.0;
 
-
   public static final double ELEVATOR_ALGAE_PICKUP_L2_POS = 0.1;
   public static final double ELEVATOR_ALGAE_PICKUP_L3_POS = 130.0;
 
