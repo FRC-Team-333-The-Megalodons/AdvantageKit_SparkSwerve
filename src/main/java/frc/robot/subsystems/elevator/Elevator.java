@@ -35,8 +35,8 @@ public class Elevator extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public Command setElevatorPosition(double setpoint) {
-    return runEnd(() -> io.setElevator(inputs.position, setpoint), () -> io.setVoltage(0.0));
+  public Command setElevatorPosition(double setpoint, boolean down) {
+    return runEnd(() -> io.setElevator(inputs.position, setpoint, down), () -> io.setVoltage(0.0));
   }
 
   @Override

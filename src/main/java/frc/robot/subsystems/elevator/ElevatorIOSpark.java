@@ -26,7 +26,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex rightElevatorMotor =
       new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
-  private final PIDController pidController = new PIDController(0.006, 0.0, 0.0);
+  private final PIDController elevatorUpPidController = new PIDController(0.012, 0.0, 0.0005);
+  private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
 
   public ElevatorIOSpark() {
     var config = new SparkFlexConfig();
@@ -79,10 +80,16 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public void setElevator(double currentPos, double targetPos) {
-    topElevatorMotor.set(pidController.calculate(currentPos, targetPos));
-    leftElevatorMotor.set(pidController.calculate(currentPos, targetPos));
-    rightElevatorMotor.set(pidController.calculate(currentPos, targetPos));
+  public void setElevator(double currentPos, double targetPos, boolean down) {
+    if (down) {
+      topElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      leftElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      rightElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+    } else {
+      topElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
+      leftElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
+      rightElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
+    }
   }
 
   @Override
@@ -96,6 +103,6 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public boolean atSetpoint() {
-    return pidController.atSetpoint();
+    return elevatorUpPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
   }
 }

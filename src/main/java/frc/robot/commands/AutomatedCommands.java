@@ -26,7 +26,7 @@ public class AutomatedCommands {
 
   public static Command homeCommand(Wrist wrist, Elevator elevator, LEDStrip led) {
     return elevator
-        .setElevatorPosition(ElevatorConstants.homeSetpoint)
+        .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
         .until(elevator::atSetpoint)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint));
   }
@@ -35,60 +35,60 @@ public class AutomatedCommands {
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint))
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .until(elevator::atL4Setpoint)
         .andThen(
             wrist
                 .setWristPosition(WristConstants.coralL4Setpoint)
-                .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint)));
+                .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false)));
   }
 
   public static Command coralL3Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
   }
 
   public static Command coralL2Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
   }
 
   public static Command algaeL3Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
   }
 
   public static Command algaeL2Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true));
   }
 
   public static Command processorCommand(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.processorSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint, true));
   }
 
   public static Command homeWithAlgaeCommand(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.algaeHomeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true));
   }
 
   public static Command netCommand(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint, true));
   }
 }

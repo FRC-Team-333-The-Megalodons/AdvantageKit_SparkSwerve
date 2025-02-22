@@ -18,11 +18,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -67,6 +66,7 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
+import frc.robot.util.GlobalConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -92,7 +92,146 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  boolean manualMode = false;
+  private final boolean startInManualMode = false;
+
+  private void configureInitialControllerBindings() {
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+            () -> -controller.getRightX()));
+    configureDriverControllerBindings();
+    if (startInManualMode) {
+      configureOperatorControllerManualModeBindings();
+    } else {
+      configureOperatorControllerSmartModeBindings();
+    }
+  }
+
+  private void configureDriverControllerBindings() {
+    controller
+        .R3()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+                () -> Rotation2d.fromDegrees(drive.setAngle())));
+    controller.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller
+        .PS()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+  }
+
+  public void removeOperatorControllerBindings() {
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    configureDriverControllerBindings();
+  }
+
+  public void configureOperatorControllerManualModeBindings() {
+    controller
+        .povUp()
+        .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
+    controller
+        .povDown()
+        .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
+    controller.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+    controller.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+
+    //   controller.triangle().whileTrue(null);
+    //   controller.cross().whileTrue(null);
+    //   controller.square().whileTrue(null);
+    //   controller.circle().whileTrue(null);
+
+    controller.create().whileTrue(hopper.runPercent(HopperConstants.speed));
+    controller.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
+
+    controller.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+    controller.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+
+    controller.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+    controller.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+  }
+
+  public void configureOperatorControllerSmartModeBindings() {
+    controller
+        .L2()
+        .whileTrue(
+            AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
+                .alongWith(
+                    EndEffecterCommands.runEndEffecterForward(endEffecter)
+                        .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
+                        .until(endEffecter::isTriggered))
+                .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
+
+    controller.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+    controller.L1().whileTrue(climber.runPercent(-ClimberConstants.speed));
+    controller.R1().whileTrue(climber.runPercent(ClimberConstants.speed));
+
+    controller
+        .triangle()
+        .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+    controller
+        .circle()
+        .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ledStrip));
+    controller
+        .square()
+        .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ledStrip));
+
+    controller.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+
+    controller
+        .povUp()
+        .whileTrue(
+            AutomatedCommands.netCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    controller
+        .povDown()
+        .whileTrue(
+            AutomatedCommands.processorCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    controller
+        .povLeft()
+        .whileTrue(
+            AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    controller
+        .povRight()
+        .whileTrue(
+            AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    controller
+        .touchpad()
+        .whileTrue(
+            AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+
+    controller.create().whileTrue(hopper.runPercent(-HopperConstants.speed));
+    controller.options().whileTrue(hopper.runPercent(HopperConstants.speed));
+  }
+
+  public void toggleManualModeWhenButtonPressed() {
+    if (controller.getHID().getRawButtonPressed(15)) {
+      boolean before = GlobalConstants.isManualMode();
+      boolean after = !before;
+      System.out.println("TOGGLE MANUAL MODE from " + before + " to " + after + ".");
+      removeOperatorControllerBindings();
+      SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, after);
+      if (after) {
+        configureOperatorControllerManualModeBindings();
+      } else {
+        configureOperatorControllerSmartModeBindings();
+      }
+    }
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -197,237 +336,9 @@ public class RobotContainer {
     new EventTrigger("intake coral").whileTrue(Commands.print("intaking coral"));
 
     // Configure the button bindings
-    configureButtonBindings();
+    configureInitialControllerBindings();
+    // configureButtonBindings();
     updateDashboard();
-  }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-            () -> -controller.getRightX()));
-
-    ledStrip.setDefaultCommand(ledStrip.makeWholeColorCommand(Color.kBlack));
-
-    new Rotation2d();
-    // Lock to 0° when R3 button is held
-    controller
-        .R3()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-                () -> Rotation2d.fromDegrees(drive.setAngle())));
-
-    // controller
-    //     .R3()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-    //             () ->
-    //                 VisionConstants.aprilTagLayout
-    //                     .getTagPose(3)
-    //                     .get()
-    //                     .getRotation()
-    //                     .toRotation2d()));
-
-    // controller.R3().whileTrue(endEffecter.runPercent(-0.5));
-
-    // Switch to X pattern when L3 button is pressed
-    controller.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reef scoring buttons
-    // L1
-    // controller.cross().whileTrue(endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
-    // controller.cross().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
-    // // L3
-    // controller
-    //     .circle()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.coralL23Setpoint)
-    //             .withTimeout(1.0)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
-    // // L2
-    // controller
-    //     .square()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.coralL23Setpoint)
-    //             .withTimeout(1.0)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
-    // // L4
-    // controller
-    //     .triangle()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.coralL4Setpoint)
-    //             .until(wrist::atSetpoint)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint))
-    //             .until(elevator::upperLimit));
-
-    // // Algae scoring buttons
-    // // Barge score
-    // controller
-    //     .povUp()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.bargeSetPoint)
-    //             .until(wrist::atSetpoint)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint))
-    //             .until(elevator::upperLimit));
-    // // Processor score
-    // controller
-    //     .povDown()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.processorSetpoint)
-    //             .until(wrist::atSetpoint)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint)));
-    // // Remove L3
-    // controller
-    //     .povRight()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.aglaeSetpoint)
-    //             .until(wrist::atSetpoint)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
-    // // Remove L2
-    // controller
-    //     .povLeft()
-    //     .whileTrue(
-    //         wrist
-    //             .setWristPosition(WristConstants.aglaeSetpoint)
-    //             .until(wrist::atSetpoint)
-    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
-
-    // // Intake
-    // controller.R2().whileTrue(endEffecter.runPercent(0.5));
-
-    // // Robot home position
-    // controller
-    //     .L2()
-    //     .whileTrue(
-    //         elevator
-    //             .setElevatorPosition(ElevatorConstants.homeSetpoint)
-    //             .until(elevator::atSetpoint)
-    //             .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)));
-
-    // // Retract
-    // controller.R1().whileTrue(climber.runPercent(1.0));
-    // // Extract
-    // controller.L1().whileTrue(climber.runPercent(-1.0));
-
-    // Reset gyro to 0° when options button is pressed
-    controller
-        .PS()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-
-    if (manualMode) {
-      controller
-          .povUp()
-          .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
-      controller
-          .povDown()
-          .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      controller.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-      controller.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
-
-      //   controller.triangle().whileTrue(null);
-      //   controller.cross().whileTrue(null);
-      //   controller.square().whileTrue(null);
-      //   controller.circle().whileTrue(null);
-
-      controller.create().whileTrue(hopper.runPercent(HopperConstants.speed));
-      controller.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
-
-      controller.L1().whileTrue(wrist.runPercent(WristConstants.speed));
-      controller.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
-
-      controller.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-      controller.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
-
-      //   controller.L3().whileTrue(null);
-      //   controller.R3().whileTrue(null);
-
-      //   controller.PS().whileTrue(null);
-      //   controller.touchpad().whileTrue(null);
-    } else {
-      // New Controller Bindings
-      controller
-          .L2()
-          .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
-                  .alongWith(
-                      EndEffecterCommands.runEndEffecterForward(endEffecter)
-                          .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
-                          .until(endEffecter::isTriggered))
-                  .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
-
-      controller.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
-
-      controller.L1().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      controller.R1().whileTrue(climber.runPercent(ClimberConstants.speed));
-
-      controller
-          .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
-      controller
-          .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ledStrip));
-      controller
-          .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ledStrip));
-
-      controller.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
-
-      controller
-          .povUp()
-          .whileTrue(
-              AutomatedCommands.netCommand(endEffecter, wrist, elevator, ledStrip)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      controller
-          .povDown()
-          .whileTrue(
-              AutomatedCommands.processorCommand(endEffecter, wrist, elevator, ledStrip)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      controller
-          .povLeft()
-          .whileTrue(
-              AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator, ledStrip)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      controller
-          .povRight()
-          .whileTrue(
-              AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator, ledStrip)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      controller
-          .touchpad()
-          .whileTrue(
-              AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator, ledStrip)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-
-      controller.create().whileTrue(hopper.runPercent(-HopperConstants.speed));
-      controller.options().whileTrue(hopper.runPercent(HopperConstants.speed));
-    }
   }
 
   public void updateDashboard() {
@@ -454,19 +365,22 @@ public class RobotContainer {
         "WristProcPos", wrist.setWristPosition(WristConstants.processorSetpoint));
     SmartDashboard.putData("WristNetPos", wrist.setWristPosition(WristConstants.netSetPoint));
     SmartDashboard.putData(
-        "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint));
+        "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true));
     SmartDashboard.putData(
-        "ElevatorCoralL2Pos", elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint));
+        "ElevatorCoralL2Pos",
+        elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
     SmartDashboard.putData(
-        "ElevatorCoralL3Pos", elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint));
+        "ElevatorCoralL3Pos",
+        elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
     SmartDashboard.putData(
-        "ElevatorCoralL4Pos", elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint));
+        "ElevatorCoralL4Pos",
+        elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, true));
     SmartDashboard.putData(
-        "ElevatorAlgaeL2Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint));
+        "ElevatorAlgaeL2Pos",
+        elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true));
     SmartDashboard.putData(
-        "ElevatorAlgaeL3Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint));
-
-    SmartDashboard.putBoolean("Manual?", manualMode);
+        "ElevatorAlgaeL3Pos",
+        elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
   }
 
   /**

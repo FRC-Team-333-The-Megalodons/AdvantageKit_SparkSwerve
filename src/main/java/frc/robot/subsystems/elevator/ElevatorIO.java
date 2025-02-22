@@ -24,7 +24,7 @@ public interface ElevatorIO {
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}
 
-  public default void setElevator(double currentPos, double tragetPos) {}
+  public default void setElevator(double currentPos, double tragetPos, boolean down) {}
 
   public default void resetEncoder() {}
 
