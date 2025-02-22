@@ -36,6 +36,9 @@ import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
 import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOSpark;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -46,6 +49,10 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOSim;
+import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
@@ -69,7 +76,8 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
-  // private final Climb climb;
+  private final Climb climb;
+  private final Hopper hopper;
   //   private final Vision vision;
 
   // Controller
@@ -110,8 +118,82 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear(); 
     configureDriverControllerBindings();
   }
-  public void configureOperatorControllerManualModeBindings() {}
-  public void configureOperatorControllerSmartModeBindings() {}
+  public void configureOperatorControllerManualModeBindings() {
+    // intake
+    operatorController
+        .L2()
+        .whileTrue(new RunningIntakeBackwards(intake));
+    operatorController
+        .R2()
+        .whileTrue(new RunningIntakeForward(intake));
+    // coral
+    operatorController
+        .triangle()
+        .whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
+    operatorController
+        .circle()
+        .whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
+    operatorController
+        .square()
+        .whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+    
+    // algae
+    operatorController
+        .povRight()
+        .whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+    operatorController
+        .povLeft()
+        .whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+    operatorController
+        .povUp()
+        .whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+    operatorController
+        .povDown()
+        .whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+    // home
+    operatorController
+        .L2()
+        .whileTrue(new GoHome(wrist, elevator, intake));
+  }
+
+  public void configureOperatorControllerSmartModeBindings() {
+    // wrist
+    operatorController
+        .L2()
+        .whileTrue(wrist.runPercent(-0.4));
+    operatorController
+        .R2()
+        .whileTrue(wrist.runPercent(0.4));
+    // elevator
+    operatorController
+        .povUp()
+        .whileTrue(elevator.runPercent(-0.4));
+    operatorController
+        .povDown()
+        .whileTrue(elevator.runPercent(0.4));
+    // intake 
+    operatorController
+        .R1()
+        .whileTrue(intake.runPercent(-0.4));
+    operatorController
+        .L1()
+        .whileTrue(intake.runPercent(-0.4));
+    //ram
+    operatorController
+        .triangle()
+        .whileTrue(hopper.runPercent(0.4));
+    operatorController
+        .cross()
+        .whileTrue(hopper.runPercent(-0.4));
+    // climber
+    operatorController
+        .circle()
+        .whileTrue(climb.runPercent(-0.4));
+    operatorController
+        .R1()
+        .whileTrue(climb.runPercent(-0.4));
+  }
+
   public void toggleManualModeWhenButtonPressed() {
     if (operatorController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
@@ -142,7 +224,8 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
-        //    climb = new Climb(new ClimbIOSpark());
+        climb = new Climb(new ClimbIOSpark());
+        hopper = new Hopper(new HopperIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         break;
 
@@ -158,7 +241,8 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
-        //  climb = new Climb(new ClimbIOSim());
+        climb = new Climb(new ClimbIOSim());
+        hopper = new Hopper(new HopperIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
 
@@ -174,7 +258,8 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
-        // climb = new Climb(new ClimbIOSim());
+        climb = new Climb(new ClimbIOSim());
+        hopper = new Hopper(new HopperIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -216,7 +301,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    //configureInitialControllerBindings();
+    configureInitialControllerBindings();
     configureButtonBindings();
     smartDashBoardButtons();
   }
