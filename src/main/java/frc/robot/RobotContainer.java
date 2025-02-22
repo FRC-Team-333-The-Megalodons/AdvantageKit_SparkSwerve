@@ -18,12 +18,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOSpark;
@@ -59,6 +62,7 @@ public class RobotContainer {
   private final Intake intake;
   private final Wrist wrist;
   private final Climb climb;
+  private LEDStrip led;
   //   private final Vision vision;
 
   // Controller
@@ -71,7 +75,6 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -84,6 +87,7 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSpark());
         climb = new Climb(new ClimbIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
+        led = new LEDStrip();
         break;
 
       case SIM:
@@ -100,6 +104,7 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
+
         break;
 
       default:
@@ -115,6 +120,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
+        led = new LEDStrip();
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -215,15 +221,18 @@ public class RobotContainer {
                 .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .options()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .options()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+
+                
+    controller.options().whileTrue(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)));
 
     // csequantial commands
 

@@ -4,9 +4,10 @@
 
 package frc.robot.commands.AutoCommands;
 
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.LEDStrip;
-import frc.robot.subsystems.LEDStrip.LEDColor;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
@@ -18,12 +19,13 @@ public class GoIntakeFromCoralStation extends SequentialCommandGroup {
       Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
-        ledStrip.setColor(LEDColor.BLUE),
+        new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_CORAL_PICKUP_POS),
         elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS),
         intake
             .runPercent(0.5)
             .until(intake::isTriggered)
-            .alongWith(ledStrip.setColor(LEDColor.GREEN)));
+            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
+            );
   }
 }
