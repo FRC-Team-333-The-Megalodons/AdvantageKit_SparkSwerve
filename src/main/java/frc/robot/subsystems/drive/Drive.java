@@ -370,4 +370,14 @@ public class Drive extends SubsystemBase {
     var alliance = DriverStation.getAlliance();
     return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
   }
+
+  public double setAngle() {
+    if (getPose().getX() < 3.0 && getPose().getY() < 3.0) {
+      return 50.0;
+    } else if (getPose().getX() < 3.0 && getPose().getY() > 3.0) {
+      return -55.0;
+    } else {
+      return 0;
+    }
+  }
 }

@@ -198,6 +198,7 @@ public class RobotContainer {
             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    new Rotation2d();
     // Lock to 0° when R3 button is held
     controller
         .R3()
@@ -206,7 +207,7 @@ public class RobotContainer {
                 drive,
                 () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
                 () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-                () -> new Rotation2d()));
+                () -> Rotation2d.fromDegrees(drive.setAngle())));
 
     // controller
     //     .R3()
