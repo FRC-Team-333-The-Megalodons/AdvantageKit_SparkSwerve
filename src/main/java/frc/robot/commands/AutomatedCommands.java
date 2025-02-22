@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.elevator.Elevator;
@@ -16,8 +17,11 @@ import frc.robot.subsystems.wrist.WristConstants;
 /** Add your docs here. */
 public class AutomatedCommands {
 
-  public static Command intakeCoral(EndEffecter endEffecter) {
-    return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
+  public static Command intakeCoral(EndEffecter endEffecter, LEDStrip led) {
+    return endEffecter
+        .runPercent(EndEffecterConstants.speed)
+        .until(endEffecter::isTriggered)
+        .andThen(led.makeWholeColorCommand(Color.kGreen));
   }
 
   public static Command homeCommand(Wrist wrist, Elevator elevator, LEDStrip led) {

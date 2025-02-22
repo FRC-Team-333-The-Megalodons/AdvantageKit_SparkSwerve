@@ -14,11 +14,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -178,6 +181,21 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    // Named Commands
+    NamedCommands.registerCommand(
+        "ScoreCoral", EndEffecterCommands.runEndEffecterForward(endEffecter));
+    NamedCommands.registerCommand(
+        "IntakeCoral", AutomatedCommands.intakeCoral(endEffecter, ledStrip));
+    NamedCommands.registerCommand(
+        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ledStrip));
+    NamedCommands.registerCommand(
+        "CoralL4Pos", AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+
+    new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
+    new EventTrigger("score coral").whileTrue(Commands.print("Score Coral"));
+    new EventTrigger("home position").whileTrue(Commands.print("Go Home"));
+    new EventTrigger("intake coral").whileTrue(Commands.print("intaking coral"));
+
     // Configure the button bindings
     configureButtonBindings();
     updateDashboard();
@@ -197,6 +215,8 @@ public class RobotContainer {
             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
             () -> -controller.getRightX()));
+
+    ledStrip.setDefaultCommand(ledStrip.makeWholeColorCommand(Color.kBlack));
 
     new Rotation2d();
     // Lock to 0° when R3 button is held
@@ -358,7 +378,9 @@ public class RobotContainer {
               AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
                   .alongWith(
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
-                          .until(endEffecter::isTriggered)));
+                          .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
+                          .until(endEffecter::isTriggered))
+                  .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
 
       controller.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
