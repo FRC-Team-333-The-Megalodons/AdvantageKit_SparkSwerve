@@ -47,6 +47,7 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("LowerLimitSwitch", lowerLimit());
     Logger.recordOutput("UpperLimitSwitch", upperLimit());
     Logger.recordOutput("Elevator Pos", io.getElevatorPosition());
+    Logger.recordOutput("L4Setpoint", atL4Setpoint());
   }
 
   public boolean lowerLimit() {
@@ -64,5 +65,13 @@ public class Elevator extends SubsystemBase {
 
   public boolean atSetpoint() {
     return io.atSetpoint();
+  }
+
+  public boolean atL4Setpoint() {
+    if (io.getElevatorPosition() > 190) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

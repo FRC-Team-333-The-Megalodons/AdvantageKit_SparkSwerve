@@ -26,7 +26,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex rightElevatorMotor =
       new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
-  private final PIDController pidController = new PIDController(0.003, 0.0, 0.0);
+  private final PIDController pidController = new PIDController(0.006, 0.0, 0.0);
 
   public ElevatorIOSpark() {
     var config = new SparkFlexConfig();
@@ -52,6 +52,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             leftElevatorMotor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    // pidController.setTolerance(4.0);
   }
 
   @Override

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.wrist;
 
+import static frc.robot.subsystems.wrist.WristConstants.homeSetpoint;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -35,5 +37,13 @@ public class Wrist extends SubsystemBase {
 
   public boolean atSetpoint() {
     return io.atSetpoint();
+  }
+
+  public boolean isClear() {
+    if (inputs.positionAbs > homeSetpoint) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

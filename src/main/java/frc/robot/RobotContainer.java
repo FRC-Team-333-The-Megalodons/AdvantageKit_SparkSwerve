@@ -23,9 +23,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutomatedCommands;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.EndEffecterCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSpark;
@@ -41,9 +45,15 @@ import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
 import frc.robot.subsystems.endEffecter.EndEffecter;
+import frc.robot.subsystems.endEffecter.EndEffecterConstants;
 import frc.robot.subsystems.endEffecter.EndEffecterIO;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
 import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperConstants;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOSim;
+import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -69,13 +79,17 @@ public class RobotContainer {
   private final EndEffecter endEffecter;
   private final Wrist wrist;
   private final Climber climber;
+  private final Hopper hopper;
   private final Vision vision;
+  private final LEDStrip ledStrip;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  boolean manualMode = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -93,11 +107,13 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
         climber = new Climber(new ClimberIOSpark());
+        hopper = new Hopper(new HopperIOSpark());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        ledStrip = new LEDStrip();
         break;
 
       case SIM:
@@ -113,6 +129,7 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
         climber = new Climber(new ClimberIOSim());
+        hopper = new Hopper(new HopperIOSim());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -120,6 +137,7 @@ public class RobotContainer {
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+        ledStrip = new LEDStrip();
         break;
 
       default:
@@ -135,7 +153,9 @@ public class RobotContainer {
         endEffecter = new EndEffecter(new EndEffecterIO() {});
         wrist = new Wrist(new WristIO() {});
         climber = new Climber(new ClimberIO() {});
+        hopper = new Hopper(new HopperIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        ledStrip = new LEDStrip();
         break;
     }
 
@@ -179,14 +199,14 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when R3 button is held
-    // controller
-    //     .R3()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-    //             () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
-    //             () -> new Rotation2d()));
+    controller
+        .R3()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
+                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+                () -> new Rotation2d()));
 
     // controller
     //     .R3()
@@ -209,88 +229,89 @@ public class RobotContainer {
 
     // Reef scoring buttons
     // L1
-    controller.cross().whileTrue(endEffecter.runPercent(0.5));
-    // L3
-    controller
-        .circle()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.coralL23Setpoint)
-                .withTimeout(1.0)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
-    // L2
-    controller
-        .square()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.coralL23Setpoint)
-                .withTimeout(1.0)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
-    // L4
-    controller
-        .triangle()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.coralL4Setpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint))
-                .until(elevator::upperLimit));
+    // controller.cross().whileTrue(endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
+    // controller.cross().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+    // // L3
+    // controller
+    //     .circle()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.coralL23Setpoint)
+    //             .withTimeout(1.0)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint)));
+    // // L2
+    // controller
+    //     .square()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.coralL23Setpoint)
+    //             .withTimeout(1.0)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint)));
+    // // L4
+    // controller
+    //     .triangle()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.coralL4Setpoint)
+    //             .until(wrist::atSetpoint)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint))
+    //             .until(elevator::upperLimit));
 
-    // Algae scoring buttons
-    // Barge score
-    controller
-        .povUp()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.bargeSetPoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint))
-                .until(elevator::upperLimit));
-    // Processor score
-    controller
-        .povDown()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.processorSetpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint)));
-    // Remove L3
-    controller
-        .povRight()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.aglaeSetpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
-    // Remove L2
-    controller
-        .povLeft()
-        .whileTrue(
-            wrist
-                .setWristPosition(WristConstants.aglaeSetpoint)
-                .until(wrist::atSetpoint)
-                .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
+    // // Algae scoring buttons
+    // // Barge score
+    // controller
+    //     .povUp()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.bargeSetPoint)
+    //             .until(wrist::atSetpoint)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint))
+    //             .until(elevator::upperLimit));
+    // // Processor score
+    // controller
+    //     .povDown()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.processorSetpoint)
+    //             .until(wrist::atSetpoint)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.processorSetpoint)));
+    // // Remove L3
+    // controller
+    //     .povRight()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.aglaeSetpoint)
+    //             .until(wrist::atSetpoint)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint)));
+    // // Remove L2
+    // controller
+    //     .povLeft()
+    //     .whileTrue(
+    //         wrist
+    //             .setWristPosition(WristConstants.aglaeSetpoint)
+    //             .until(wrist::atSetpoint)
+    //             .andThen(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint)));
 
-    // Intake from the coral station
-    controller.R2().whileTrue(endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
+    // // Intake
+    // controller.R2().whileTrue(endEffecter.runPercent(0.5));
 
-    // Robot home position
-    controller
-        .L2()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.homeSetpoint)
-                .until(elevator::atSetpoint)
-                .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)));
+    // // Robot home position
+    // controller
+    //     .L2()
+    //     .whileTrue(
+    //         elevator
+    //             .setElevatorPosition(ElevatorConstants.homeSetpoint)
+    //             .until(elevator::atSetpoint)
+    //             .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)));
 
-    // Retract
-    controller.R1().whileTrue(climber.runPercent(1.0));
-    // Extract
-    controller.L1().whileTrue(climber.runPercent(-1.0));
+    // // Retract
+    // controller.R1().whileTrue(climber.runPercent(1.0));
+    // // Extract
+    // controller.L1().whileTrue(climber.runPercent(-1.0));
 
     // Reset gyro to 0° when options button is pressed
     controller
-        .options()
+        .PS()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -298,6 +319,92 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    if (manualMode) {
+      controller
+          .povUp()
+          .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
+      controller
+          .povDown()
+          .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
+      controller.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+      controller.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+
+      //   controller.triangle().whileTrue(null);
+      //   controller.cross().whileTrue(null);
+      //   controller.square().whileTrue(null);
+      //   controller.circle().whileTrue(null);
+
+      controller.create().whileTrue(hopper.runPercent(HopperConstants.speed));
+      controller.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
+
+      controller.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+      controller.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+
+      controller.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+      controller.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+
+      //   controller.L3().whileTrue(null);
+      //   controller.R3().whileTrue(null);
+
+      //   controller.PS().whileTrue(null);
+      //   controller.touchpad().whileTrue(null);
+    } else {
+      // New Controller Bindings
+      controller
+          .L2()
+          .whileTrue(
+              AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
+                  .alongWith(
+                      EndEffecterCommands.runEndEffecterForward(endEffecter)
+                          .until(endEffecter::isTriggered)));
+
+      controller.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+      controller.L1().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      controller.R1().whileTrue(climber.runPercent(ClimberConstants.speed));
+
+      controller
+          .triangle()
+          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+      controller
+          .circle()
+          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ledStrip));
+      controller
+          .square()
+          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ledStrip));
+
+      controller.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+
+      controller
+          .povUp()
+          .whileTrue(
+              AutomatedCommands.netCommand(endEffecter, wrist, elevator, ledStrip)
+                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+      controller
+          .povDown()
+          .whileTrue(
+              AutomatedCommands.processorCommand(endEffecter, wrist, elevator, ledStrip)
+                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+      controller
+          .povLeft()
+          .whileTrue(
+              AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator, ledStrip)
+                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+      controller
+          .povRight()
+          .whileTrue(
+              AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator, ledStrip)
+                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+      controller
+          .touchpad()
+          .whileTrue(
+              AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator, ledStrip)
+                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+
+      controller.create().whileTrue(hopper.runPercent(-HopperConstants.speed));
+      controller.options().whileTrue(hopper.runPercent(HopperConstants.speed));
+    }
   }
 
   public void updateDashboard() {
@@ -310,6 +417,8 @@ public class RobotContainer {
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
     SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
     SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
+    SmartDashboard.putData("HopperUp", hopper.runPercent(0.1));
+    SmartDashboard.putData("HopperDown", hopper.runPercent(-0.1));
 
     // Advanced Commands
     SmartDashboard.putData(
@@ -318,6 +427,9 @@ public class RobotContainer {
     SmartDashboard.putData("WristL23Pos", wrist.setWristPosition(WristConstants.coralL23Setpoint));
     SmartDashboard.putData("WristL4Pos", wrist.setWristPosition(WristConstants.coralL4Setpoint));
     SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.aglaeSetpoint));
+    SmartDashboard.putData(
+        "WristProcPos", wrist.setWristPosition(WristConstants.processorSetpoint));
+    SmartDashboard.putData("WristNetPos", wrist.setWristPosition(WristConstants.netSetPoint));
     SmartDashboard.putData(
         "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint));
     SmartDashboard.putData(
@@ -330,6 +442,8 @@ public class RobotContainer {
         "ElevatorAlgaeL2Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint));
     SmartDashboard.putData(
         "ElevatorAlgaeL3Pos", elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint));
+
+    SmartDashboard.putBoolean("Manual?", manualMode);
   }
 
   /**
