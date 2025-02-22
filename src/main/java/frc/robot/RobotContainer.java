@@ -98,8 +98,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-            () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
             () -> -controller.getRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
