@@ -16,13 +16,13 @@ public class ElevatorConstants {
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
 
-  public static final double ELEVATOR_MAX_HEIGHT = 180.0;
-  public static final double ELEVATOR_MIN_HEIGHT = 0.1;
+  public static final double ELEVATOR_MAX_HEIGHT = 200.0;
+  public static final double ELEVATOR_MIN_HEIGHT = 0.0;
 
-  public static final double ELEVATOR_HOME_POSITION = 0.1;
+  public static final double ELEVATOR_HOME_POSITION = 0.0;
 
-  public static final double ELEVATOR_CORAL_PICKUP_POS = 0.1;
-  public static final double ELEVATOR_ALGAE_PICKUP_FLOOR_POS = 0.1;
+  public static final double ELEVATOR_CORAL_PICKUP_POS = 0.0;
+  public static final double ELEVATOR_ALGAE_PICKUP_FLOOR_POS = 0.0;
 
   public static final double ELEVATOR_ALGAE_SCORE_PROCESSOR_POS = 8;
   public static final double ELEVATOR_ALGAE_SCORE_NET_POS = 210.0;

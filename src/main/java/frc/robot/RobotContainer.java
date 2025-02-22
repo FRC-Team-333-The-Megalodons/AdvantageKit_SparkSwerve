@@ -50,7 +50,6 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
 import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.HopperIO;
 import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.subsystems.intake.Intake;
@@ -61,7 +60,6 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import frc.robot.util.GlobalConstants;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -87,6 +85,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final boolean startInManualMode = false;
+
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -94,15 +93,15 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX()));
-            configureDriverControllerBindings();
-            //////////
-            if (startInManualMode) {
-                configureOperatorControllerManualModeBindings();
-              } else {
-                configureOperatorControllerSmartModeBindings();
-              }
-
+    configureDriverControllerBindings();
+    //////////
+    if (startInManualMode) {
+      configureOperatorControllerManualModeBindings();
+    } else {
+      configureOperatorControllerSmartModeBindings();
+    }
   }
+
   private void configureDriverControllerBindings() {
     driveController
         .L3()
@@ -112,93 +111,54 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
-
   }
+
   public void removeOperatorControllerBindings() {
-    CommandScheduler.getInstance().getActiveButtonLoop().clear(); 
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
     configureDriverControllerBindings();
   }
+
   public void configureOperatorControllerManualModeBindings() {
     // intake
-    operatorController
-        .L2()
-        .whileTrue(new RunningIntakeBackwards(intake));
-    operatorController
-        .R2()
-        .whileTrue(new RunningIntakeForward(intake));
+    operatorController.L2().whileTrue(new RunningIntakeBackwards(intake));
+    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
     // coral
-    operatorController
-        .triangle()
-        .whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
-    operatorController
-        .circle()
-        .whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
-    operatorController
-        .square()
-        .whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
-    
+    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
+    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
+    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+
     // algae
-    operatorController
-        .povRight()
-        .whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-    operatorController
-        .povLeft()
-        .whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-    operatorController
-        .povUp()
-        .whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-    operatorController
-        .povDown()
-        .whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
     // home
-    operatorController
-        .L2()
-        .whileTrue(new GoHome(wrist, elevator, intake));
+    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
   }
 
   public void configureOperatorControllerSmartModeBindings() {
     // wrist
-    operatorController
-        .L2()
-        .whileTrue(wrist.runPercent(-0.4));
-    operatorController
-        .R2()
-        .whileTrue(wrist.runPercent(0.4));
+    operatorController.L2().whileTrue(wrist.runPercent(-0.4));
+    operatorController.R2().whileTrue(wrist.runPercent(0.4));
     // elevator
-    operatorController
-        .povUp()
-        .whileTrue(elevator.runPercent(-0.4));
-    operatorController
-        .povDown()
-        .whileTrue(elevator.runPercent(0.4));
-    // intake 
-    operatorController
-        .R1()
-        .whileTrue(intake.runPercent(-0.4));
-    operatorController
-        .L1()
-        .whileTrue(intake.runPercent(-0.4));
-    //ram
-    operatorController
-        .triangle()
-        .whileTrue(hopper.runPercent(0.4));
-    operatorController
-        .cross()
-        .whileTrue(hopper.runPercent(-0.4));
+    operatorController.povUp().whileTrue(elevator.runPercent(-0.4));
+    operatorController.povDown().whileTrue(elevator.runPercent(0.4));
+    // intake
+    operatorController.R1().whileTrue(intake.runPercent(-0.4));
+    operatorController.L1().whileTrue(intake.runPercent(-0.4));
+    // ram
+    operatorController.triangle().whileTrue(hopper.runPercent(0.4));
+    operatorController.cross().whileTrue(hopper.runPercent(-0.4));
     // climber
-    operatorController
-        .circle()
-        .whileTrue(climb.runPercent(-0.4));
-    operatorController
-        .R1()
-        .whileTrue(climb.runPercent(-0.4));
+    operatorController.circle().whileTrue(climb.runPercent(-0.4));
+    operatorController.R1().whileTrue(climb.runPercent(-0.4));
   }
 
   public void toggleManualModeWhenButtonPressed() {
     if (operatorController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
       boolean after = !before;
-      System.out.println("TOGGLE MANUAL MODE from "+before+" to "+after+".");
+      System.out.println("TOGGLE MANUAL MODE from " + before + " to " + after + ".");
       removeOperatorControllerBindings();
       SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, after);
       if (after) {
@@ -312,7 +272,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void smartDashBoardButtons(){
+  private void smartDashBoardButtons() {
     SmartDashboard.putData("RunIntake In", intake.runPercent(5));
     SmartDashboard.putData("RunIntake Out", intake.runPercent(-5));
 
@@ -324,8 +284,8 @@ public class RobotContainer {
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
-    
   }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -352,59 +312,60 @@ public class RobotContainer {
     driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Running elevator drive controller
-    driveController
-        .povUp()
-        .whileTrue(
-            elevator
-                .runPercent(0.1)
-                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
-    driveController
-        .povDown()
-        .whileTrue(
-            elevator
-                .runPercent(-0.1)
-                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
+    // driveController
+    //     .povUp()
+    //     .whileTrue(
+    //         elevator
+    //             .runPercent(0.1)
+    //             .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
+    // driveController
+    //     .povDown()
+    //     .whileTrue(
+    //         elevator
+    //             .runPercent(-0.1)
+    //             .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
 
-    // Running wrist drive controller
-    driveController.povLeft().whileTrue(wrist.runPercent(-0.4));
-    driveController.povRight().whileTrue(wrist.runPercent(0.4));
+    // // Running wrist drive controller
+    // driveController.povLeft().whileTrue(wrist.runPercent(-0.4));
+    // driveController.povRight().whileTrue(wrist.runPercent(0.4));
 
-    // Running climber drive controller
-    // driveController.R1().whileTrue(climb.runPercent(1));
-    // driveController.L1().whileTrue(climb.runPercent(-1));
+    // // Running climber drive controller
+    // // driveController.R1().whileTrue(climb.runPercent(1));
+    // // driveController.L1().whileTrue(climb.runPercent(-1));
 
-    // Running end effector operator controller
-    operatorController.cross().whileTrue(new RunningIntakeBackwards(intake));
-    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
+    // // Running end effector operator controller
+    // operatorController.cross().whileTrue(new RunningIntakeBackwards(intake));
+    // operatorController.R2().whileTrue(new RunningIntakeForward(intake));
 
-    // Scoring Reef operator controller
-    // L4
-    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
-    // L3
-    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
-    // L2
-    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+    // // Scoring Reef operator controller
+    // // L4
+    // operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
+    // // L3
+    // operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
+    // // L2
+    // operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
 
-    // Scoring and removing algae operator controller
-    // Removing L3
-    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-    // Removing L2
-    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-    // Scoring to the NET
-    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-    // Scoring Processor
-    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+    // // Scoring and removing algae operator controller
+    // // Removing L3
+    // operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+    // // Removing L2
+    // operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+    // // Scoring to the NET
+    // operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+    // // Scoring Processor
+    // operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
 
-    // Home position operator controller
-    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
+    // // Home position operator controller
+    // operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
 
-    // Running climber operator controller
-    // operatorController.L1().whileTrue(new RunningClimberBackwards(climb, null));
-    // operatorController.R1().whileTrue(new RunningClimberForward(climb, null));
+    // // Running climber operator controller
+    // // operatorController.L1().whileTrue(new RunningClimberBackwards(climb, null));
+    // // operatorController.R1().whileTrue(new RunningClimberForward(climb, null));
 
-    // Running ramp operator controller
-    // operatorController.options().whileTrue(new RunningRampDown(null, Color.black));
-    // operatorController.create().whileTrue(new RunningRampUp(null, null));
+    // // Running ramp operator controller
+    // // operatorController.options().whileTrue(new RunningRampDown(null, Color.black));
+    // // operatorController.create().whileTrue(new RunningRampUp(null, null));
+
   }
 
   /**
