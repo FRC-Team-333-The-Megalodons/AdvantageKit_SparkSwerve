@@ -107,6 +107,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     // Switch thread to high priority to improve loop timing
     Threads.setCurrentThreadPriority(true, 99);
+    robotContainer.toggleManualModeWhenButtonPressed();
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled commands, running already-scheduled commands, removing
@@ -114,7 +115,6 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    robotContainer.toggleManualModeWhenButtonPressed();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
