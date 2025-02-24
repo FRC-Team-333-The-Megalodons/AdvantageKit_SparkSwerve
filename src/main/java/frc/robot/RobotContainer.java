@@ -14,16 +14,30 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands.GoHome;
+import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
+import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
+import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
+import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
+import frc.robot.commands.AutoCommands.GoScoreCoralL2;
+import frc.robot.commands.AutoCommands.GoScoreCoralL3;
+import frc.robot.commands.AutoCommands.GoScoreCoralL4;
+import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
+import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.LEDStrip;
@@ -47,6 +61,12 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOSim;
+import frc.robot.subsystems.hopper.HopperIOSpark;
+import frc.robot.util.GlobalConstants;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -61,15 +81,67 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
+  private final Hopper hopper;
   private final Climb climb;
   private LEDStrip led;
-  //   private final Vision vision;
-
   // Controller
-  private final CommandPS5Controller controller = new CommandPS5Controller(0);
+  private final CommandPS5Controller driveController = new CommandPS5Controller(0);
+  private final CommandPS5Controller operatorController = new CommandPS5Controller(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final boolean startInManualMode = false;
+  private void configureInitialControllerBindings() {
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
+            configureDriverControllerBindings();
+            //////////
+            if (startInManualMode) {
+                configureOperatorControllerManualModeBindings();
+              } else {
+                configureOperatorControllerSmartModeBindings();
+              }
+
+  }
+  private void configureDriverControllerBindings() {
+    driveController
+        .L3()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> new Rotation2d()));
+
+  }
+  public void removeOperatorControllerBindings() {
+    CommandScheduler.getInstance().getActiveButtonLoop().clear(); 
+    configureDriverControllerBindings();
+  }
+  public void configureOperatorControllerManualModeBindings() {
+
+  }
+  public void configureOperatorControllerSmartModeBindings() {
+    
+  }
+  public void toggleManualModeWhenButtonPressed() {
+    if (operatorController.getHID().getRawButtonPressed(15)) {
+      boolean before = GlobalConstants.isManualMode();
+      boolean after = !before;
+      System.out.println("TOGGLE MANUAL MODE from "+before+" to "+after+".");
+      removeOperatorControllerBindings();
+      SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, after);
+      if (after) {
+        configureOperatorControllerManualModeBindings();
+      } else {
+        configureOperatorControllerSmartModeBindings();
+      }
+    }
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -86,6 +158,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
         climb = new Climb(new ClimbIOSpark());
+        hopper = new Hopper(new HopperIOSpark());
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         led = new LEDStrip();
         break;
@@ -103,6 +176,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
+        hopper = new Hopper(new HopperIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
 
         break;
@@ -121,6 +195,7 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
         led = new LEDStrip();
+        hopper = new Hopper(new HopperIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -145,8 +220,25 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     // NamedCommands.registerCommand("Intake", getAutonomousCommand());
 
-    // Configure the button bindings
+    NamedCommands.registerCommand(
+        "GoL3",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+
+    NamedCommands.registerCommand(
+        "GoHome",
+        wrist
+            .setWristPosition(WristConstants.WRIST_HOME_POSITION)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION))
+            .onlyWhile(() -> !elevator.isAtLowerLimit()));
+
+    NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
+
+    configureInitialControllerBindings();
     configureButtonBindings();
+    smartDashBoardButtons();
   }
 
   /**
@@ -155,126 +247,55 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  private void smartDashBoardButtons(){
+    SmartDashboard.putData("RunIntake In", intake.runPercent(5));
+    SmartDashboard.putData("RunIntake Out", intake.runPercent(-5));
+
+    SmartDashboard.putData("Wrist Up", wrist.runPercent(5));
+    SmartDashboard.putData("Wrist Down", wrist.runPercent(-5));
+
+    SmartDashboard.putData("Elevator Up", elevator.runPercent(5));
+    SmartDashboard.putData("Elevator Down", elevator.runPercent(-5));
+    SmartDashboard.putData("RunIntake", intake.runPercent(5));
+    SmartDashboard.putData("RunIntake", intake.runPercent(5));
+    SmartDashboard.putData("RunIntake", intake.runPercent(5));
+    
+  }
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
 
     elevator.setDefaultCommand(
-        elevator.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
+        elevator.runTeleop(() -> driveController.getR2Axis(), () -> driveController.getL2Axis()));
 
     // Lock to 0° when A button is held
-    controller
-        .R3()
+    driveController
+        .L3()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.options().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // Switch to X pattern when X button is pressed(locking wheels)
+    driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        // Reset gyro to 0° when B button is pressed
+    driveController
+      .options()
+      .onTrue(
+          Commands.runOnce(
+              () ->
+                drive.setPose(
+                  new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+          .ignoringDisable(true));
 
-    controller
-        .povUp()
-        .whileTrue(
-            elevator
-                .runPercent(0.4)
-                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
-    controller
-        .povDown()
-        .whileTrue(
-            elevator
-                .runPercent(-0.4)
-                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
-
-    // Running intake
-    controller.triangle().whileTrue(intake.runPercent(0.9));
-
-    // Running wrist
-    controller
-        .R1()
-        .whileTrue(wrist.setWristPositionFeedForward(WristConstants.WRIST_SCORE_CORAL_L2_POS));
-
-    controller.L1().whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS));
-
-    controller.L2().whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION));
-
-    // Running elevator
-    controller
-        .cross()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
-
-    controller
-        .circle()
-        .whileTrue(
-            elevator
-                .setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION)
-                .until(() -> elevator.isAtLowerLimit() || elevator.isAtUpperLimit()));
-
-    // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .options()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
-
-                
-    controller.options().whileTrue(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)));
-
-    // csequantial commands
-
-    // climber
-    // controller.R1().whileTrue(climb.runPercent(1));
-    // controller.L1().whileTrue(climb.runPercent(-1));
-
-    // //reef scoring coral
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L3_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L2_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_L2_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller.triangle().whileTrue(
-    //     wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS).andThen(
-    //     elevator.setElevatorPosition(ElevatorConstants.ELEVAOTR_SCORE_CORAL_L1_POS)).onlyWhile(
-    //         () -> !elevator.isAtLowerLimit() || !elevator.isAtUpperLimit()));
-
-    // controller
-    //     .povLeft()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)); // L4 angle
-    // controller
-    //     .povRight()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)); // L2,3
-    // angle
-    // controller
-    //     .cross()
-    //     .whileTrue(wrist.setWristPosition(WristConstants.WRIST_HOME_POSITION)); // home position
-    // controller
-    //     .create()
-    //     .whileTrue(
-    //         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS)); // algae angle
   }
 
   /**

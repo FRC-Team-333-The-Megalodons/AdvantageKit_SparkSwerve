@@ -22,4 +22,10 @@ public interface HopperIO {
   public default void setVoltage(double volts) {}
 
   public default void setSpeed(double speed) {}
+
+  public default double getPosition() {
+    return 0.0;
+  }
+
+  public default void runHopperPIDController(double setPoint) {}
 }

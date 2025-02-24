@@ -21,8 +21,7 @@ public class Hopper extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Hopper", inputs);
-    // Logger.recordOutput("HopperEncoder", hopperEncoder.get());
-    // SmartDashboard.putNumber("HopperEncoder", getPosition());
+    Logger.recordOutput("HopperPosition", inputs.positionRad);
   }
 
   public Command runPercent(double percent) {
@@ -35,15 +34,7 @@ public class Hopper extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  // public Command runHopper(double setPoint) {
-  //   return run(() -> io.runHopperPIDController(getPosition(), setPoint));
-  // }
-
-  // public double getPosition() {
-  //   return hopperEncoder.get();
-  // }
-
-  // public boolean rotationForHopper() {
-  //   return (getPosition() >= 0);
-  // }
+  public Command setHopperPosition(double setpoint) {
+    return runEnd(() -> io.runHopperPIDController(setpoint), () -> io.setVoltage(0));
+  }
 }

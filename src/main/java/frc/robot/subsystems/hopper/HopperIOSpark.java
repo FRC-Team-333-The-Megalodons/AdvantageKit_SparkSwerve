@@ -5,7 +5,6 @@
 package frc.robot.subsystems.hopper;
 
 import static frc.robot.subsystems.hopper.HopperConstants.*;
-import static frc.robot.subsystems.hopper.HopperConstants.hopperCanId;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -15,49 +14,61 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
+
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class HopperIOSpark implements HopperIO {
-  private final SparkFlex hopperFlex = new SparkFlex(hopperCanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = hopperFlex.getEncoder();
-  // private PIDController pid = new PIDController(1.4, 0, 0);
+  private final SparkFlex motor = new SparkFlex(hopperCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = motor.getEncoder();
+  private PIDController pid = new PIDController(1.4, 0, 0);
 
   public HopperIOSpark() {
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
 
     tryUntilOk(
-        hopperFlex,
+        motor,
         5,
         () ->
-            hopperFlex.configure(
+            motor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(HopperIOInputs inputs) {
-    ifOk(hopperFlex, encoder::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(hopperFlex, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(motor, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(motor, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        hopperFlex,
-        new DoubleSupplier[] {hopperFlex::getAppliedOutput, hopperFlex::getBusVoltage},
+        motor,
+        new DoubleSupplier[] {motor::getAppliedOutput, motor::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(hopperFlex, hopperFlex::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(motor, motor::getOutputCurrent, (value) -> inputs.currentAmps = value);
   }
 
   @Override
   public void setVoltage(double volts) {
-    hopperFlex.setVoltage(volts);
+    motor.setVoltage(volts);
   }
 
   @Override
   public void setSpeed(double speed) {
-    hopperFlex.set(speed);
+    motor.set(speed);
   }
 
-  // @Override
-  // public void runHopperPIDController(double sensor, double setPoint) {
-  //   hopperFlex.set(pid.calculate(sensor, setPoint));
-  // }
+  @Override
+  public void runHopperPIDController(double setPoint) {
+    motor.set(pid.calculate(encoder.getPosition(), setPoint));
+  }
+
+  
+
+
+  @Override
+  public double getPosition() {
+    return encoder.getPosition();
+  }
 }
