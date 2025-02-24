@@ -8,8 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class GlobalConstants {
-    public static  final String MANUAL_MODE_KEY = "MANUAL_MODE";
-    public static boolean isManualMode() {
-      return SmartDashboard.getBoolean(MANUAL_MODE_KEY, true);
-    }
+  public static final String MANUAL_MODE_KEY = "MANUAL_MODE";
+
+  public static boolean isManualMode() {
+    return SmartDashboard.getBoolean(MANUAL_MODE_KEY, true);
+  }
 }

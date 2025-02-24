@@ -54,7 +54,6 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import frc.robot.util.GlobalConstants;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -79,6 +78,7 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final boolean startInManualMode = false;
+
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -86,15 +86,15 @@ public class RobotContainer {
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX()));
-            configureDriverControllerBindings();
-            //////////
-            if (startInManualMode) {
-                configureOperatorControllerManualModeBindings();
-              } else {
-                configureOperatorControllerSmartModeBindings();
-              }
-
+    configureDriverControllerBindings();
+    //////////
+    if (startInManualMode) {
+      configureOperatorControllerManualModeBindings();
+    } else {
+      configureOperatorControllerSmartModeBindings();
+    }
   }
+
   private void configureDriverControllerBindings() {
     driveController
         .L3()
@@ -104,19 +104,22 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
-
   }
+
   public void removeOperatorControllerBindings() {
-    CommandScheduler.getInstance().getActiveButtonLoop().clear(); 
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
     configureDriverControllerBindings();
   }
+
   public void configureOperatorControllerManualModeBindings() {}
+
   public void configureOperatorControllerSmartModeBindings() {}
+
   public void toggleManualModeWhenButtonPressed() {
     if (operatorController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
       boolean after = !before;
-      System.out.println("TOGGLE MANUAL MODE from "+before+" to "+after+".");
+      System.out.println("TOGGLE MANUAL MODE from " + before + " to " + after + ".");
       removeOperatorControllerBindings();
       SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, after);
       if (after) {
@@ -216,7 +219,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    //configureInitialControllerBindings();
+    // configureInitialControllerBindings();
     configureButtonBindings();
     smartDashBoardButtons();
   }
@@ -227,7 +230,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void smartDashBoardButtons(){
+  private void smartDashBoardButtons() {
     SmartDashboard.putData("RunIntake In", intake.runPercent(5));
     SmartDashboard.putData("RunIntake Out", intake.runPercent(-5));
 
@@ -239,8 +242,8 @@ public class RobotContainer {
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
-    
   }
+
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
