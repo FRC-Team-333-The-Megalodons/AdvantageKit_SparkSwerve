@@ -14,15 +14,18 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
-public class GoScoreAlgaeProcessor extends SequentialCommandGroup {
-  public GoScoreAlgaeProcessor(
-      Intake intake, Wrist wrist, Elevator elevator /* , LEDStrip ledStrip*/) {
+public class GoIntakeFromCoralStation extends SequentialCommandGroup {
+  public GoIntakeFromCoralStation(
+      Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
-        wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_PROCESSOR_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_POS),
-        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen))
-        );
+        wrist.setWristPosition(WristConstants.WRIST_CORAL_PICKUP_POS),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_CORAL_PICKUP_POS),
+        intake
+            .runPercent(0.5)
+            .until(intake::isTriggered)
+            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
+            );
   }
 }

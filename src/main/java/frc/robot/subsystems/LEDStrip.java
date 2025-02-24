@@ -1,298 +1,228 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.LarsonAnimation;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.HashMap;
 
 public class LEDStrip extends SubsystemBase {
-  private AddressableLED m_led;
+  private static final CANdle candle = new CANdle(42);
 
-  private AddressableLEDBuffer offBuffer,
-      redBuffer,
-      orangeBuffer,
-      yellowBuffer,
-      greenBuffer,
-      blueBuffer,
-      violetBuffer,
-      whiteBuffer;
+  public LEDSegment BatteryIndicator;
+  public LEDSegment PressureIndicator;
+  public LEDSegment MastEncoderIndicator;
+  public LEDSegment BoomEncoderIndicator;
+  public LEDSegment WristEncoderIndicator;
+  public LEDSegment DriverStationIndicator;
+  public LEDSegment MainStrip;
 
-  private final int LED_COUNT_BOTTOM = 23;
-  private final int LED_COUNT_TOP = 10;
-  private LEDColor lastColorBottom, lastColorTop;
+  public static final LEDSegment FirstBulb = new LEDSegment(0, 1, 0);
+  public static final LEDSegment SecondBulb = new LEDSegment(1, 1, 0);
 
-  public enum LEDColor {
-    OFF,
-    RED,
-    ORANGE,
-    YELLOW,
-    GREEN,
-    BLUE,
-    VIOLET,
-    WHITE;
-  }
-
-  public class RGB {
-    public int r, g, b;
-
-    public RGB(int _r, int _g, int _b) {
-      r = _r;
-      g = _g;
-      b = _b;
-    }
-  }
-
-  /** Creates a new LEDS. */
   public LEDStrip() {
-    initializeBuffers();
+    CANdleConfiguration candleConfiguration = new CANdleConfiguration();
+    candleConfiguration.statusLedOffWhenActive = true;
+    candleConfiguration.disableWhenLOS = false;
+    candleConfiguration.stripType = LEDStripType.RGB;
+    candleConfiguration.brightnessScalar = 0.5;
+    candleConfiguration.vBatOutputMode = VBatOutputMode.Modulated;
+    candle.configAllSettings(candleConfiguration, 100);
 
-    m_led = new AddressableLED(6); // LEDs
-
-    m_led.setLength(LED_COUNT_BOTTOM + LED_COUNT_TOP);
-    setBottomColor(LEDColor.OFF);
-    m_led.start();
+    BatteryIndicator = new LEDSegment(0, 2, 0);
+    PressureIndicator = new LEDSegment(2, 2, 1);
+    MastEncoderIndicator = new LEDSegment(4, 1, -1);
+    BoomEncoderIndicator = new LEDSegment(5, 1, -1);
+    WristEncoderIndicator = new LEDSegment(6, 1, -1);
+    DriverStationIndicator = new LEDSegment(7, 1, -1);
+    MainStrip = new LEDSegment(8, 300, 2);
   }
 
-  private AddressableLEDBuffer getBufferByColorEnum(LEDColor color) {
-    switch (color) {
-      case OFF:
-        return offBuffer;
-      case RED:
-        return redBuffer;
-      case ORANGE:
-        return orangeBuffer;
-      case YELLOW:
-        return yellowBuffer;
-      case GREEN:
-        return greenBuffer;
-      case BLUE:
-        return blueBuffer;
-      case VIOLET:
-        return violetBuffer;
-      case WHITE:
-        return whiteBuffer;
-      default:
-        return offBuffer;
+  public static LEDSegment getSegment(int startBulb, int length) {
+    return new LEDSegment(startBulb, length, -1);
+  }
+
+  public static LEDSegment getBulb(int bulb) {
+    return getSegment(bulb, 1);
+  }
+
+  public void setBrightness(double percent) {
+    candle.configBrightnessScalar(percent, 100);
+  }
+
+  public Command makeClearSegmentCommand(LEDSegment segment) {
+    return runOnce(
+        () -> {
+          segment.clearAnimation();
+          segment.disableLEDs();
+        });
+  }
+
+  public Command makeWholeColorCommand(Color color) {
+    return runOnce(
+        () -> {
+          setLEDs(color);
+        });
+  }
+
+  public static int colorDoubleToInt(double value) {
+    return (int) (value * 255.0);
+  }
+
+  public static void setLEDs(Color color) {
+    candle.setLEDs(
+        colorDoubleToInt(color.red), colorDoubleToInt(color.green), colorDoubleToInt(color.blue));
+  }
+
+  public static void setLEDs(Color color, LEDSegment segment) {
+    candle.setLEDs(
+        colorDoubleToInt(color.red),
+        colorDoubleToInt(color.green),
+        colorDoubleToInt(color.blue),
+        0,
+        segment.startIndex,
+        segment.segmentSize);
+  }
+
+  public Command makeSegmentColorCommand(Color color, LEDSegment segment) {
+    return runOnce(
+        () -> {
+          setLEDs(color, segment);
+        });
+  }
+
+  public static class LEDSegment {
+
+    public final int startIndex;
+    public final int segmentSize;
+    public final int animationSlot;
+
+    private LEDSegment(int startIndex, int segmentSize, int animationSlot) {
+      this.startIndex = startIndex;
+      this.segmentSize = segmentSize;
+      this.animationSlot = animationSlot;
+    }
+
+    public void setColor(Color color) {
+      clearAnimation();
+      setLEDs(color, this);
+    }
+
+    private void setAnimation(Animation animation) {
+      candle.animate(animation, animationSlot);
+    }
+
+    public void fullClear() {
+      clearAnimation();
+      disableLEDs();
+    }
+
+    public void clearAnimation() {
+      candle.clearAnimation(animationSlot);
+    }
+
+    public void disableLEDs() {
+      setColor(Color.kBlack);
+    }
+
+    public void setFlowAnimation(Color color, double speed) {
+      setAnimation(
+          new ColorFlowAnimation(
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              Direction.Forward,
+              startIndex));
+    }
+
+    public void setFadeAnimation(Color color, double speed) {
+      setAnimation(
+          new SingleFadeAnimation(
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              startIndex));
+    }
+
+    public void setBandAnimation(Color color, double speed) {
+      setAnimation(
+          new LarsonAnimation(
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              BounceMode.Front,
+              3,
+              startIndex));
+    }
+
+    public void setStrobeAnimation(Color color, double speed) {
+      setAnimation(
+          new StrobeAnimation(
+              colorDoubleToInt(color.red),
+              colorDoubleToInt(color.green),
+              colorDoubleToInt(color.blue),
+              0,
+              speed,
+              segmentSize,
+              startIndex));
+    }
+
+    public void setRainbowAnimation(double speed) {
+      setAnimation(new RainbowAnimation(1, speed, segmentSize, false, startIndex));
     }
   }
 
-  private AddressableLEDBuffer makeBuffer(int count, LEDColor color) {
-    RGB rgb = colorToRGB(color);
-    return makeBuffer(count, rgb.r, rgb.g, rgb.b);
-  }
+  // public static class Color {
+  //   public int red;
+  //   public int green;
+  //   public int blue;
 
-  private RGB colorToRGB(LEDColor color) {
-    switch (color) {
-      case RED:
-        return new RGB(250, 0, 0);
-      case ORANGE:
-        return new RGB(255, 43, 0);
-      case YELLOW:
-        return new RGB(230, 223, 0);
-      case GREEN:
-        return new RGB(0, 250, 0);
-      case BLUE:
-        return new RGB(0, 59, 174);
-      case VIOLET:
-        return new RGB(255, 0, 255);
-      case WHITE:
-        return new RGB(221, 222, 223);
-      case OFF:
-      default:
-        return new RGB(0, 0, 0);
-    }
-  }
-
-  private AddressableLEDBuffer makeBuffer(int count, int r, int g, int b) {
-    AddressableLEDBuffer buffer = new AddressableLEDBuffer(count);
-    for (int i = 0; i < buffer.getLength(); ++i) {
-      buffer.setRGB(i, r, g, b);
-    }
-    return buffer;
-  }
-
-  private void initializeBuffers() {
-    offBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.OFF);
-    redBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.RED);
-    orangeBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.ORANGE);
-    yellowBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.YELLOW);
-    greenBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.GREEN);
-    blueBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.BLUE);
-    violetBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.VIOLET);
-    whiteBuffer = makeBuffer(LED_COUNT_BOTTOM, LEDColor.WHITE);
-  }
-
-  // public void setBlinkColor(LEDColor color) {
-  //   final long interval = 250;
-  //   long millis = System.currentTimeMillis() % 1000;
-
-  //   // If we're between [250,500) ms, or [750,1000)ms, then make the color "off":
-  //   if ((millis >= 1*interval && millis < 2*interval) || (millis >= 3*interval && millis <
-  // 4*interval)) {
-  //     setColor(LEDColor.OFF);
+  //   public Color(int red, int green, int blue) {
+  //     this.red = red;
+  //     this.green = green;
+  //     this.blue = blue;
   //   }
-  //   else {
-  //     setColor(color);
-  //   }
+
+  //   //     /**
+  //   //      * Highly imperfect way of dimming the LEDs. It does not maintain color or
+  //   //      * accurately adjust perceived brightness.
+  //   //      *
+  //   //      * @param dimFactor
+  //   //      * @return The dimmed color
+  //   //      */
+  //   //     // public Color dim(double dimFactor) {
+  //   //     //     int newRed = (int) (MathUtils.ensureRange(red * dimFactor, 0, 200));
+  //   //     //     int newGreen = (int) (MathUtils.ensureRange(green * dimFactor, 0, 200));
+  //   //     //     int newBlue = (int) (MathUtils.ensureRange(blue * dimFactor, 0, 200));
+
+  //   //     //     return new Color(newRed, newGreen, newBlue);
   // }
 
-  public String colorToString(LEDColor color) {
-    if (color == null) {
-      return "NULL";
-    }
-    return color.toString();
+  public Object setColorRGB(int r, int g, int b) {
+    throw new UnsupportedOperationException("Unimplemented method 'setColorRGB'");
   }
 
-  public void setBottomColor(LEDColor color) {
-    // We cache the last color we set, so that we don't have
-    //  to overwrite it except for when we actually are changing the colors.
-
-    if (color == lastColorBottom) {
-      return;
-    }
-
-    System.out.println(
-        "Changing LED bottom color from "
-            + colorToString(lastColorBottom)
-            + " to "
-            + colorToString(color));
-
-    // If we've made it this far, it means we're actually changing the colors!
-    lastColorBottom = color;
-    // AddressableLEDBuffer buff = getBufferByColorEnum(color);
-    AddressableLEDBuffer buff = getTwoColorBuffer(lastColorBottom, lastColorTop);
-    m_led.setData(buff);
+  public void setFlowAnimation(int i, int j, int k, int l, int m, int n) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setFlowAnimation'");
   }
-
-  public void setTopColor(LEDColor color) {
-    // We cache the last color we set, so that we don't have
-    //  to overwrite it except for when we actually are changing the colors.
-
-    if (color == lastColorTop) {
-      return;
-    }
-
-    System.out.println(
-        "Changing LED top color from "
-            + colorToString(lastColorTop)
-            + " to "
-            + colorToString(color));
-
-    // If we've made it this far, it means we're actually changing the colors!
-    lastColorTop = color;
-    // AddressableLEDBuffer buff = getBufferByColorEnum(color);
-    AddressableLEDBuffer buff = getTwoColorBuffer(lastColorBottom, lastColorTop);
-    m_led.setData(buff);
-  }
-
-  public Pair<LEDColor, LEDColor> makeKey(LEDColor first, LEDColor second) {
-    return new Pair<LEDColor, LEDColor>(first, second);
-  }
-
-  public HashMap<Pair<LEDColor, LEDColor>, AddressableLEDBuffer> bufferCache = new HashMap<>();
-
-  public AddressableLEDBuffer getTwoColorBuffer(LEDColor bottomColor, LEDColor topColor) {
-    Pair<LEDColor, LEDColor> key = makeKey(bottomColor, topColor);
-    if (bufferCache.containsKey(key)) {
-      System.out.println(
-          "Cache hit for Buffer Factory for "
-              + colorToString(bottomColor)
-              + ":"
-              + colorToString(topColor));
-
-      return bufferCache.get(key);
-    }
-
-    System.out.println(
-        "Cache MISS, making Buffer for "
-            + colorToString(bottomColor)
-            + ":"
-            + colorToString(topColor));
-
-    // If we didn't have it cached, we have to create it and cache it.
-    AddressableLEDBuffer buff = new AddressableLEDBuffer(LED_COUNT_BOTTOM + LED_COUNT_TOP);
-    RGB bottomRGB = colorToRGB(bottomColor);
-    RGB topRGB = colorToRGB(topColor);
-    for (int i = 0; i < buff.getLength(); ++i) {
-      if (i < LED_COUNT_BOTTOM) {
-        buff.setRGB(i, bottomRGB.r, bottomRGB.g, bottomRGB.b);
-      } else {
-        buff.setRGB(i, topRGB.r, topRGB.g, topRGB.b);
-      }
-    }
-
-    bufferCache.put(key, buff);
-    return buff;
-  }
-
-  public void off() {
-    setBottomColor(LEDColor.OFF);
-  }
-
-  public void red() {
-    setBottomColor(LEDColor.RED);
-  }
-
-  // public void blinkRed() {
-  //   setBlinkColor(LEDColor.RED);
-  // }
-
-  public void orange() {
-    setBottomColor(LEDColor.ORANGE);
-  }
-
-  // public void blinkOrange() {
-  //   setBlinkColor(LEDColor.ORANGE);
-  // }
-
-  public void yellow() {
-    setBottomColor(LEDColor.YELLOW);
-  }
-
-  // public void blinkYellow() {
-  //   setBlinkColor(LEDColor.YELLOW);
-  // }
-
-  public void green() {
-    setBottomColor(LEDColor.GREEN);
-  }
-
-  // public void blinkGreen() {
-  //   setBlinkColor(LEDColor.GREEN);
-  // }
-
-  public void blue() {
-    setBottomColor(LEDColor.BLUE);
-  }
-
-  // public void blinkBlue() {
-  //   setBlinkColor(LEDColor.BLUE);
-  // }
-
-  public void violet() {
-    setBottomColor(LEDColor.VIOLET);
-  }
-
-  // public void blinkViolet() {
-  //   setBlinkColor(LEDColor.VIOLET);
-  // }
-
-  public void white() {
-    setBottomColor(LEDColor.WHITE);
-  }
-
-  public Command setColor(LEDColor green) {
-    throw new UnsupportedOperationException("Unimplemented method 'setColor'");
-  }
-
-  // public void blinkWhite()
-  // {
-  //   setBlinkColor(LEDColor.WHITE);
-  // }
 }
