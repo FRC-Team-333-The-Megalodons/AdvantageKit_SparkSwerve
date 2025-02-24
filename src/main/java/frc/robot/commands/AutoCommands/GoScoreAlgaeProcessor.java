@@ -7,10 +7,7 @@ package frc.robot.commands.AutoCommands;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-<<<<<<< HEAD
 import frc.robot.subsystems.LEDStrip;
-=======
->>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
@@ -22,21 +19,10 @@ public class GoScoreAlgaeProcessor extends SequentialCommandGroup {
       Intake intake, Wrist wrist, Elevator elevator /* , LEDStrip ledStrip*/) {
 
     addCommands(
-<<<<<<< HEAD
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_PROCESSOR_POS),
         elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_POS),
         new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen))
-=======
-        //  ledStrip.setColor(LEDColor.BLUE),
-        wrist
-            .setWristPosition(WristConstants.WRIST_ALGAE_SCORE_PROCESSOR_POS)
-            .until(wrist::atSetpoint),
-        elevator
-            .setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_PROCESSOR_POS)
-            .until(elevator::atSetpoint)
-        //  ledStrip.setColor(LEDColor.ORANGE)
->>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
         );
   }
 }
