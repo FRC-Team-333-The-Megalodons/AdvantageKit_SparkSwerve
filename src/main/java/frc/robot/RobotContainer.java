@@ -32,6 +32,7 @@ import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
 import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
+import frc.robot.commands.AutoCommands.GoScoreCoralL1;
 import frc.robot.commands.AutoCommands.GoScoreCoralL2;
 import frc.robot.commands.AutoCommands.GoScoreCoralL3;
 import frc.robot.commands.AutoCommands.GoScoreCoralL4;
@@ -115,14 +116,60 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
+    driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+     // Reset gyro to 0° when B button is pressed
+     driveController
+     .options()
+     .onTrue(
+         Commands.runOnce(
+             () ->
+               drive.setPose(
+                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                   drive)
+         .ignoringDisable(true));
   }
 
   public void removeOperatorControllerBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     configureDriverControllerBindings();
   }
-  public void configureOperatorControllerManualModeBindings() {}
-  public void configureOperatorControllerSmartModeBindings() {}
+  public void configureOperatorControllerManualModeBindings() {
+  // elevetor
+    operatorController.povUp().whileTrue(elevator.runPercent(0.5));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.5));
+  // wrist 
+    operatorController.L1().whileTrue(intake.runPercent(0.5));
+    operatorController.R1().whileTrue(intake.runPercent(-0.5));
+  // hopper
+    operatorController.R1().whileTrue(hopper.runPercent(0.5));
+    operatorController.L1().whileTrue(hopper.runPercent(-0.5));
+  // intake 
+    operatorController.triangle().whileTrue(hopper.runPercent(0.5));
+    operatorController.cross().whileTrue(hopper.runPercent(-0.5));
+  // climb
+    operatorController.options().whileTrue(climb.runPercent(0.5));
+    operatorController.create().whileTrue(climb.runPercent(-0.5));
+  }
+
+  public void configureOperatorControllerSmartModeBindings() {
+  // Running end effector operator controller
+     operatorController.R2().whileTrue(new RunningIntakeForward(intake));
+     operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
+  // scoring on the reef operator controller
+     operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
+     operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
+     operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+     operatorController.cross().whileTrue(new GoScoreCoralL1(wrist, elevator, intake, led));
+  // algae scoring operator controller
+     operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+     operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+     operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+     operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+  // climb operator controller
+     operatorController.L1().whileTrue(climb.runPercent(0.5));
+     operatorController.R1().whileTrue(climb.runPercent(-0.5));
+  }
+
   public void toggleManualModeWhenButtonPressed() {
     if (operatorController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
@@ -214,6 +261,13 @@ public class RobotContainer {
     // NamedCommands.registerCommand("Intake", getAutonomousCommand());
 
     NamedCommands.registerCommand(
+      "GoL4",
+      wrist
+          .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)
+          .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS))
+          .onlyWhile(() -> !elevator.isAtUpperLimit())
+    );
+    NamedCommands.registerCommand(
         "GoL3",
         wrist
             .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)
@@ -221,17 +275,30 @@ public class RobotContainer {
             .onlyWhile(() -> !elevator.isAtUpperLimit()));
 
     NamedCommands.registerCommand(
+        "GoL2",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+    NamedCommands.registerCommand(
+        "GoL1",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L1_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+    
+    NamedCommands.registerCommand(
         "GoHome",
         wrist
             .setWristPosition(WristConstants.WRIST_HOME_POSITION)
             .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION))
             .onlyWhile(() -> !elevator.isAtLowerLimit()));
+    
 
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    //configureInitialControllerBindings();
-    configureButtonBindings();
+    configureInitialControllerBindings();
     smartDashBoardButtons();
   }
 
@@ -255,98 +322,6 @@ public class RobotContainer {
     SmartDashboard.putData("RunIntake", intake.runPercent(5));
   }
 
-  private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX()));
-
-    elevator.setDefaultCommand(
-        elevator.runTeleop(() -> driveController.getR2Axis(), () -> driveController.getL2Axis()));
-
-    // Lock to 0° when A button is held
-    driveController
-        .L3()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed(locking wheels)
-    driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
-        // Reset gyro to 0° when B button is pressed
-    driveController
-      .options()
-      .onTrue(
-          Commands.runOnce(
-              () ->
-                drive.setPose(
-                  new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-          .ignoringDisable(true));
-
-    // Running elevator drive controller
-    driveController
-        .povUp()
-        .whileTrue(
-            elevator
-                .runPercent(0.1)
-                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
-    driveController
-        .povDown()
-        .whileTrue(
-            elevator
-                .runPercent(-0.1)
-                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
-
-    // Running wrist drive controller
-    driveController.povLeft().whileTrue(wrist.runPercent(-0.4));
-    driveController.povRight().whileTrue(wrist.runPercent(0.4));
-
-    // Running climber drive controller
-    // driveController.R1().whileTrue(climb.runPercent(1));
-    // driveController.L1().whileTrue(climb.runPercent(-1));
-
-    // Running end effector operator controller
-    operatorController.cross().whileTrue(new RunningIntakeBackwards(intake));
-    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
-
-    // Scoring Reef operator controller
-    // L4
-    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
-    // L3
-    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
-    // L2
-    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
-
-    // Scoring and removing algae operator controller
-    // Removing L3
-    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-    // Removing L2
-    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-    // Scoring to the NET
-    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-    // Scoring Processor
-    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
-
-    // Home position operator controller
-    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
-
-    // Running climber operator controller
-    // operatorController.L1().whileTrue(new RunningClimberBackwards(climb, null));
-    // operatorController.R1().whileTrue(new RunningClimberForward(climb, null));
-
-    // Running ramp operator controller
-    // operatorController.options().whileTrue(new RunningRampDown(null, Color.black));
-    // operatorController.create().whileTrue(new RunningRampUp(null, null));
-
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -356,3 +331,9 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
+
+
+    // // Default command, normal field-relative drive
+    
+    // elevator.setDefaultCommand(
+    //     elevator.runTeleop(() -> driveController.getR2Axis(), () -> driveController.getL2Axis()));
