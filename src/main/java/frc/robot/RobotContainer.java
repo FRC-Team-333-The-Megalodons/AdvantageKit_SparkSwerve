@@ -15,12 +15,18 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+<<<<<<< HEAD
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.util.Color;
+=======
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -40,10 +46,13 @@ import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
 import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+<<<<<<< HEAD
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOSpark;
+=======
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -61,10 +70,13 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
+<<<<<<< HEAD
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIO;
 import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.hopper.HopperIOSpark;
+=======
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 import frc.robot.util.GlobalConstants;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -81,9 +93,15 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
+<<<<<<< HEAD
   private final Hopper hopper;
   private final Climb climb;
   private LEDStrip led;
+=======
+  // private final Climb climb;
+  //   private final Vision vision;
+
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
   // Controller
   private final CommandPS5Controller driveController = new CommandPS5Controller(0);
   private final CommandPS5Controller operatorController = new CommandPS5Controller(1);
@@ -122,12 +140,17 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear(); 
     configureDriverControllerBindings();
   }
+<<<<<<< HEAD
   public void configureOperatorControllerManualModeBindings() {
 
   }
   public void configureOperatorControllerSmartModeBindings() {
     
   }
+=======
+  public void configureOperatorControllerManualModeBindings() {}
+  public void configureOperatorControllerSmartModeBindings() {}
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
   public void toggleManualModeWhenButtonPressed() {
     if (operatorController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
@@ -157,8 +180,12 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSpark());
         intake = new Intake(new IntakeIOSpark());
         wrist = new Wrist(new WristIOSpark());
+<<<<<<< HEAD
         climb = new Climb(new ClimbIOSpark());
         hopper = new Hopper(new HopperIOSpark());
+=======
+        //    climb = new Climb(new ClimbIOSpark());
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
         // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
         led = new LEDStrip();
         break;
@@ -175,8 +202,12 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+<<<<<<< HEAD
         climb = new Climb(new ClimbIOSim());
         hopper = new Hopper(new HopperIOSim());
+=======
+        //  climb = new Climb(new ClimbIOSim());
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
 
         break;
@@ -193,9 +224,13 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
+<<<<<<< HEAD
         climb = new Climb(new ClimbIOSim());
         led = new LEDStrip();
         hopper = new Hopper(new HopperIOSim());
+=======
+        // climb = new Climb(new ClimbIOSim());
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
@@ -236,7 +271,12 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
+<<<<<<< HEAD
     configureInitialControllerBindings();
+=======
+    // Configure the button bindings
+    //configureInitialControllerBindings();
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
     configureButtonBindings();
     smartDashBoardButtons();
   }
@@ -285,6 +325,7 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed(locking wheels)
     driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
+<<<<<<< HEAD
         // Reset gyro to 0° when B button is pressed
     driveController
       .options()
@@ -296,6 +337,63 @@ public class RobotContainer {
                     drive)
           .ignoringDisable(true));
 
+=======
+
+    // Running elevator drive controller
+    driveController
+        .povUp()
+        .whileTrue(
+            elevator
+                .runPercent(0.1)
+                .until(elevator::isAtUpperLimit)); // .until(elevator::isTriggeredLowLimit));
+    driveController
+        .povDown()
+        .whileTrue(
+            elevator
+                .runPercent(-0.1)
+                .until(elevator::isAtLowerLimit)); // .until(elevator::isTriggeredTopLimit));
+
+    // Running wrist drive controller
+    driveController.povLeft().whileTrue(wrist.runPercent(-0.4));
+    driveController.povRight().whileTrue(wrist.runPercent(0.4));
+
+    // Running climber drive controller
+    // driveController.R1().whileTrue(climb.runPercent(1));
+    // driveController.L1().whileTrue(climb.runPercent(-1));
+
+    // Running end effector operator controller
+    operatorController.cross().whileTrue(new RunningIntakeBackwards(intake));
+    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
+
+    // Scoring Reef operator controller
+    // L4
+    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
+    // L3
+    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
+    // L2
+    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+
+    // Scoring and removing algae operator controller
+    // Removing L3
+    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+    // Removing L2
+    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+    // Scoring to the NET
+    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+    // Scoring Processor
+    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+
+    // Home position operator controller
+    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
+
+    // Running climber operator controller
+    // operatorController.L1().whileTrue(new RunningClimberBackwards(climb, null));
+    // operatorController.R1().whileTrue(new RunningClimberForward(climb, null));
+
+    // Running ramp operator controller
+    // operatorController.options().whileTrue(new RunningRampDown(null, Color.black));
+    // operatorController.create().whileTrue(new RunningRampUp(null, null));
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
   }
 
   /**

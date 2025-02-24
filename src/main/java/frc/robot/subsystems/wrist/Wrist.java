@@ -50,8 +50,11 @@ public class Wrist extends SubsystemBase {
   public boolean atSetpoint() {
     return io.atSetpoint();
   }
+<<<<<<< HEAD
 
   public double getPosition() {
     return wristEncoder.get();
   }
+=======
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 }

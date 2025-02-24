@@ -24,7 +24,12 @@ public class ElevatorConstants {
   public static final double ELEVATOR_CORAL_PICKUP_POS = 0.0;
   public static final double ELEVATOR_ALGAE_PICKUP_FLOOR_POS = 0.0;
 
+<<<<<<< HEAD
   public static final double ELEVATOR_ALGAE_SCORE_POS = 0;
+=======
+  public static final double ELEVATOR_ALGAE_SCORE_PROCESSOR_POS = 8;
+  public static final double ELEVATOR_ALGAE_SCORE_NET_POS = 210.0;
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 
   public static final double ELEVATOR_ALGAE_SCORE_PROCESSOR_POS = 8;
   public static final double ELEVATOR_ALGAE_SCORE_NET_POS = 210.0;

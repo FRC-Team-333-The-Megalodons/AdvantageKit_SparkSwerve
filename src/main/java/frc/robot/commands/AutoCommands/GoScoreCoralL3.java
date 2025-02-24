@@ -7,7 +7,10 @@ package frc.robot.commands.AutoCommands;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+<<<<<<< HEAD
 import frc.robot.subsystems.LEDStrip;
+=======
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.intake.Intake;
@@ -18,10 +21,13 @@ public class GoScoreCoralL3 extends SequentialCommandGroup {
   public GoScoreCoralL3(Intake intake, Wrist wrist, Elevator elevator /* , LEDStrip ledStrip*/) {
 
     addCommands(
+<<<<<<< HEAD
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS),
         elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS),
         new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)),
+=======
+>>>>>>> 2e6a5294c865f61289f7355695aa6832bd26136e
         //  ledStrip.setColor(LEDColor.BLUE),
         wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS).until(wrist::atSetpoint),
         elevator
