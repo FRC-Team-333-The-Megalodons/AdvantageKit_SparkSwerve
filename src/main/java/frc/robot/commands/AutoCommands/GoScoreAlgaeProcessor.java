@@ -15,8 +15,7 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
 public class GoScoreAlgaeProcessor extends SequentialCommandGroup {
-  public GoScoreAlgaeProcessor(
-      Intake intake, Wrist wrist, Elevator elevator /* , LEDStrip ledStrip*/) {
+  public GoScoreAlgaeProcessor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),

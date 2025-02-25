@@ -15,7 +15,7 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
 public class GoRemoveAlgaeL2 extends SequentialCommandGroup {
-  public GoRemoveAlgaeL2(Intake intake, Wrist wrist, Elevator elevator /* , LEDStrip ledStrip*/) {
+  public GoRemoveAlgaeL2(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
     addCommands(
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_L2_POS),

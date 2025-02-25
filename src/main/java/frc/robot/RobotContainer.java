@@ -149,22 +149,22 @@ public class RobotContainer {
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-    // Running end effector operator controller
-    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
-    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
-    // scoring on the reef operator controller
-    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
-    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
-    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
-    operatorController.cross().whileTrue(new GoScoreCoralL1(wrist, elevator, intake, led));
-    // algae scoring operator controller
-    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
-    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-    // climb operator controller
-    operatorController.L1().whileTrue(climb.runPercent(0.5));
-    operatorController.R1().whileTrue(climb.runPercent(-0.5));
+  // Running end effector operator controller
+     operatorController.R2().whileTrue(new RunningIntakeForward(intake));
+     operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
+  // scoring on the reef operator controller
+     operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
+     operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
+     operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+     operatorController.cross().whileTrue(new GoScoreCoralL1(wrist, elevator, intake, led));
+  // algae scoring operator controller
+     operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+     operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+     operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+     operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+  // climb operator controller
+     operatorController.L1().whileTrue(climb.runPercent(0.5));
+     operatorController.R1().whileTrue(climb.runPercent(-0.5));
   }
 
   public void toggleManualModeWhenButtonPressed() {
