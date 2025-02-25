@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -30,10 +29,10 @@ import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
 import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
-import frc.robot.commands.AutoCommands.GoScoreCoralL1;
 import frc.robot.commands.AutoCommands.GoScoreCoralL2;
 import frc.robot.commands.AutoCommands.GoScoreCoralL3;
 import frc.robot.commands.AutoCommands.GoScoreCoralL4;
+import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
 import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -112,7 +111,6 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
-
   }
 
   public void removeOperatorControllerBindings() {
@@ -125,15 +123,15 @@ public class RobotContainer {
     operatorController.L2().whileTrue(new RunningIntakeBackwards(intake));
     operatorController.R2().whileTrue(new RunningIntakeForward(intake));
     // coral
-    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator));
-    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator));
-    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
+    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
+    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator, led));
 
     // algae
-    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator, led));
+    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator, led));
+    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator, led));
+    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator, led));
     // home
     operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
   }
@@ -282,7 +280,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    //configureInitialControllerBindings();
+    // configureInitialControllerBindings();
     configureButtonBindings();
     smartDashBoardButtons();
   }
