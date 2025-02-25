@@ -24,7 +24,6 @@ public class GoIntakeAlgaeFloor extends SequentialCommandGroup {
         intake
             .runPercent(0.5)
             .until(intake::isTriggered)
-            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kOrange)))
-            );
+            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kOrange))));
   }
 }

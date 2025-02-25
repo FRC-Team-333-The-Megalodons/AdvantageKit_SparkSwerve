@@ -21,7 +21,6 @@ public class GoScoreCoralL3 extends SequentialCommandGroup {
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS),
         elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS),
-        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen))
-        );
+        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)));
   }
 }

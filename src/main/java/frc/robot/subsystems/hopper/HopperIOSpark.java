@@ -14,10 +14,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
-
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -63,9 +60,6 @@ public class HopperIOSpark implements HopperIO {
   public void runHopperPIDController(double setPoint) {
     motor.set(pid.calculate(encoder.getPosition(), setPoint));
   }
-
-  
-
 
   @Override
   public double getPosition() {

@@ -23,7 +23,6 @@ public class GoRemoveAlgaeL2 extends SequentialCommandGroup {
         intake
             .runPercent(0.5)
             .until(intake::isTriggered)
-            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)))
-            );
+            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen))));
   }
 }

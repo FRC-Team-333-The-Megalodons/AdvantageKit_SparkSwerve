@@ -19,12 +19,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoCommands.GoHome;
@@ -36,7 +34,6 @@ import frc.robot.commands.AutoCommands.GoScoreCoralL1;
 import frc.robot.commands.AutoCommands.GoScoreCoralL2;
 import frc.robot.commands.AutoCommands.GoScoreCoralL3;
 import frc.robot.commands.AutoCommands.GoScoreCoralL4;
-import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
 import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -54,6 +51,9 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIOSim;
+import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSpark;
@@ -61,10 +61,6 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.HopperIO;
-import frc.robot.subsystems.hopper.HopperIOSim;
-import frc.robot.subsystems.hopper.HopperIOSpark;
 import frc.robot.util.GlobalConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -117,57 +113,58 @@ public class RobotContainer {
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
     driveController.square().onTrue(Commands.runOnce(drive::stopWithX, drive));
-     // Reset gyro to 0° when B button is pressed
-     driveController
-     .options()
-     .onTrue(
-         Commands.runOnce(
-             () ->
-               drive.setPose(
-                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                   drive)
-         .ignoringDisable(true));
+    // Reset gyro to 0° when B button is pressed
+    driveController
+        .options()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
   }
 
   public void removeOperatorControllerBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     configureDriverControllerBindings();
   }
+
   public void configureOperatorControllerManualModeBindings() {
-  // elevetor
+    // elevetor
     operatorController.povUp().whileTrue(elevator.runPercent(0.5));
     operatorController.povDown().whileTrue(elevator.runPercent(-0.5));
-  // wrist 
+    // wrist
     operatorController.L1().whileTrue(intake.runPercent(0.5));
     operatorController.R1().whileTrue(intake.runPercent(-0.5));
-  // hopper
+    // hopper
     operatorController.R1().whileTrue(hopper.runPercent(0.5));
     operatorController.L1().whileTrue(hopper.runPercent(-0.5));
-  // intake 
+    // intake
     operatorController.triangle().whileTrue(hopper.runPercent(0.5));
     operatorController.cross().whileTrue(hopper.runPercent(-0.5));
-  // climb
+    // climb
     operatorController.options().whileTrue(climb.runPercent(0.5));
     operatorController.create().whileTrue(climb.runPercent(-0.5));
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-  // Running end effector operator controller
-     operatorController.R2().whileTrue(new RunningIntakeForward(intake));
-     operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
-  // scoring on the reef operator controller
-     operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
-     operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
-     operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
-     operatorController.cross().whileTrue(new GoScoreCoralL1(wrist, elevator, intake, led));
-  // algae scoring operator controller
-     operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
-     operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
-     operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
-     operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
-  // climb operator controller
-     operatorController.L1().whileTrue(climb.runPercent(0.5));
-     operatorController.R1().whileTrue(climb.runPercent(-0.5));
+    // Running end effector operator controller
+    operatorController.R2().whileTrue(new RunningIntakeForward(intake));
+    operatorController.L2().whileTrue(new GoHome(wrist, elevator, intake));
+    // scoring on the reef operator controller
+    operatorController.triangle().whileTrue(new GoScoreCoralL4(intake, wrist, elevator, led));
+    operatorController.circle().whileTrue(new GoScoreCoralL3(intake, wrist, elevator, led));
+    operatorController.square().whileTrue(new GoScoreCoralL2(intake, wrist, elevator));
+    operatorController.cross().whileTrue(new GoScoreCoralL1(wrist, elevator, intake, led));
+    // algae scoring operator controller
+    operatorController.povUp().whileTrue(new GoScoreAlgaeNet(intake, wrist, elevator));
+    operatorController.povDown().whileTrue(new GoScoreAlgaeProcessor(intake, wrist, elevator));
+    operatorController.povRight().whileTrue(new GoRemoveAlgaeL3(intake, wrist, elevator));
+    operatorController.povLeft().whileTrue(new GoRemoveAlgaeL2(intake, wrist, elevator));
+    // climb operator controller
+    operatorController.L1().whileTrue(climb.runPercent(0.5));
+    operatorController.R1().whileTrue(climb.runPercent(-0.5));
   }
 
   public void toggleManualModeWhenButtonPressed() {
@@ -261,12 +258,11 @@ public class RobotContainer {
     // NamedCommands.registerCommand("Intake", getAutonomousCommand());
 
     NamedCommands.registerCommand(
-      "GoL4",
-      wrist
-          .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)
-          .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS))
-          .onlyWhile(() -> !elevator.isAtUpperLimit())
-    );
+        "GoL4",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
     NamedCommands.registerCommand(
         "GoL3",
         wrist
@@ -286,14 +282,13 @@ public class RobotContainer {
             .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS)
             .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L1_POS))
             .onlyWhile(() -> !elevator.isAtUpperLimit()));
-    
+
     NamedCommands.registerCommand(
         "GoHome",
         wrist
             .setWristPosition(WristConstants.WRIST_HOME_POSITION)
             .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_HOME_POSITION))
             .onlyWhile(() -> !elevator.isAtLowerLimit()));
-    
 
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
@@ -332,8 +327,8 @@ public class RobotContainer {
   }
 }
 
-
     // // Default command, normal field-relative drive
-    
+
     // elevator.setDefaultCommand(
-    //     elevator.runTeleop(() -> driveController.getR2Axis(), () -> driveController.getL2Axis()));
+    //     elevator.runTeleop(() -> driveController.getR2Axis(), () ->
+    // driveController.getL2Axis()));

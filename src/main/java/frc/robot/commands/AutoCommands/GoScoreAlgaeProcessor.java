@@ -22,7 +22,6 @@ public class GoScoreAlgaeProcessor extends SequentialCommandGroup {
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
         wrist.setWristPosition(WristConstants.WRIST_ALGAE_SCORE_PROCESSOR_POS),
         elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_SCORE_POS),
-        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen))
-        );
+        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)));
   }
 }
