@@ -280,8 +280,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    // configureInitialControllerBindings();
-    configureButtonBindings();
+    configureInitialControllerBindings();
+    SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, false);
     smartDashBoardButtons();
   }
 
