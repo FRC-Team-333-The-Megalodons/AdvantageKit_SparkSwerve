@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,13 +30,14 @@ import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
 import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
 import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
+import frc.robot.commands.AutoCommands.GoScoreCoralL1;
 import frc.robot.commands.AutoCommands.GoScoreCoralL2;
 import frc.robot.commands.AutoCommands.GoScoreCoralL3;
 import frc.robot.commands.AutoCommands.GoScoreCoralL4;
-import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
 import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOSpark;
@@ -74,10 +76,9 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Intake intake;
   private final Wrist wrist;
-  private final Climb climb;
   private final Hopper hopper;
-  //   private final Vision vision;
-
+  private final Climb climb;
+  private LEDStrip led;
   // Controller
   private final CommandPS5Controller driveController = new CommandPS5Controller(0);
   private final CommandPS5Controller operatorController = new CommandPS5Controller(1);
@@ -111,6 +112,7 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> new Rotation2d()));
+
   }
 
   public void removeOperatorControllerBindings() {
@@ -173,7 +175,6 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -186,7 +187,7 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSpark());
         climb = new Climb(new ClimbIOSpark());
         hopper = new Hopper(new HopperIOSpark());
-        // vision = new Vision(new VisionIOPhotonVision(/* TODO: figure out the name of this */));
+        led = new LEDStrip();
         break;
 
       case SIM:
@@ -204,6 +205,7 @@ public class RobotContainer {
         climb = new Climb(new ClimbIOSim());
         hopper = new Hopper(new HopperIOSim());
         // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
+
         break;
 
       default:
@@ -219,8 +221,8 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
+        led = new LEDStrip();
         hopper = new Hopper(new HopperIOSim());
-        // vision = new Vision(new VisionIOPhotonVisionSim(/*TODO: figure out the name of this */));
         break;
     }
 
@@ -245,10 +247,29 @@ public class RobotContainer {
     // NamedCommands.registerCommand("Intake", getAutonomousCommand());
 
     NamedCommands.registerCommand(
+        "GoL4",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L4_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L4_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+    NamedCommands.registerCommand(
         "GoL3",
         wrist
             .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS)
             .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+
+    NamedCommands.registerCommand(
+        "GoL2",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L2_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L2_POS))
+            .onlyWhile(() -> !elevator.isAtUpperLimit()));
+    NamedCommands.registerCommand(
+        "GoL1",
+        wrist
+            .setWristPosition(WristConstants.WRIST_SCORE_CORAL_L1_POS)
+            .andThen(elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L1_POS))
             .onlyWhile(() -> !elevator.isAtUpperLimit()));
 
     NamedCommands.registerCommand(
@@ -261,7 +282,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", intake.runPercent(0.5));
 
     // Configure the button bindings
-    configureInitialControllerBindings();
+    //configureInitialControllerBindings();
     configureButtonBindings();
     smartDashBoardButtons();
   }
@@ -377,3 +398,9 @@ public class RobotContainer {
     return autoChooser.get();
   }
 }
+
+    // // Default command, normal field-relative drive
+
+    // elevator.setDefaultCommand(
+    //     elevator.runTeleop(() -> driveController.getR2Axis(), () ->
+    // driveController.getL2Axis()));

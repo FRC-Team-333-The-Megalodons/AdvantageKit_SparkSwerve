@@ -13,6 +13,19 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import edu.wpi.first.wpilibj.util.Color;
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.LarsonAnimation;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -218,6 +231,20 @@ public class LEDStrip extends SubsystemBase {
   //     this.blue = blue;
   //   }
 
+  //   //     /**
+  //   //      * Highly imperfect way of dimming the LEDs. It does not maintain color or
+  //   //      * accurately adjust perceived brightness.
+  //   //      *
+  //   //      * @param dimFactor
+  //   //      * @return The dimmed color
+  //   //      */
+  //   //     // public Color dim(double dimFactor) {
+  //   //     //     int newRed = (int) (MathUtils.ensureRange(red * dimFactor, 0, 200));
+  //   //     //     int newGreen = (int) (MathUtils.ensureRange(green * dimFactor, 0, 200));
+  //   //     //     int newBlue = (int) (MathUtils.ensureRange(blue * dimFactor, 0, 200));
+
+  //   //     //     return new Color(newRed, newGreen, newBlue);
+  // }
   //   //     /**
   //   //      * Highly imperfect way of dimming the LEDs. It does not maintain color or
   //   //      * accurately adjust perceived brightness.

@@ -14,13 +14,16 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
-public class GoScoreCoralL3 extends SequentialCommandGroup {
-  public GoScoreCoralL3(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
+public class GoIntakeAlgaeFloor extends SequentialCommandGroup {
+  public GoIntakeAlgaeFloor(Intake intake, Wrist wrist, Elevator elevator, LEDStrip ledStrip) {
 
     addCommands(
         new RunCommand(() -> LEDStrip.setLEDs(Color.kBlue)),
-        wrist.setWristPosition(WristConstants.WRIST_SCORE_CORAL_L3_POS),
-        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_SCORE_CORAL_L3_POS),
-        new RunCommand(() -> LEDStrip.setLEDs(Color.kGreen)));
+        wrist.setWristPosition(WristConstants.WRIST_ALGAE_PICKUP_FLOOR_POS),
+        elevator.setElevatorPosition(ElevatorConstants.ELEVATOR_ALGAE_PICKUP_FLOOR_POS),
+        intake
+            .runPercent(0.5)
+            .until(intake::isTriggered)
+            .alongWith(new RunCommand(() -> LEDStrip.setLEDs(Color.kOrange))));
   }
 }

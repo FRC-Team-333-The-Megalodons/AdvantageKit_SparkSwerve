@@ -21,8 +21,6 @@ public class Climb extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climb", inputs);
-    // Logger.recordOutput("ClimbEncoder", climbEncoder.get());
-    // SmartDashboard.putNumber("ClimbEncoder", getPosition());
   }
 
   public Command runPercent(double percent) {
@@ -34,16 +32,4 @@ public class Climb extends SubsystemBase {
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
         () -> io.setVoltage(0.0));
   }
-
-  // public Command runClimb(double setPoint) {
-  //   return run(() -> io.runWristPIDController(getPosition(), setPoint));
-  // }
-
-  // public double getPosition() {
-  //   return climbEncoder.get();
-  // }
-
-  // public boolean rotationForClimb() {
-  //   return (getPosition() >= 0);
-  // }
 }

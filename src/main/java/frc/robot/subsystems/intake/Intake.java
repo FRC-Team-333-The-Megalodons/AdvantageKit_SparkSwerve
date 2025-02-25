@@ -58,4 +58,9 @@ public class Intake extends SubsystemBase {
   public double getDistance() {
     return canRange.getDistance().getValueAsDouble();
   }
+
+  public Command setElevatorPosition(double elevatorScoreCoralL1Pos) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setElevatorPosition'");
+  }
 }

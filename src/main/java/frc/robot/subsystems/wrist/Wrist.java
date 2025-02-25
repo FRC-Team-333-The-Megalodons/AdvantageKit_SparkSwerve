@@ -36,10 +36,6 @@ public class Wrist extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public double getPosition() {
-    return wristEncoder.get();
-  }
-
   public boolean rotationForWrist() {
     return (getPosition() >= 0);
   }
@@ -54,5 +50,9 @@ public class Wrist extends SubsystemBase {
 
   public boolean atSetpoint() {
     return io.atSetpoint();
+  }
+
+  public double getPosition() {
+    return wristEncoder.get();
   }
 }
