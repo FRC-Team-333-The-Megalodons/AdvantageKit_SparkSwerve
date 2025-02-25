@@ -87,20 +87,22 @@ public class RobotContainer {
   private final LEDStrip ledStrip;
 
   // Controller
-  private final CommandPS5Controller controller = new CommandPS5Controller(0);
+  private final CommandPS5Controller driverController = new CommandPS5Controller(0);
+  public final CommandPS5Controller operaController = new CommandPS5Controller(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
+  private final boolean isInSoloDrivingMode = false;
 
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> controller.getLeftY(),
-            () -> controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> driverController.getLeftY(),
+            () -> driverController.getLeftX(),
+            () -> -driverController.getRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
@@ -110,16 +112,16 @@ public class RobotContainer {
   }
 
   private void configureDriverControllerBindings() {
-    controller
+    driverController
         .R3()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> drive.isRed() ? controller.getLeftY() : -controller.getLeftY(),
-                () -> drive.isRed() ? controller.getLeftX() : -controller.getLeftX(),
+                () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
+                () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
                 () -> Rotation2d.fromDegrees(drive.setAngle())));
-    controller.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller
+    driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController
         .PS()
         .onTrue(
             Commands.runOnce(
@@ -136,32 +138,52 @@ public class RobotContainer {
   }
 
   public void configureOperatorControllerManualModeBindings() {
-    controller
+    if (isInSoloDrivingMode) {
+        driverController
         .povUp()
         .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
-    controller
+    driverController
         .povDown()
         .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-    controller.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-    controller.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+        driverController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+        driverController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+        driverController.create().whileTrue(hopper.runPercent(HopperConstants.speed));
+        driverController.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
+
+        driverController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+        driverController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+
+        driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+        driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+    }else{
+    operaController
+        .povUp()
+        .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
+    operaController
+        .povDown()
+        .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
+    operaController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+    operaController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
 
     //   controller.triangle().whileTrue(null);
     //   controller.cross().whileTrue(null);
     //   controller.square().whileTrue(null);
     //   controller.circle().whileTrue(null);
 
-    controller.create().whileTrue(hopper.runPercent(HopperConstants.speed));
-    controller.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
+    operaController.create().whileTrue(hopper.runPercent(HopperConstants.speed));
+    operaController.options().whileTrue(hopper.runPercent(-HopperConstants.speed));
 
-    controller.L1().whileTrue(wrist.runPercent(WristConstants.speed));
-    controller.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+    operaController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+    operaController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
 
-    controller.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-    controller.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+    operaController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+    operaController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+    }
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-    controller
+    if (isInSoloDrivingMode) {
+        driverController
         .L2()
         .whileTrue(
             AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
@@ -171,55 +193,112 @@ public class RobotContainer {
                         .until(endEffecter::isTriggered))
                 .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
 
-    controller.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+                driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-    controller.L1().whileTrue(climber.runPercent(-ClimberConstants.speed));
-    controller.R1().whileTrue(climber.runPercent(ClimberConstants.speed));
+                driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+                driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
-    controller
+                driverController
         .triangle()
         .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
-    controller
+        driverController
         .circle()
         .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ledStrip));
-    controller
+        driverController
         .square()
         .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ledStrip));
 
-    controller.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+        driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
-    controller
+        driverController
         .povUp()
         .whileTrue(
             AutomatedCommands.netCommand(endEffecter, wrist, elevator, ledStrip)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-    controller
+                driverController
         .povDown()
         .whileTrue(
             AutomatedCommands.processorCommand(endEffecter, wrist, elevator, ledStrip)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-    controller
+                driverController
         .povLeft()
         .whileTrue(
             AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator, ledStrip)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-    controller
+                driverController
         .povRight()
         .whileTrue(
             AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator, ledStrip)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-    controller
+                driverController
         .touchpad()
         .whileTrue(
             AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator, ledStrip)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
 
-    controller.create().whileTrue(hopper.runPercent(-HopperConstants.speed));
-    controller.options().whileTrue(hopper.runPercent(HopperConstants.speed));
+                driverController.R1().whileTrue(hopper.runPercent(-HopperConstants.speed));
+                driverController.L1().whileTrue(hopper.runPercent(HopperConstants.speed));
+    }else{
+    operaController
+        .L2()
+        .whileTrue(
+            AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
+                .alongWith(
+                    EndEffecterCommands.runEndEffecterForward(endEffecter)
+                        .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
+                        .until(endEffecter::isTriggered))
+                .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
+
+    operaController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+    operaController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+    operaController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+
+    operaController
+        .triangle()
+        .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+    operaController
+        .circle()
+        .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ledStrip));
+    operaController
+        .square()
+        .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ledStrip));
+
+    operaController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+
+    operaController
+        .povUp()
+        .whileTrue(
+            AutomatedCommands.netCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operaController
+        .povDown()
+        .whileTrue(
+            AutomatedCommands.processorCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operaController
+        .povLeft()
+        .whileTrue(
+            AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operaController
+        .povRight()
+        .whileTrue(
+            AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operaController
+        .touchpad()
+        .whileTrue(
+            AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator, ledStrip)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+
+    operaController.R1().whileTrue(hopper.runPercent(-HopperConstants.speed));
+    operaController.L1().whileTrue(hopper.runPercent(HopperConstants.speed));
+    }
   }
 
   public void toggleManualModeWhenButtonPressed() {
-    if (controller.getHID().getRawButtonPressed(15)) {
+    if (operaController.getHID().getRawButtonPressed(15)) {
       boolean before = GlobalConstants.isManualMode();
       boolean after = !before;
       System.out.println("TOGGLE MANUAL MODE from " + before + " to " + after + ".");
@@ -337,6 +416,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureInitialControllerBindings();
+    SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, false);
     // configureButtonBindings();
     updateDashboard();
   }
