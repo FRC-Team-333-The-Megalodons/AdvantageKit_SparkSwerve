@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.ramp;
 
-import static frc.robot.subsystems.hopper.HopperConstants.*;
+import static frc.robot.subsystems.ramp.RampConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -17,11 +17,11 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
-public class HopperIOSpark implements HopperIO {
+public class RampIOSpark implements RampIO {
   private final SparkFlex hopper = new SparkFlex(hopperCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = hopper.getEncoder();
 
-  public HopperIOSpark() {
+  public RampIOSpark() {
     var config = new SparkFlexConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config
@@ -41,7 +41,7 @@ public class HopperIOSpark implements HopperIO {
   }
 
   @Override
-  public void updateInputs(HopperIOInputs inputs) {
+  public void updateInputs(RampIOInputs inputs) {
     ifOk(hopper, encoder::getPosition, (value) -> inputs.positionRad = value);
     ifOk(hopper, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(

@@ -2,20 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.ramp;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Hopper extends SubsystemBase {
+public class Ramp extends SubsystemBase {
 
-  private final HopperIO io;
-  private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
+  private final RampIO io;
+  private final RampIOInputsAutoLogged inputs = new RampIOInputsAutoLogged();
 
   /** Creates a new EndEffecterIO. */
-  public Hopper(HopperIO io) {
+  public Ramp(RampIO io) {
     this.io = io;
   }
 

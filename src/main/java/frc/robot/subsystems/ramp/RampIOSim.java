@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.hopper;
+package frc.robot.subsystems.ramp;
 
-import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
+import static frc.robot.subsystems.ramp.RampConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -12,7 +12,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 /** Add your docs here. */
-public class HopperIOSim implements HopperIO {
+public class RampIOSim implements RampIO {
   private DCMotorSim sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(1), 0.004, motorReduction),
@@ -22,7 +22,7 @@ public class HopperIOSim implements HopperIO {
   private double speed = Double.MIN_VALUE;
 
   @Override
-  public void updateInputs(HopperIOInputs inputs) {
+  public void updateInputs(RampIOInputs inputs) {
 
     if (speed != Double.MIN_VALUE) {
       sim.setInput(speed);
