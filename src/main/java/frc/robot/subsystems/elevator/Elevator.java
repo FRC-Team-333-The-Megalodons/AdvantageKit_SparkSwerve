@@ -42,8 +42,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean lowerLimit() {
-    io.resetEncoder();
     if (inputs.lowerLimit) {
+      io.resetEncoder();
       return true;
     } else {
       return false;

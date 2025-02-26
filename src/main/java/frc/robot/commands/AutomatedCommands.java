@@ -27,7 +27,7 @@ public class AutomatedCommands {
   public static Command homeCommand(Wrist wrist, Elevator elevator, LEDStrip led) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
-        .until(elevator::atSetpoint)
+        .until(elevator::lowerLimit)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint));
   }
 
