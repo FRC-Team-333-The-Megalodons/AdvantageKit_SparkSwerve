@@ -15,12 +15,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex topElevatorMotor =
-      new SparkFlex(toplEvatorMotorCanId, MotorType.kBrushless);
+      new SparkFlex(toplElevatorMotorCanId, MotorType.kBrushless);
   private final SparkFlex leftElevatorMotor =
       new SparkFlex(leftElevatorMotorCanId, MotorType.kBrushless);
   private final SparkFlex rightElevatorMotor =
@@ -28,6 +30,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
   private final PIDController elevatorUpPidController = new PIDController(0.012, 0.0, 0.0005);
   private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
+  private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
+  private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   public ElevatorIOSpark() {
     var config = new SparkFlexConfig();
@@ -53,7 +57,6 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             leftElevatorMotor.configure(
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    // pidController.setTolerance(4.0);
   }
 
   @Override
@@ -69,7 +72,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         topElevatorMotor::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
 
-    inputs.atSetpoint = atSetpoint();
+    inputs.atSetpoint = elevatorDownPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
+    inputs.lowerLimit = !lowerLimitSwitch.get();
+    inputs.upperLimit = !upperLimitSwitch.get();
+    inputs.atL4Setpoint = getElevatorPosition() > 190 ? true : false;
   }
 
   @Override
@@ -99,10 +105,5 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   public double getElevatorPosition() {
     return encoder.getPosition();
-  }
-
-  @Override
-  public boolean atSetpoint() {
-    return elevatorUpPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
   }
 }

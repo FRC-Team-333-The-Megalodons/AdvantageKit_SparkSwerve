@@ -6,7 +6,7 @@ package frc.robot.subsystems.elevator;
 
 /** Add your docs here. */
 public class ElevatorConstants {
-  public static final int toplEvatorMotorCanId = 7;
+  public static final int toplElevatorMotorCanId = 7;
   public static final int leftElevatorMotorCanId = 9;
   public static final int rightElevatorMotorCanId = 8;
   public static final int lowerLimitSwitchId = 9;
@@ -24,4 +24,9 @@ public class ElevatorConstants {
   public static final double aglaeL3Setpoint = 130.0;
   public static final double processorSetpoint = 0.0;
   public static final double bargeSetPoint = 200.0;
+
+  // PID Constants
+  public static final double kP = 0.05;
+  public static final double kI = 0.05;
+  public static final double kD = 0.05;
 }

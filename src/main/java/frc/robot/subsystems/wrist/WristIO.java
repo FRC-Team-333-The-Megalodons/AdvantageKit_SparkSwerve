@@ -24,9 +24,5 @@ public interface WristIO {
 
   public default void setSpeed(double speed) {}
 
-  public default void setWrist(double currentPos, double targetPos) {}
-
-  public default boolean atSetpoint() {
-    return false;
-  }
+  public default void setWristPosition(double currentPos, double targetPos) {}
 }
