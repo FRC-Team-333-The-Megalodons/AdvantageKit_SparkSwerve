@@ -120,8 +120,9 @@ public class RobotContainer {// Subsystems
                   () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
                   () -> Rotation2d.fromDegrees(drive.setAngle())));
       driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+      
       driverController
-          .PS()
+          .options()
           .onTrue(
               Commands.runOnce(
                       () ->
@@ -154,6 +155,16 @@ public class RobotContainer {// Subsystems
   
         driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
         driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+
+        driverController
+          .PS()
+          .onTrue(
+              Commands.runOnce(
+                      () ->
+                          drive.setPose(
+                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                      drive)
+                  .ignoringDisable(true));
       } else {
         operatorController
             .povUp()
@@ -163,11 +174,6 @@ public class RobotContainer {// Subsystems
             .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
         operatorController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
         operatorController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
-  
-        //   controller.triangle().whileTrue(null);
-        //   controller.cross().whileTrue(null);
-        //   controller.square().whileTrue(null);
-        //   controller.circle().whileTrue(null);
   
         operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
         operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
