@@ -38,7 +38,6 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-    Logger.recordOutput("Elevator Pos", io.getElevatorPosition());
   }
 
   public boolean lowerLimit() {

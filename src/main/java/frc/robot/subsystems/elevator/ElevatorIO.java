@@ -28,8 +28,4 @@ public interface ElevatorIO {
   public default void setElevator(double currentPos, double tragetPos, boolean down) {}
 
   public default void resetEncoder() {}
-
-  public default double getElevatorPosition() {
-    return -1;
-  }
 }

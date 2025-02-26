@@ -61,11 +61,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public double getElevatorPosition() {
-    return positionRot.getValueAsDouble();
-  }
-
-  @Override
   public void resetEncoder() {
     topElevatorMotor.setPosition(0.0);
   }
