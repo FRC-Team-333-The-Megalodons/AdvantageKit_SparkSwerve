@@ -24,17 +24,17 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoCommands.GoHome;
-import frc.robot.commands.AutoCommands.GoRemoveAlgaeL2;
-import frc.robot.commands.AutoCommands.GoRemoveAlgaeL3;
-import frc.robot.commands.AutoCommands.GoScoreAlgaeNet;
-import frc.robot.commands.AutoCommands.GoScoreAlgaeProcessor;
-import frc.robot.commands.AutoCommands.GoScoreCoralL2;
-import frc.robot.commands.AutoCommands.GoScoreCoralL3;
-import frc.robot.commands.AutoCommands.GoScoreCoralL4;
-import frc.robot.commands.AutoCommands.RunningIntakeBackwards;
-import frc.robot.commands.AutoCommands.RunningIntakeForward;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.AutoComFolder.GoHome;
+import frc.robot.commands.AutoComFolder.GoRemoveAlgaeL2;
+import frc.robot.commands.AutoComFolder.GoRemoveAlgaeL3;
+import frc.robot.commands.AutoComFolder.GoScoreAlgaeNet;
+import frc.robot.commands.AutoComFolder.GoScoreAlgaeProcessor;
+import frc.robot.commands.AutoComFolder.GoScoreCoralL2;
+import frc.robot.commands.AutoComFolder.GoScoreCoralL3;
+import frc.robot.commands.AutoComFolder.GoScoreCoralL4;
+import frc.robot.commands.AutoComFolder.RunningIntakeBackwards;
+import frc.robot.commands.AutoComFolder.RunningIntakeForward;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.climb.Climb;
@@ -50,12 +50,12 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.endEffecter.EndEffector;
+import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
+import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.hopper.HopperIOSpark;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOSpark;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIOSim;
@@ -73,7 +73,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Elevator elevator;
-  private final Intake intake;
+  private final EndEffector intake;
   private final Wrist wrist;
   private final Hopper hopper;
   private final Climb climb;
@@ -141,8 +141,8 @@ public class RobotContainer {
     operatorController.L2().whileTrue(wrist.runPercent(-0.4));
     operatorController.R2().whileTrue(wrist.runPercent(0.4));
     // elevator
-    operatorController.povUp().whileTrue(elevator.runPercent(-0.4));
-    operatorController.povDown().whileTrue(elevator.runPercent(0.4));
+    operatorController.povUp().whileTrue(elevator.runPercent(0.4));
+    operatorController.povDown().whileTrue(elevator.runPercent(-0.4));
     // intake
     operatorController.R1().whileTrue(intake.runPercent(-0.4));
     operatorController.L1().whileTrue(intake.runPercent(-0.4));
@@ -181,7 +181,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSpark());
-        intake = new Intake(new IntakeIOSpark());
+        intake = new EndEffector(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
         climb = new Climb(new ClimbIOSpark());
         hopper = new Hopper(new HopperIOSpark());
@@ -198,7 +198,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSim());
-        intake = new Intake(new IntakeIOSim());
+        intake = new EndEffector(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
         hopper = new Hopper(new HopperIOSim());
@@ -216,7 +216,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         elevator = new Elevator(new ElevatorIOSim());
-        intake = new Intake(new IntakeIOSim());
+        intake = new EndEffector(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
         led = new LEDStrip();

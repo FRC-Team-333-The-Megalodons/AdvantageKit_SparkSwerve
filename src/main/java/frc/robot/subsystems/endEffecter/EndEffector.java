@@ -2,23 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.endEffecter;
 
 import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
+
 // import frc.robot.subsystems.LEDStrip;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class Intake extends SubsystemBase {
+public class EndEffector extends SubsystemBase {
 
-  private final IntakeIO io;
+  private final EndEffecterIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
+  private final CANrange canRange = new CANrange(EndEffecterConstants.canRangeId);
 
   /** Creates a new IntakeIO. */
-  public Intake(IntakeIO io) {
+  public EndEffector(EndEffecterIO io) {
     this.io = io;
   }
 

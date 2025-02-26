@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.endEffecter;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
@@ -17,11 +17,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
-public class IntakeIOSpark implements IntakeIO {
+public class EndEffecterIOSpark implements EndEffecterIO {
   private final SparkFlex intake = new SparkFlex(intakeCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = intake.getEncoder();
 
-  public IntakeIOSpark() {
+  public EndEffecterIOSpark() {
     var config = new SparkMaxConfig();
     config.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     config

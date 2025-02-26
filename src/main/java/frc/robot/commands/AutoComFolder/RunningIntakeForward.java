@@ -2,17 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.AutoCommands;
+package frc.robot.commands.AutoComFolder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.endEffecter.EndEffector;
 
-public class RunningClimberForward extends SequentialCommandGroup {
-  public RunningClimberForward(Climb climb /* , LEDStrip ledStrip*/) {
+public class RunningIntakeForward extends SequentialCommandGroup {
+  public RunningIntakeForward(EndEffector intake /* , LEDStrip ledStrip*/) {
 
     addCommands(
         // ledStrip.setColor(LEDColor.BLUE),
-        climb.runPercent(1)
+        intake.runPercent(0.5).until(intake::isTriggered)
         // .alongWith(ledStrip.setColor(LEDColor.ORANGE))
         );
   }

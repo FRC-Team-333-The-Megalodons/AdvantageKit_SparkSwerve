@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.wrist;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
 import static frc.robot.subsystems.wrist.WristConstants.wristCanId;
 import static frc.robot.util.SparkUtil.*;
 
