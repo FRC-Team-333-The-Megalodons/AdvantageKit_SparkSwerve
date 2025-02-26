@@ -25,4 +25,7 @@ public class WristConstants {
   public static final double WRIST_SCORE_CORAL_L2_POS = 0.42276;
   public static final double WRIST_SCORE_CORAL_L3_POS = 0.42276;
   public static final double WRIST_SCORE_CORAL_L4_POS = 0.353;
+
+  public static final double autoSpeed = 0.7;
+  public static final double manualSpeed = 0.5;
 }

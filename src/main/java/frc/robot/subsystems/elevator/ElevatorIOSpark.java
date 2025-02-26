@@ -136,7 +136,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public Object getDistance() {
+  public double getDistance() {
     throw new UnsupportedOperationException("Unimplemented method 'getDistance'");
   }
 
@@ -144,4 +144,5 @@ public class ElevatorIOSpark implements ElevatorIO {
   public boolean atSetpoint() {
     return elevatorPIDController.atSetpoint();
   }
+  
 }

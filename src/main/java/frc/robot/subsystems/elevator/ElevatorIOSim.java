@@ -37,7 +37,7 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public Object getDistance() {
+  public double getDistance() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getDistance'");
   }
