@@ -8,4 +8,9 @@ public class HopperConstants {
   public static final int hopperCanId = 6;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+
+  public static final double  HOPPER_HOME_POS = 0.0;
+  public static final double  HOPPER_INTAKE_POS = 0.0;
+  public static final double  HOPPER_CLIMB = 0.0;
+
 }

@@ -44,7 +44,7 @@ public class Wrist extends SubsystemBase {
     return runEnd(() -> io.runWristPIDController(getPosition(), setpoint), () -> io.setVoltage(0));
   }
 
-  public Command setWristPositionFeedForward(double setpoint) {
+  public Command setWristPositionFF(double setpoint) {
     return runEnd(() -> io.runWristPIDControllerFeedForward(setpoint), () -> io.setVoltage(0));
   }
 
