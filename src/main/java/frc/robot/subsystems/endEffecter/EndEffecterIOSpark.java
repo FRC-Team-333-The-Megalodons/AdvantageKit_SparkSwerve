@@ -7,6 +7,7 @@ package frc.robot.subsystems.endEffecter;
 import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import com.ctre.phoenix6.hardware.CANrange;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -20,6 +21,7 @@ import java.util.function.DoubleSupplier;
 public class EndEffecterIOSpark implements EndEffecterIO {
   private final SparkFlex endEffecter = new SparkFlex(endEffecterCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = endEffecter.getEncoder();
+  private final CANrange canRange = new CANrange(canRangeId);
 
   public EndEffecterIOSpark() {
     var config = new SparkFlexConfig();
@@ -49,6 +51,10 @@ public class EndEffecterIOSpark implements EndEffecterIO {
         new DoubleSupplier[] {endEffecter::getAppliedOutput, endEffecter::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(endEffecter, endEffecter::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    inputs.isTriggered = canRange.getIsDetected().getValue();
+    inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
+    inputs.isConnected = canRange.isConnected();
   }
 
   @Override

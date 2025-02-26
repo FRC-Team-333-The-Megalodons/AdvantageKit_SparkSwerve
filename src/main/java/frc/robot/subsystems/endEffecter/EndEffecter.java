@@ -4,13 +4,8 @@
 
 package frc.robot.subsystems.endEffecter;
 
-import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
-
-import com.ctre.phoenix6.hardware.CANrange;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LEDStrip;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,7 +13,6 @@ public class EndEffecter extends SubsystemBase {
 
   private final EndEffecterIO io;
   private final EndEffecterIOInputsAutoLogged inputs = new EndEffecterIOInputsAutoLogged();
-  private final CANrange canRange = new CANrange(canRangeId);
 
   /** Creates a new EndEffecterIO. */
   public EndEffecter(EndEffecterIO io) {
@@ -30,8 +24,6 @@ public class EndEffecter extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("EndEffecter", inputs);
-    Logger.recordOutput("CANRange", isTriggered());
-    Logger.recordOutput("CANRangeDistance", getDistance());
   }
 
   public Command runPercent(double percent) {
@@ -44,22 +36,7 @@ public class EndEffecter extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  // public boolean isTriggered() {
-  //   if (getDistance() < 0.05 && getDistance() > 0.0) {
-  //     LEDStrip.setLEDs(Color.kGreen);
-  //     return true;
-  //   } else {
-  //     LEDStrip.setLEDs(Color.kBlack);
-  //     return false;
-  //   }
-  // }
-
   public boolean isTriggered() {
-    LEDStrip.setLEDs(Color.kGreen);
-    return canRange.getIsDetected().getValue();
-  }
-
-  public double getDistance() {
-    return canRange.getDistance().getValueAsDouble();
+    return inputs.isTriggered;
   }
 }

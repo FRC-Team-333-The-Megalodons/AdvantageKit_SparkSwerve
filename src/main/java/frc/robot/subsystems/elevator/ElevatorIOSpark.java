@@ -16,7 +16,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -72,7 +71,8 @@ public class ElevatorIOSpark implements ElevatorIO {
         topElevatorMotor::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
 
-    inputs.atSetpoint = elevatorDownPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
+    inputs.atSetpoint =
+        elevatorDownPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
     inputs.lowerLimit = !lowerLimitSwitch.get();
     inputs.upperLimit = !upperLimitSwitch.get();
     inputs.atL4Setpoint = getElevatorPosition() > 190 ? true : false;

@@ -28,5 +28,7 @@ public interface RampIO {
 
   public default void resetEncoder() {}
 
-  public default double getRampPosition() { return -1; }
+  public default double getRampPosition() {
+    return -1;
+  }
 }
