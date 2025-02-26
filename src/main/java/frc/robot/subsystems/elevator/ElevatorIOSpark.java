@@ -75,7 +75,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         elevatorDownPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
     inputs.lowerLimit = !lowerLimitSwitch.get();
     inputs.upperLimit = !upperLimitSwitch.get();
-    inputs.atL4Setpoint = getElevatorPosition() > 190 ? true : false;
+    inputs.atL4Setpoint = inputs.position > 190 ? true : false;
   }
 
   @Override
@@ -101,9 +101,5 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void resetEncoder() {
     encoder.setPosition(0);
-  }
-
-  public double getElevatorPosition() {
-    return encoder.getPosition();
   }
 }
