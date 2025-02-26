@@ -122,7 +122,7 @@ public class RobotContainer { // Subsystems
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
     if (isInSoloDrivingMode) {
       driverController
-        .options()
+        .PS()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -132,7 +132,7 @@ public class RobotContainer { // Subsystems
                 .ignoringDisable(true));
     }else{
     driverController
-        .PS()
+        .options()
         .onTrue(
             Commands.runOnce(
                     () ->
