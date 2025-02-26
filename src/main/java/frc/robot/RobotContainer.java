@@ -120,8 +120,8 @@ public class RobotContainer { // Subsystems
                 () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
                 () -> Rotation2d.fromDegrees(drive.setAngle())));
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    driverController
+    if (isInSoloDrivingMode) {
+      driverController
         .options()
         .onTrue(
             Commands.runOnce(
@@ -130,6 +130,17 @@ public class RobotContainer { // Subsystems
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    }else{
+    driverController
+        .PS()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+  }
   }
 
   public void removeOperatorControllerBindings() {
