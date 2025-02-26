@@ -32,18 +32,10 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command setWristPosition(double setpoint) {
-    return runEnd(() -> io.setWrist(inputs.positionAbs, setpoint), () -> io.setVoltage(0.0));
+    return runEnd(() -> io.setWristPosition(inputs.positionAbs, setpoint), () -> io.setVoltage(0.0));
   }
 
   public boolean atSetpoint() {
-    return io.atSetpoint();
-  }
-
-  public boolean isClear() {
-    if (inputs.positionAbs > homeSetpoint) {
-      return true;
-    } else {
-      return false;
-    }
+    return inputs.atSetpoint;
   }
 }

@@ -13,6 +13,7 @@ public interface RampIO {
     public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public boolean atSetpoint = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -22,4 +23,10 @@ public interface RampIO {
   public default void setVoltage(double volts) {}
 
   public default void setSpeed(double speed) {}
+
+  public default void setRampPosition(double currentPos, double targetPos) {}
+
+  public default void resetEncoder() {}
+
+  public default double getRampPosition() { return -1; }
 }

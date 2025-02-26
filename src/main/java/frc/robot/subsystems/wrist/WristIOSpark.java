@@ -23,7 +23,7 @@ public class WristIOSpark implements WristIO {
   private final SparkFlex wrist = new SparkFlex(wristCanId, MotorType.kBrushless);
   private final RelativeEncoder internalEncoder = wrist.getEncoder();
   private final DutyCycleEncoder externalEncoder = new DutyCycleEncoder(wristEncoderId);
-  private final PIDController pid = new PIDController(1.5, 0.0, 0.0);
+  private final PIDController pidController = new PIDController(kP, kI, kD);
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();
@@ -54,7 +54,7 @@ public class WristIOSpark implements WristIO {
     ifOk(wrist, wrist::getOutputCurrent, (value) -> inputs.currentAmps = value);
     ifOk(wrist, externalEncoder::get, (value) -> inputs.positionAbs = value);
 
-    inputs.atSetpoint = atSetpoint();
+    inputs.atSetpoint = pidController.atSetpoint();
   }
 
   @Override
@@ -68,12 +68,7 @@ public class WristIOSpark implements WristIO {
   }
 
   @Override
-  public void setWrist(double currentPos, double targetPos) {
-    wrist.set(-pid.calculate(currentPos, targetPos));
-  }
-
-  @Override
-  public boolean atSetpoint() {
-    return pid.atSetpoint();
+  public void setWristPosition(double currentPos, double targetPos) {
+    wrist.set(-pidController.calculate(currentPos, targetPos));
   }
 }

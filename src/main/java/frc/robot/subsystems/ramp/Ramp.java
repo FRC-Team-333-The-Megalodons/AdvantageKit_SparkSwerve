@@ -35,4 +35,12 @@ public class Ramp extends SubsystemBase {
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 6.0),
         () -> io.setVoltage(0.0));
   }
+
+  public Command setRampPosition(double setpoint) {
+    return runEnd(() -> io.setRampPosition(inputs.positionRad, setpoint), () -> io.setVoltage(0.0));
+  }
+
+  public boolean atSetpoint() {
+    return inputs.atSetpoint;
+  }
 }

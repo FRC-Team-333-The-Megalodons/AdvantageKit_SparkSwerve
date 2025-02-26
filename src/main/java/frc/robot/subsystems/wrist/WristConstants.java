@@ -19,4 +19,9 @@ public class WristConstants {
   public static final double netSetPoint = 0.247;
   public static final double aglaeSetpoint = 0.12;
   public static final double algaeHomeSetpoint = 0.244;
+
+  // PID Constants
+  public static final double kP = 1.5;
+  public static final double kI = 0.05;
+  public static final double kD = 0.05;
 }

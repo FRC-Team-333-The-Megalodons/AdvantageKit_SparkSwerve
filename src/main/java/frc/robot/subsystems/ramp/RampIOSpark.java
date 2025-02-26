@@ -13,13 +13,17 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.controller.PIDController;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class RampIOSpark implements RampIO {
-  private final SparkFlex hopper = new SparkFlex(hopperCanId, MotorType.kBrushless);
-  private final RelativeEncoder encoder = hopper.getEncoder();
+  private final SparkFlex ramp = new SparkFlex(rampCanId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = ramp.getEncoder();
+  private final PIDController pidController = new PIDController(kP, kI, kD);
 
   public RampIOSpark() {
     var config = new SparkFlexConfig();
@@ -33,31 +37,37 @@ public class RampIOSpark implements RampIO {
         .uvwAverageDepth(2);
 
     tryUntilOk(
-        hopper,
+        ramp,
         5,
         () ->
-            hopper.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            ramp.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(RampIOInputs inputs) {
-    ifOk(hopper, encoder::getPosition, (value) -> inputs.positionRad = value);
-    ifOk(hopper, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(ramp, encoder::getPosition, (value) -> inputs.positionRad = value);
+    ifOk(ramp, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
     ifOk(
-        hopper,
-        new DoubleSupplier[] {hopper::getAppliedOutput, hopper::getBusVoltage},
+        ramp,
+        new DoubleSupplier[] {ramp::getAppliedOutput, ramp::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
-    ifOk(hopper, hopper::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    ifOk(ramp, ramp::getOutputCurrent, (value) -> inputs.currentAmps = value);
+
+    inputs.atSetpoint = pidController.atSetpoint();
   }
 
   @Override
   public void setVoltage(double volts) {
-    hopper.setVoltage(volts);
+    ramp.setVoltage(volts);
   }
 
   @Override
   public void setSpeed(double speed) {
-    hopper.set(speed);
+    ramp.set(speed);
+  }
+
+  @Override
+  public void setRampPosition(double currentPos, double targetPos) {
+    ramp.setVoltage(pidController.calculate(currentPos, targetPos));
   }
 }

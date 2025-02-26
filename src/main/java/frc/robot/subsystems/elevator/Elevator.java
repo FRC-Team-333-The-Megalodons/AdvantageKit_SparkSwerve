@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems.elevator;
 
-import static frc.robot.subsystems.elevator.ElevatorConstants.*;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -17,9 +14,6 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-
-  private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
-  private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   public Elevator(ElevatorIO io) {
     this.io = io;
@@ -44,34 +38,27 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
-    Logger.recordOutput("LowerLimitSwitch", lowerLimit());
-    Logger.recordOutput("UpperLimitSwitch", upperLimit());
     Logger.recordOutput("Elevator Pos", io.getElevatorPosition());
-    Logger.recordOutput("L4Setpoint", atL4Setpoint());
   }
 
   public boolean lowerLimit() {
-    if (lowerLimitSwitch.get()) {
-      return false;
-    } else {
-      io.resetEncoder();
+    io.resetEncoder();
+    if (inputs.lowerLimit) {
       return true;
+    } else {
+      return false;
     }
   }
 
   public boolean upperLimit() {
-    return upperLimitSwitch.get() ? false : true;
+    return inputs.upperLimit;
   }
 
   public boolean atSetpoint() {
-    return io.atSetpoint();
+    return inputs.atSetpoint;
   }
 
   public boolean atL4Setpoint() {
-    if (io.getElevatorPosition() > 190) {
-      return true;
-    } else {
-      return false;
-    }
+    return inputs.atL4Setpoint;
   }
 }

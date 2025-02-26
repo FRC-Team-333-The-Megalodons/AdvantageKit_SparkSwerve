@@ -16,6 +16,7 @@ public interface ElevatorIO {
     public boolean upperLimit = false;
     public boolean lowerLimit = false;
     public boolean atSetpoint = false;
+    public boolean atL4Setpoint = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -30,17 +31,5 @@ public interface ElevatorIO {
 
   public default double getElevatorPosition() {
     return -1;
-  }
-
-  public default boolean atSetpoint() {
-    return false;
-  }
-
-  public default boolean lowerLimit() {
-    return false;
-  }
-
-  public default boolean upperLimit() {
-    return false;
   }
 }
