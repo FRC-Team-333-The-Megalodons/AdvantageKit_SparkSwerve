@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3480677480890038,
-        "y": 0.9353291984704128
+        "x": 7.351500000000001,
+        "y": 6.6575
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.307901708565211,
-        "y": 3.1158213514293136
+        "x": 6.425249999999999,
+        "y": 6.6282499999999995
       },
       "isLocked": false,
-      "linkedName": "3_right_HP_pickup"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.617175572519084,
-        "y": 2.8611402671755717
+        "x": 5.31375,
+        "y": 5.399749999999999
       },
       "prevControl": {
-        "x": 2.7617387947300562,
-        "y": 2.080150667441857
+        "x": 5.72325,
+        "y": 5.8969999999999985
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "4_right_left_reef_score"
+      "linkedName": "LeftReefScoringPose"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 61.38954033403481
+    "rotation": -115.94229548987161
   },
   "reversed": false,
-  "folder": "4gp",
+  "folder": "pieces coral auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.4929709390852
   },
   "useDefaultConstraints": true
 }

@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.hardware.CANrange;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +18,8 @@ public class Intake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
   private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
+
+  DigitalInput dSensor = new DigitalInput(0);
   // private IntakeIOSpark intakeIOSpark = new IntakeIOSpark();
 
   /** Creates a new IntakeIO. */
@@ -32,6 +35,7 @@ public class Intake extends SubsystemBase {
     // Logger.recordOutput("CANRange", isTriggered());
     // Logger.recordOutput("CANRangeDistance", getDistance());
     Logger.recordOutput("WristEncoder", wristEncoder.get());
+    Logger.recordOutput("DSensor", getPositionForDSensor());
   }
 
   public Command runPercent(double percent) {
@@ -68,5 +72,9 @@ public class Intake extends SubsystemBase {
 
   public boolean rotationForWrist() {
     return (getPosition() >= 0);
+  }
+
+  public boolean getPositionForDSensor() {
+    return dSensor.get();
   }
 }
