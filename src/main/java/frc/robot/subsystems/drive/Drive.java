@@ -388,21 +388,25 @@ public class Drive extends SubsystemBase {
       return 0;
     }
   }
-  public ReefPoseStates setReefAngle(Vision vision){
+
+  public ReefPoseStates setReefAngle(Vision vision) {
     int id = vision.getFudicialId();
     if (id == 18 || id == 7) {
       reefPoseStates = ReefPoseStates.BOTTOM_REEF;
-    }else if (id == 19 || id == 6) {
+    } else if (id == 19 || id == 6) {
       reefPoseStates = ReefPoseStates.LEFT_BOTTOM_REEF;
-    }else if (id == 17 || id == 8) {
+    } else if (id == 17 || id == 8) {
       reefPoseStates = ReefPoseStates.RIGHT_BOTTOM_REEF;
-    }else if (id == 20 || id == 11) {
+    } else if (id == 20 || id == 11) {
       reefPoseStates = ReefPoseStates.LEFT_TOP_REEF;
-    }else if (id == 22 || id == 9) {
+    } else if (id == 22 || id == 9) {
       reefPoseStates = ReefPoseStates.RIGHT_TOP_REEF;
-  }else if (id == 21 || id == 10) {
-    reefPoseStates = ReefPoseStates.TOP_REEF;
+    } else if (id == 21 || id == 10) {
+      reefPoseStates = ReefPoseStates.TOP_REEF;
+    }
+
+    Logger.recordOutput("ReefPoseStates", reefPoseStates);
+
+    return reefPoseStates;
   }
-  return reefPoseStates;
-}
 }

@@ -69,7 +69,6 @@ import frc.robot.subsystems.wrist.WristIOSim;
 import frc.robot.subsystems.wrist.WristIOSpark;
 import frc.robot.util.GlobalConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.opencv.objdetect.CascadeClassifier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -101,8 +100,8 @@ public class RobotContainer { // Subsystems
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> driverController.getLeftY(),
-            () -> driverController.getLeftX(),
+            () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
+            () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
             () -> -driverController.getRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
@@ -122,30 +121,30 @@ public class RobotContainer { // Subsystems
     //             () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
     //             () -> Rotation2d.fromDegrees(drive.setAngle())));
 
-    
     switch (drive.setReefAngle(vision)) {
-        case BOTTOM_REEF:
-             DriverConstants.driveAngle = 0;
-            break;
-        case RIGHT_BOTTOM_REEF:
+      case BOTTOM_REEF:
+        DriverConstants.driveAngle = 0;
+        break;
+      case RIGHT_BOTTOM_REEF:
         DriverConstants.driveAngle = 45;
-             break;
-        case LEFT_BOTTOM_REEF:
+        break;
+      case LEFT_BOTTOM_REEF:
         DriverConstants.driveAngle = -45;
         break;
-        case RIGHT_TOP_REEF:
+      case RIGHT_TOP_REEF:
         DriverConstants.driveAngle = 135;
         break;
-        case LEFT_TOP_REEF:
+      case LEFT_TOP_REEF:
         DriverConstants.driveAngle = -135;
         break;
-        case TOP_REEF:
+      case TOP_REEF:
         DriverConstants.driveAngle = 180;
         break;
-        default:
+      default:
         DriverConstants.driveAngle = 0;
-            break;
+        break;
     }
+
     driverController
         .R3()
         .whileTrue(
@@ -154,28 +153,30 @@ public class RobotContainer { // Subsystems
                 () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
                 () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
                 () -> Rotation2d.fromDegrees(DriverConstants.driveAngle)));
+
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
     if (isInSoloDrivingMode) {
       driverController
-        .PS()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    }else{
-    driverController
-        .options()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-  }
+          .PS()
+          .onTrue(
+              Commands.runOnce(
+                      () ->
+                          drive.setPose(
+                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                      drive)
+                  .ignoringDisable(true));
+    } else {
+      driverController
+          .options()
+          .onTrue(
+              Commands.runOnce(
+                      () ->
+                          drive.setPose(
+                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                      drive)
+                  .ignoringDisable(true));
+    }
   }
 
   public void removeOperatorControllerBindings() {

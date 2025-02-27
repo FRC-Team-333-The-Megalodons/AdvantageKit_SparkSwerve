@@ -63,18 +63,17 @@ public class Vision extends SubsystemBase {
   public Rotation2d getTargetX(int cameraIndex) {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
-  public  int getFudicialId(){
+
+  public int getFudicialId() {
     int id = 0;
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
-      // Update disconnected alert
-
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
         id = tagId;
-        }
       }
-      return id;
+    }
+    return id;
   }
 
   @Override
