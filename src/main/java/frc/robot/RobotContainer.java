@@ -36,7 +36,6 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOSpark;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriverConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -121,29 +120,29 @@ public class RobotContainer { // Subsystems
     //             () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
     //             () -> Rotation2d.fromDegrees(drive.setAngle())));
 
-    switch (drive.setReefAngle(vision)) {
-      case BOTTOM_REEF:
-        DriverConstants.driveAngle = 0;
-        break;
-      case RIGHT_BOTTOM_REEF:
-        DriverConstants.driveAngle = 45;
-        break;
-      case LEFT_BOTTOM_REEF:
-        DriverConstants.driveAngle = -45;
-        break;
-      case RIGHT_TOP_REEF:
-        DriverConstants.driveAngle = 135;
-        break;
-      case LEFT_TOP_REEF:
-        DriverConstants.driveAngle = -135;
-        break;
-      case TOP_REEF:
-        DriverConstants.driveAngle = 180;
-        break;
-      default:
-        DriverConstants.driveAngle = 0;
-        break;
-    }
+    // switch (drive.setReefAngle(vision)) {
+    //   case BOTTOM_REEF:
+    //     DriverConstants.driveAngle = 0;
+    //     break;
+    //   case RIGHT_BOTTOM_REEF:
+    //     DriverConstants.driveAngle = 45;
+    //     break;
+    //   case LEFT_BOTTOM_REEF:
+    //     DriverConstants.driveAngle = -45;
+    //     break;
+    //   case RIGHT_TOP_REEF:
+    //     DriverConstants.driveAngle = 135;
+    //     break;
+    //   case LEFT_TOP_REEF:
+    //     DriverConstants.driveAngle = -135;
+    //     break;
+    //   case TOP_REEF:
+    //     DriverConstants.driveAngle = 180;
+    //     break;
+    //   default:
+    //     DriverConstants.driveAngle = 200;
+    //     break;
+    // }
 
     driverController
         .R3()
@@ -152,7 +151,7 @@ public class RobotContainer { // Subsystems
                 drive,
                 () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
                 () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
-                () -> Rotation2d.fromDegrees(DriverConstants.driveAngle)));
+                () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -346,6 +345,8 @@ public class RobotContainer { // Subsystems
 
       operatorController.R1().whileTrue(ramp.runPercent(-RampConstants.speed));
       operatorController.L1().whileTrue(ramp.runPercent(RampConstants.speed));
+
+      //   operatorController.PS().whileTrue(null);
     }
   }
 
@@ -513,6 +514,9 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData(
         "ElevatorAlgaeL3Pos",
         elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
+    SmartDashboard.putData("RampHomePos", ramp.setRampPosition(RampConstants.homeSetpoint));
+    SmartDashboard.putData("RampIntakePos", ramp.setRampPosition(RampConstants.intakeSetpoint));
+    SmartDashboard.putData("RampClimbPos", ramp.setRampPosition(RampConstants.climbSetpoint));
   }
 
   /**

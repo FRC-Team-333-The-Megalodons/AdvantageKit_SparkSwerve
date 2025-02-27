@@ -11,6 +11,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endEffecter.EndEffecter;
 import frc.robot.subsystems.endEffecter.EndEffecterConstants;
+import frc.robot.subsystems.ramp.Ramp;
+import frc.robot.subsystems.ramp.RampConstants;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
@@ -22,6 +24,13 @@ public class AutomatedCommands {
         .runPercent(EndEffecterConstants.speed)
         .until(endEffecter::isTriggered)
         .andThen(led.makeWholeColorCommand(Color.kGreen));
+  }
+
+  public static Command intakeCoral(EndEffecter endEffecter, Ramp ramp, LEDStrip led) {
+    return endEffecter
+        .runPercent(EndEffecterConstants.speed)
+        .until(endEffecter::isTriggered)
+        .alongWith(ramp.setRampPosition(RampConstants.homeSetpoint));
   }
 
   public static Command homeCommand(Wrist wrist, Elevator elevator, LEDStrip led) {

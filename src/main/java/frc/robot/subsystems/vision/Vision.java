@@ -81,6 +81,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
+      Logger.recordOutput("Fudicial ID HK", getFudicialId());
     }
 
     // Initialize logging values

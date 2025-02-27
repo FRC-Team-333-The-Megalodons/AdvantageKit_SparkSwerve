@@ -9,8 +9,13 @@ public class RampConstants {
   public static final int rampCanId = 6;
   public static final int rampLimitSwitchId = -1;
   public static final double motorReduction = 1.0;
-  public static final int currentLimit = 30;
+  public static final int currentLimit = 20;
   public static final double speed = 0.1;
+
+  // Ramp Setpoints
+  public static double homeSetpoint = 0.0;
+  public static double intakeSetpoint = 0.0;
+  public static double climbSetpoint = 0.0;
 
   // PID Constants
   public static final double kP = 0.05;

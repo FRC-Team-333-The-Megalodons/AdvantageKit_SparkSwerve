@@ -409,4 +409,24 @@ public class Drive extends SubsystemBase {
 
     return reefPoseStates;
   }
+
+  public int reefDriveAngle(Vision vision) {
+    int id = vision.getFudicialId();
+    int driveAngle = 0;
+    if (id == 18 || id == 7) {
+
+      driveAngle = 0;
+    } else if (id == 19 || id == 6) {
+      driveAngle = -45;
+    } else if (id == 17 || id == 8) {
+      driveAngle = 45;
+    } else if (id == 20 || id == 11) {
+      driveAngle = -135;
+    } else if (id == 22 || id == 9) {
+      driveAngle = 135;
+    } else if (id == 21 || id == 10) {
+      driveAngle = 180;
+    }
+    return driveAngle;
+  }
 }
