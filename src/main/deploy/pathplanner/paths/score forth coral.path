@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.31375,
-        "y": 5.399749999999999
+        "x": 0.8190000000000001,
+        "y": 6.8525
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.28025,
-        "y": 6.608749999999999
+        "x": 1.911,
+        "y": 6.189500000000001
       },
       "isLocked": false,
-      "linkedName": "LeftReefScoringPose"
+      "linkedName": "PickUpCoralPos4"
     },
     {
       "anchor": {
-        "x": 1.2587090163934425,
-        "y": 7.171772540983605
+        "x": 3.46125,
+        "y": 5.253499999999999
       },
       "prevControl": {
-        "x": 2.6627090163934435,
-        "y": 6.694022540983605
+        "x": 2.7007500000000007,
+        "y": 5.702000000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "PickUpCoralPos"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -54.86580694308437
+    "rotation": -57.72435568542241
   },
   "reversed": false,
   "folder": "4 pieces coral auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -115.94229548987161
+    "rotation": -52.352379359892375
   },
   "useDefaultConstraints": true
 }
