@@ -5,7 +5,7 @@
 package frc.robot.commands.AutoComFolder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.endEffecter.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffector;
 
 public class RunningIntakeBackwards extends SequentialCommandGroup {
   public RunningIntakeBackwards(EndEffector intake /* , LEDStrip ledStrip*/) {

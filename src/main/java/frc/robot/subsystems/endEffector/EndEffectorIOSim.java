@@ -2,9 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.endEffecter;
+package frc.robot.subsystems.endEffector;
 
-import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
+import static frc.robot.subsystems.endEffector.EndEffectorConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -12,7 +12,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 /** Add your docs here. */
-public class EndEffecterIOSim implements EndEffecterIO {
+public class EndEffectorIOSim implements EndEffectorIO {
   private DCMotorSim sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(1), 0.004, motorReduction),
@@ -22,7 +22,7 @@ public class EndEffecterIOSim implements EndEffecterIO {
   private double speed = Double.MIN_VALUE;
 
   @Override
-  public void updateInputs(IntakeIOInputs inputs) {
+  public void updateInputs(EndEffectorIOInputs inputs) {
 
     if (speed != Double.MIN_VALUE) {
       sim.setInput(speed);

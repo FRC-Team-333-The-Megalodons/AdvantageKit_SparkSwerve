@@ -2,25 +2,26 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.endEffecter;
+package frc.robot.subsystems.endEffector;
 
 import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.intake.IntakeIOInputsAutoLogged;
+import frc.robot.subsystems.elevator.ElevatorIOInputsAutoLogged;
 
 // import frc.robot.subsystems.LEDStrip;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
+
 public class EndEffector extends SubsystemBase {
 
-  private final EndEffecterIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final CANrange canRange = new CANrange(EndEffecterConstants.canRangeId);
+  private final EndEffectorIO io;
+  private final EndEffectorIOInputsAutoLogged inputs = new EndEffectorIOInputsAutoLogged();
+  private final CANrange canRange = new CANrange(EndEffectorConstants.canRangeId);
 
   /** Creates a new IntakeIO. */
-  public EndEffector(EndEffecterIO io) {
+  public EndEffector(EndEffectorIO io) {
     this.io = io;
   }
 
@@ -28,14 +29,13 @@ public class EndEffector extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Intake", inputs);
+    Logger.processInputs("EndEffector", inputs);
     Logger.recordOutput("CANRange", isTriggered());
     Logger.recordOutput("CANRangeDistance", getDistance());
 
     // Logic for leds and CANrange when a coral in the intake
     if (isTriggered()) {
       runPercent(0);
-      // new LEDStrip().makeSegmentColorCommand(Color.kGreen, LEDStrip.getSegment(0, 3));
     }
   }
 
@@ -59,10 +59,5 @@ public class EndEffector extends SubsystemBase {
 
   public double getDistance() {
     return canRange.getDistance().getValueAsDouble();
-  }
-
-  public Command setElevatorPosition(double elevatorScoreCoralL1Pos) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setElevatorPosition'");
   }
 }

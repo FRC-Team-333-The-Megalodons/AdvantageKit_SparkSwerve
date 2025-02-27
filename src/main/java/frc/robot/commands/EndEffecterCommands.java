@@ -4,10 +4,10 @@
 
 package frc.robot.commands;
 
-import static frc.robot.subsystems.endEffecter.EndEffecterConstants.speed;
+import static frc.robot.subsystems.endEffector.EndEffectorConstants.speed;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.endEffecter.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffector;
 
 public class EndEffecterCommands {
 

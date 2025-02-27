@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LEDStrip;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.endEffecter.EndEffecterConstants;
-import frc.robot.subsystems.endEffecter.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffectorConstants;
+import frc.robot.subsystems.endEffector.EndEffector;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
@@ -19,7 +19,7 @@ public class AutomatedCommands {
 
   public static Command intakeCoral(EndEffector endEffecter, LEDStrip led) {
     return endEffecter
-        .runPercent(EndEffecterConstants.speed)
+        .runPercent(EndEffectorConstants.speed)
         .until(endEffecter::isTriggered)
         .andThen(led.makeWholeColorCommand(Color.kGreen));
   }
