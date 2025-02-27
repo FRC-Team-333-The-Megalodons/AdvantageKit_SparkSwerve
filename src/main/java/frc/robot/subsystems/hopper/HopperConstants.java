@@ -9,9 +9,9 @@ public class HopperConstants {
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
 
-  public static final double  HOPPER_HOME_POS = 0.0;
-  public static final double  HOPPER_INTAKE_POS = 0.0;
-  public static final double  HOPPER_CLIMB = 0.0;
+  public static final double  HOPPER_HOME_POS = 107.51;
+  public static final double  HOPPER_INTAKE_POS = 109;
+  public static final double  HOPPER_CLIMB = 3.863;
 
   public static final double autoSpeed = 0.7;
   public static final double manualSpeed = 0.5;

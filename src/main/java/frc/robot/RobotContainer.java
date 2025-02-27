@@ -33,11 +33,11 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
-import frc.robot.subsystems.endEffecter.EndEffecterConstants;
-import frc.robot.subsystems.endEffecter.EndEffecterIO;
-import frc.robot.subsystems.endEffecter.EndEffecterIOSim;
-import frc.robot.subsystems.endEffecter.EndEffecterIOSpark;
-import frc.robot.subsystems.endEffecter.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffectorConstants;
+import frc.robot.subsystems.endEffector.EndEffectorIO;
+import frc.robot.subsystems.endEffector.EndEffectorIOSim;
+import frc.robot.subsystems.endEffector.EndEffectorIOSpark;
+import frc.robot.subsystems.endEffector.EndEffector;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperConstants;
 import frc.robot.subsystems.hopper.HopperIO;
@@ -132,8 +132,8 @@ public class RobotContainer {
         driverController.L1().whileTrue(wrist.runPercent(WristConstants.manualSpeed));
         driverController.R1().whileTrue(wrist.runPercent(-WristConstants.manualSpeed));
 
-        driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-        driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+        driverController.L2().whileTrue(endEffecter.runPercent(-EndEffectorConstants.speed));
+        driverController.R2().whileTrue(endEffecter.runPercent(EndEffectorConstants.speed));
     }else{
     operaController
         .povUp()
@@ -150,8 +150,8 @@ public class RobotContainer {
     operaController.L1().whileTrue(wrist.runPercent(WristConstants.manualSpeed));
     operaController.R1().whileTrue(wrist.runPercent(-WristConstants.manualSpeed));
 
-    operaController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-    operaController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+    operaController.L2().whileTrue(endEffecter.runPercent(-EndEffectorConstants.speed));
+    operaController.R2().whileTrue(endEffecter.runPercent(EndEffectorConstants.speed));
     }
   }
 
@@ -299,7 +299,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSpark());
-        endEffecter = new EndEffector(new EndEffecterIOSpark());
+        endEffecter = new EndEffector(new EndEffectorIOSpark());
         wrist = new Wrist(new WristIOSpark());
         climber = new Climb(new ClimbIOSpark());
         hopper = new Hopper(new HopperIOSpark());
@@ -321,7 +321,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOSim());
-        endEffecter = new EndEffector(new EndEffecterIOSim());
+        endEffecter = new EndEffector(new EndEffectorIOSim());
         wrist = new Wrist(new WristIOSim());
         climber = new Climb(new ClimbIOSim());
         hopper = new Hopper(new HopperIOSim());
@@ -345,7 +345,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         elevator = new Elevator(new ElevatorIO() {});
-        endEffecter = new EndEffector(new EndEffecterIO() {});
+        endEffecter = new EndEffector(new EndEffectorIO() {});
         wrist = new Wrist(new WristIO() {});
         climber = new Climb(new ClimbIO() {});
         hopper = new Hopper(new HopperIO() {});
