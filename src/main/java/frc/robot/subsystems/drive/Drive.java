@@ -50,6 +50,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.DriverConstants.PoseState;
+import frc.robot.subsystems.drive.DriverConstants.ReefPoseStates;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -58,6 +60,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   public DriverConstants.PoseState poseState;
+  public DriverConstants.ReefPoseStates reefPoseStates;
   // TunerConstants doesn't include these constants, so they are declared locally
 
   static final double ODOMETRY_FREQUENCY =
@@ -116,6 +119,7 @@ public class Drive extends SubsystemBase {
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
     poseState = PoseState.DEFAULT;
+    reefPoseStates = ReefPoseStates.DEFAULT;
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
@@ -384,4 +388,21 @@ public class Drive extends SubsystemBase {
       return 0;
     }
   }
+  public ReefPoseStates setReefAngle(Vision vision){
+    int id = vision.getFudicialId();
+    if (id == 18 || id == 7) {
+      reefPoseStates = ReefPoseStates.BOTTOM_REEF;
+    }else if (id == 19 || id == 6) {
+      reefPoseStates = ReefPoseStates.LEFT_BOTTOM_REEF;
+    }else if (id == 17 || id == 8) {
+      reefPoseStates = ReefPoseStates.RIGHT_BOTTOM_REEF;
+    }else if (id == 20 || id == 11) {
+      reefPoseStates = ReefPoseStates.LEFT_TOP_REEF;
+    }else if (id == 22 || id == 9) {
+      reefPoseStates = ReefPoseStates.RIGHT_TOP_REEF;
+  }else if (id == 21 || id == 10) {
+    reefPoseStates = ReefPoseStates.TOP_REEF;
+  }
+  return reefPoseStates;
+}
 }

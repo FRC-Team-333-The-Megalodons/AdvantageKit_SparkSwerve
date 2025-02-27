@@ -14,4 +14,13 @@ public class DriverConstants {
     RIGHT_CORAL_STATION,
     LEFT_CORAL_STATION
   }
+  public static enum ReefPoseStates{
+    DEFAULT,
+    BOTTOM_REEF,
+    LEFT_BOTTOM_REEF,
+    RIGHT_BOTTOM_REEF,
+    LEFT_TOP_REEF,
+    RIGHT_TOP_REEF,
+    TOP_REEF
+  }
 }
