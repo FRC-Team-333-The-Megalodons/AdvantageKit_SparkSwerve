@@ -13,7 +13,7 @@ public class RampConstants {
   public static final double speed = 0.1;
 
   // Ramp Setpoints
-  public static double homeSetpoint = 0.0;
+  public static double coralStationSetpoint = 0.0;
   public static double intakeSetpoint = 0.0;
   public static double climbSetpoint = 0.0;
 

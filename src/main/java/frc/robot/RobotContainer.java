@@ -237,7 +237,7 @@ public class RobotContainer { // Subsystems
       driverController
           .L2()
           .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
+              AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip)
                   .alongWith(
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
@@ -293,7 +293,7 @@ public class RobotContainer { // Subsystems
       operatorController
           .L2()
           .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ledStrip)
+              AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip)
                   .alongWith(
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .alongWith(ledStrip.makeWholeColorCommand(Color.kRed))
@@ -346,7 +346,7 @@ public class RobotContainer { // Subsystems
       operatorController.R1().whileTrue(ramp.runPercent(-RampConstants.speed));
       operatorController.L1().whileTrue(ramp.runPercent(RampConstants.speed));
 
-      //   operatorController.PS().whileTrue(null);
+      operatorController.PS().whileTrue(AutomatedCommands.rampIntakeCommand(ramp));
     }
   }
 
@@ -458,7 +458,7 @@ public class RobotContainer { // Subsystems
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.intakeCoral(endEffecter, ledStrip));
     NamedCommands.registerCommand(
-        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ledStrip));
+        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip));
     NamedCommands.registerCommand(
         "CoralL4Pos", AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
 
@@ -514,7 +514,7 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData(
         "ElevatorAlgaeL3Pos",
         elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
-    SmartDashboard.putData("RampHomePos", ramp.setRampPosition(RampConstants.homeSetpoint));
+    SmartDashboard.putData("RampHomePos", ramp.setRampPosition(RampConstants.coralStationSetpoint));
     SmartDashboard.putData("RampIntakePos", ramp.setRampPosition(RampConstants.intakeSetpoint));
     SmartDashboard.putData("RampClimbPos", ramp.setRampPosition(RampConstants.climbSetpoint));
   }

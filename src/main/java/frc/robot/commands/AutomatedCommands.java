@@ -30,14 +30,15 @@ public class AutomatedCommands {
     return endEffecter
         .runPercent(EndEffecterConstants.speed)
         .until(endEffecter::isTriggered)
-        .alongWith(ramp.setRampPosition(RampConstants.homeSetpoint));
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
-  public static Command homeCommand(Wrist wrist, Elevator elevator, LEDStrip led) {
+  public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp, LEDStrip led) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
         .until(elevator::lowerLimit)
-        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint));
+        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
 
   public static Command coralL4Command(
@@ -99,5 +100,9 @@ public class AutomatedCommands {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint, true));
+  }
+
+  public static Command rampIntakeCommand(Ramp ramp) {
+    return ramp.setRampPosition(RampConstants.intakeSetpoint);
   }
 }
