@@ -26,6 +26,13 @@ public class AutomatedCommands {
         .andThen(led.makeWholeColorCommand(Color.kGreen));
   }
 
+  public static Command rampGoToIntakePosition(Ramp ramp, EndEffecter endEffecter) {
+    return endEffecter
+        .runPercent(EndEffecterConstants.speed)
+        .until(endEffecter::isTriggered)
+        .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
+  }
+
   public static Command intakeCoral(EndEffecter endEffecter, Ramp ramp, LEDStrip led) {
     return endEffecter
         .runPercent(EndEffecterConstants.speed)
@@ -37,8 +44,10 @@ public class AutomatedCommands {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
         .until(elevator::lowerLimit)
-        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint)
-        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
+        .andThen(
+            wrist
+                .setWristPosition(WristConstants.homeSetpoint)
+                .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
 
   public static Command coralL4Command(

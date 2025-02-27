@@ -245,7 +245,9 @@ public class RobotContainer { // Subsystems
                   .andThen(ledStrip.makeWholeColorCommand(Color.kGreen)));
 
       driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
-
+      driverController
+          .touchpad()
+          .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
       driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
       driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
@@ -290,6 +292,9 @@ public class RobotContainer { // Subsystems
       driverController.R1().whileTrue(ramp.runPercent(-RampConstants.speed));
       driverController.L1().whileTrue(ramp.runPercent(RampConstants.speed));
     } else {
+      operatorController
+          .touchpad()
+          .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
       operatorController
           .L2()
           .whileTrue(
@@ -475,7 +480,9 @@ public class RobotContainer { // Subsystems
   }
 
   public void updateDashboard() {
+
     // Basic Bitch Commands
+    SmartDashboard.putData("ResetRampEncoder", ramp.resetEncoder());
     SmartDashboard.putData("Intake", endEffecter.runPercent(0.5));
     SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5));
     SmartDashboard.putData("WristUp", wrist.runPercent(-0.1));

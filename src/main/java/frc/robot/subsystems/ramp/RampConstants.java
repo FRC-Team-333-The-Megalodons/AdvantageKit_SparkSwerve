@@ -14,11 +14,11 @@ public class RampConstants {
 
   // Ramp Setpoints
   public static double coralStationSetpoint = 0.0;
-  public static double intakeSetpoint = 0.0;
-  public static double climbSetpoint = 0.0;
+  public static double intakeSetpoint = 12.48;
+  public static double climbSetpoint = -96.5638;
 
   // PID Constants
-  public static final double kP = 0.05;
-  public static final double kI = 0.05;
-  public static final double kD = 0.05;
+  public static final double kP = 0.06;
+  public static final double kI = 0.0;
+  public static final double kD = 0.0;
 }

@@ -60,6 +60,11 @@ public class RampIOSpark implements RampIO {
   }
 
   @Override
+  public void resetEncoder() {
+    encoder.setPosition(0.0);
+  }
+
+  @Override
   public void setSpeed(double speed) {
     ramp.set(speed);
   }
