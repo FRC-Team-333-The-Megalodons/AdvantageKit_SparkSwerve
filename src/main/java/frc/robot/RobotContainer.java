@@ -438,6 +438,28 @@ public class RobotContainer { // Subsystems
         break;
     }
 
+    // Named Commands
+    NamedCommands.registerCommand(
+        "ScoreCoral", EndEffecterCommands.runEndEffecterForward(endEffecter).onlyIf(endEffecter::isTriggered));
+    NamedCommands.registerCommand(
+        "IntakeCoral", AutomatedCommands.intakeCoral(endEffecter, ramp, ledStrip));
+    NamedCommands.registerCommand(
+        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip));
+    NamedCommands.registerCommand(
+        "CoralL4Position",
+        AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+
+    new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
+    new EventTrigger("l3 position").whileTrue(Commands.print("Going to L3 position"));
+    new EventTrigger("l2 position").whileTrue(Commands.print("Going to L2 position"));
+    new EventTrigger("score coral").whileTrue(Commands.print("Score Coral"));
+    new EventTrigger("home position").whileTrue(Commands.print("Going Home"));
+    new EventTrigger("intake coral")
+        .whileTrue(
+            Commands.print("Intaking Coral...")
+                .until(endEffecter::isTriggered)
+                .andThen(Commands.print("Coral Intaked!")));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -456,21 +478,6 @@ public class RobotContainer { // Subsystems
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // Named Commands
-    NamedCommands.registerCommand(
-        "ScoreCoral", EndEffecterCommands.runEndEffecterForward(endEffecter));
-    NamedCommands.registerCommand(
-        "IntakeCoral", AutomatedCommands.intakeCoral(endEffecter, ledStrip));
-    NamedCommands.registerCommand(
-        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip));
-    NamedCommands.registerCommand(
-        "CoralL4Pos", AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
-
-    new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
-    new EventTrigger("score coral").whileTrue(Commands.print("Score Coral"));
-    new EventTrigger("home position").whileTrue(Commands.print("Go Home"));
-    new EventTrigger("intake coral").whileTrue(Commands.print("intaking coral"));
 
     // Configure the button bindings
     configureInitialControllerBindings();

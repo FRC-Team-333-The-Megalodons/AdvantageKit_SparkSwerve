@@ -26,18 +26,18 @@ public class AutomatedCommands {
         .andThen(led.makeWholeColorCommand(Color.kGreen));
   }
 
-  public static Command rampGoToIntakePosition(Ramp ramp, EndEffecter endEffecter) {
-    return endEffecter
-        .runPercent(EndEffecterConstants.speed)
-        .until(endEffecter::isTriggered)
-        .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
-  }
-
   public static Command intakeCoral(EndEffecter endEffecter, Ramp ramp, LEDStrip led) {
     return endEffecter
         .runPercent(EndEffecterConstants.speed)
         .until(endEffecter::isTriggered)
         .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
+  }
+
+  public static Command rampGoToIntakePosition(Ramp ramp, EndEffecter endEffecter) {
+    return endEffecter
+        .runPercent(EndEffecterConstants.speed)
+        .until(endEffecter::isTriggered)
+        .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
   }
 
   public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp, LEDStrip led) {

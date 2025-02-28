@@ -13,8 +13,20 @@
                 "data": {
                   "pathName": "H4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoralL4Position"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreCoral"
           }
         }
       ]

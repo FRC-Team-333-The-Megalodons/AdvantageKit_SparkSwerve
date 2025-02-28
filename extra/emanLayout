@@ -1019,7 +1019,7 @@
         "containers": [
           {
             "title": "ElevateDown",
-            "x": 512.0,
+            "x": 256.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -1032,7 +1032,7 @@
           },
           {
             "title": "ElevateUp",
-            "x": 512.0,
+            "x": 256.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -1097,7 +1097,7 @@
           },
           {
             "title": "WristDown",
-            "x": 1280.0,
+            "x": 1408.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -1110,7 +1110,7 @@
           },
           {
             "title": "WristUp",
-            "x": 1280.0,
+            "x": 1408.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -1286,6 +1286,84 @@
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/WristProcPos",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ResetRampEncoder",
+            "x": 768.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ResetRampEncoder",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RampUp",
+            "x": 1024.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RampUp",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RampDown",
+            "x": 1024.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RampDown",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RampHomePos",
+            "x": 768.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RampHomePos",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RampIntakePos",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RampIntakePos",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RampClimbPos",
+            "x": 512.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/RampClimbPos",
               "period": 0.06,
               "show_type": true
             }
