@@ -28,9 +28,13 @@ public class ElevatorIOSpark implements ElevatorIO {
       new SparkFlex(elevatorMotorRightCanId, MotorType.kBrushless);
 
   private final RelativeEncoder encoder1 = elevatorMotorTop.getEncoder();
-  private PIDController PID = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-  private PIDController PIDL4 = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kP);
-  private ElevatorFeedforward FF = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
+  private PIDController PID =
+      new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
+  private PIDController PIDL4 =
+      new PIDController(ElevatorConstants.kP4, ElevatorConstants.kI4, ElevatorConstants.kP4);
+  private ElevatorFeedforward FF =
+      new ElevatorFeedforward(
+          ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
   // 0, 0.11, 2.66, 0.05    0, 0.6, 1.33, 0.025
 
   private final RelativeEncoder encoder2 = elevatorMotorLeft.getEncoder();
@@ -120,15 +124,10 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void runElevatorPIDFFController(double setPoint) {
-    elevatorMotorTop.set(
-        PID.calculate(encoder1.getPosition(), setPoint)
-            + FF.calculate(setPoint));
-    elevatorMotorLeft.set(
-        PID.calculate(encoder2.getPosition(), setPoint)
-            + FF.calculate(setPoint));
+    elevatorMotorTop.set(PID.calculate(encoder1.getPosition(), setPoint) + FF.calculate(setPoint));
+    elevatorMotorLeft.set(PID.calculate(encoder2.getPosition(), setPoint) + FF.calculate(setPoint));
     elevatorMotorRight.set(
-        PID.calculate(encoder3.getPosition(), setPoint)
-            + FF.calculate(setPoint));
+        PID.calculate(encoder3.getPosition(), setPoint) + FF.calculate(setPoint));
   }
 
   @Override
