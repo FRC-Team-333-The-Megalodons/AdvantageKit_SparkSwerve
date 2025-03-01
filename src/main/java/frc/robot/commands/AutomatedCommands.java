@@ -33,6 +33,13 @@ public class AutomatedCommands {
         .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
+  public static Command intakeCoralAgain(EndEffecter endEffecter, Ramp ramp, LEDStrip led) {
+    return endEffecter
+        .runPercent(EndEffecterConstants.speed)
+        .until(endEffecter::isTriggered)
+        .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
+  }
+
   public static Command rampGoToIntakePosition(Ramp ramp, EndEffecter endEffecter) {
     return endEffecter
         .runPercent(EndEffecterConstants.speed)
@@ -129,6 +136,5 @@ public class AutomatedCommands {
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .until(elevator::atL4Setpoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
-
   }
 }

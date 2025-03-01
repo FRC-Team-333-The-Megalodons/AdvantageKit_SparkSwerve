@@ -25,12 +25,14 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
+  public static Pose3d visionRobotPose;
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
@@ -112,21 +114,25 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        boolean rejectPose = observation.tagCount() == 0; // Must have at least one tag
-        // || ( // observation.tagCount() == 1
-        // observation.ambiguity() > maxAmbiguity); // Cannot be high ambiguity
-        //     || Math.abs(observation.pose().getZ())
-        //         > maxZError // Must have realistic Z coordinate
-
-        //     // Must be within the field boundaries
-        // || observation.pose().getX() < 0.0
-        // || observation.pose().getX() > aprilTagLayout.getFieldLength()
-        // || observation.pose().getY() < 0.0
-        // || observation.pose().getY() > aprilTagLayout.getFieldWidth();
+        double x = observation.pose().getX(), y = observation.pose().getY();
+        boolean isPoseSane = /* somehow, origin value get in here. that needs to go away. */
+            x != 0 && y != 0 && observation.pose().getRotation().getAngle() != 0;
+        // observation.tagCount() > 0 &&                         // Must have at least one tag
+        // found
+        /*
+        observation.ambiguity() <= maxAmbiguity // Cannot be high ambiguity
+            && Math.abs(observation.pose().getZ())
+                <= maxZError // Must have realistic Z coordinate
+            && x > 0
+            && x < aprilTagLayout.getFieldLength() // Must be within the field boundaries
+            && y > 0
+            && y < aprilTagLayout.getFieldWidth() // Must be within the field boundaries
+        ;
+        */
 
         // Add pose to log
-        // robotPoses.add(observation.pose());
-        if (rejectPose) {
+        robotPoses.add(observation.pose());
+        if (!isPoseSane) {
           robotPosesRejected.add(observation.pose());
           continue;
         } else {
@@ -178,6 +184,25 @@ public class Vision extends SubsystemBase {
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
 
+    // We can potentially end up with multiple poses, and be unable to determine which is correct.
+    // In that case, we can use the physical odometry as a reference to help us "break the tie" -
+    // Of the poses, the one with the closes Position2d to the drivetrain's (motors+gyro) odometry
+    //  is (probably) the correct one!
+    Pose2d drivetrainPose2d = Drive.estimatedPose2d;
+    Logger.recordOutput("Vision/Summary/DriveTrainPose", drivetrainPose2d);
+    Pose3d bestRobotPose = null;
+    double bestRobotPoseScore = Double.MAX_VALUE;
+    for (int i = 0; i < allRobotPosesAccepted.size(); ++i) {
+      Pose3d pose3d = allRobotPosesAccepted.get(i);
+      double score = getScaledPose2dDiff(drivetrainPose2d, pose3d.toPose2d());
+      if (score < bestRobotPoseScore) {
+        bestRobotPose = pose3d;
+        bestRobotPoseScore = score;
+      }
+    }
+
+    visionRobotPose = bestRobotPose;
+
     // Log summary data
     Logger.recordOutput(
         "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
@@ -189,6 +214,31 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
+  }
+
+  private static Double hypotenuse = null;
+
+  public double getFieldHypotenuse() {
+    // We're using a static variable to cache the result so we don't do the expensive
+    //  pythagorean theorem calc for hypotenuse every time.
+    if (hypotenuse == null) {
+      double fieldLength = aprilTagLayout.getFieldLength();
+      double fieldWidth = aprilTagLayout.getFieldWidth();
+      hypotenuse = Math.sqrt(Math.pow(fieldLength, 2) + Math.pow(fieldWidth, 2));
+    }
+    return hypotenuse;
+  }
+
+  public double getScaledPose2dDiff(Pose2d a, Pose2d b) {
+    // We're effectively "scoring" the difference, as a combination of Translation and Rotation.
+    // Balancing the delta between the rotation and translation is a bit hard. We need to scale
+    // distance relative to the field size (i.e. hypotenuse)
+    double scaledRotationDelta = Math.abs(a.relativeTo(b).getRotation().getDegrees()) / 180;
+    double scaledTranslationDelta =
+        Math.abs(a.getTranslation().getDistance(b.getTranslation())) / getFieldHypotenuse();
+
+    return scaledRotationDelta + scaledTranslationDelta;
   }
 
   @FunctionalInterface

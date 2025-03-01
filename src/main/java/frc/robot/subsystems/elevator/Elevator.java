@@ -13,6 +13,8 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   private final ElevatorIO io;
 
+  public static boolean isPastSlowdownHeight = false;
+
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
   public Elevator(ElevatorIO io) {
@@ -38,6 +40,20 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+    isPastSlowdownHeight = evaluateIsPastSlowdownHeight();
+  }
+
+  public boolean evaluateIsPastSlowdownHeight()
+  {
+    if (upperLimit()) {
+      return true;
+    }
+
+    if (atL4Setpoint()) {
+      return true;
+    }
+
+    return inputs.position > ElevatorConstants.closeToL4;
   }
 
   public boolean lowerLimit() {
