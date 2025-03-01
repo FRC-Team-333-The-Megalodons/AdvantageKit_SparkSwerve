@@ -14,6 +14,7 @@ public interface WristIO {
     public double currentAmps = 0.0;
     public double positionAbs = 0.0;
     public boolean atSetpoint = false;
+    public boolean atL4Setpoint = false;
   }
 
   /** Update the set of loggable inputs. */

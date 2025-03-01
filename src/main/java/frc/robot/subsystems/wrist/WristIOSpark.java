@@ -55,6 +55,7 @@ public class WristIOSpark implements WristIO {
     ifOk(wrist, externalEncoder::get, (value) -> inputs.positionAbs = value);
 
     inputs.atSetpoint = pidController.atSetpoint();
+    inputs.atL4Setpoint = inputs.positionAbs > 0.35 && inputs.positionAbs < 0.39 ? true : false;
   }
 
   @Override

@@ -114,4 +114,21 @@ public class AutomatedCommands {
   public static Command rampIntakeCommand(Ramp ramp) {
     return ramp.setRampPosition(RampConstants.intakeSetpoint);
   }
+
+  public static Command scoreCoral(EndEffecter endEffecter, Wrist wrist) {
+
+    return EndEffecterCommands.runEndEffecterForward(endEffecter)
+        .onlyWhile(endEffecter::isTriggered)
+        .onlyWhile(wrist::atL4Setpoint);
+  }
+
+  public static Command autoScoreL4(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
+    return wrist
+        .setWristPosition(WristConstants.coralL23Setpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
+        .until(elevator::atL4Setpoint)
+        .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
+
+  }
 }

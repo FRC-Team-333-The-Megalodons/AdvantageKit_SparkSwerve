@@ -440,14 +440,15 @@ public class RobotContainer { // Subsystems
 
     // Named Commands
     NamedCommands.registerCommand(
-        "ScoreCoral", EndEffecterCommands.runEndEffecterForward(endEffecter).onlyIf(endEffecter::isTriggered));
+        "ScoreCoral",
+        EndEffecterCommands.runEndEffecterForward(endEffecter)
+            .onlyWhile(endEffecter::isTriggered)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.intakeCoral(endEffecter, ramp, ledStrip));
     NamedCommands.registerCommand(
         "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip));
     NamedCommands.registerCommand(
-        "CoralL4Position",
-        AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ledStrip));
+        "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator, ledStrip));
 
     new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
     new EventTrigger("l3 position").whileTrue(Commands.print("Going to L3 position"));
