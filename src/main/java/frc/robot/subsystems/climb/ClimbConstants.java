@@ -8,4 +8,6 @@ public class ClimbConstants {
   public static final int climbCanId = 5;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+
+  public static final double speed = 0.7;
 }

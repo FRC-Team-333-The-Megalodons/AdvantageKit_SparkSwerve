@@ -10,6 +10,8 @@ public class ElevatorConstants {
   public static final int elevatorMotorLeftCanId = 9;
   public static final int elevatorMotorRightCanId = 8;
 
+  public static final double speed = 0.7;
+
   public static final int topLimitSwitchID = 8;
   public static final int bottomLimitSwitchID = 9;
 

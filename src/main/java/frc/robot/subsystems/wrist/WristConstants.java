@@ -8,6 +8,7 @@ public class WristConstants {
   public static final int wristCanId = 4;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
+  public static final double speed = 0.7;
 
   // Wrist set points
   public static final double WRIST_HOME_POSITION = 0.4725;
@@ -25,4 +26,6 @@ public class WristConstants {
   public static final double WRIST_SCORE_CORAL_L2_POS = 0.42276;
   public static final double WRIST_SCORE_CORAL_L3_POS = 0.42276;
   public static final double WRIST_SCORE_CORAL_L4_POS = 0.353;
+
+  public static final double WRIST_HOME_WITH_ALGAE_POS = 0.244;
 }
