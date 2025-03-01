@@ -95,13 +95,34 @@ public class RobotContainer { // Subsystems
   private final boolean startInManualMode = false;
   private final boolean isInSoloDrivingMode = false;
 
+  private double applyJoystickAllianceAndLimits(double value) {
+    if (!drive.isRed()) {
+      value *= -1; // Flip the direction if we're not Red.
+    }
+    // Remove this code if you want to remove Speed Limiting when elevator up
+    if (Elevator.isPastSlowdownHeight) {
+      // If the elevator is higher than the slow-limiter height, cut the joystick in half.
+      value /= 2;
+    }
+    return value;
+  }
+
+  private double getDriverLeftY() {
+    return applyJoystickAllianceAndLimits(driverController.getLeftY());
+  }
+
+  private double getDriverLeftX() {
+    return applyJoystickAllianceAndLimits(driverController.getLeftX());
+  }
+
+  private double getDriverRightX() {
+    return -driverController.getRightX();
+  }
+
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
-            () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
@@ -116,8 +137,8 @@ public class RobotContainer { // Subsystems
     //     .whileTrue(
     //         DriveCommands.joystickDriveAtAngle(
     //             drive,
-    //             () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
-    //             () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
+    //             () -> getDriverLeftY(),
+    //             () -> getDriverLeftX(),
     //             () -> Rotation2d.fromDegrees(drive.setAngle())));
 
     // switch (drive.setReefAngle(vision)) {
@@ -149,8 +170,8 @@ public class RobotContainer { // Subsystems
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> drive.isRed() ? driverController.getLeftY() : -driverController.getLeftY(),
-                () -> drive.isRed() ? driverController.getLeftX() : -driverController.getLeftX(),
+                () -> getDriverLeftY(),
+                () -> getDriverLeftX(),
                 () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
