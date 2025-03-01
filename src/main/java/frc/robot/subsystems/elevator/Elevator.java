@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -41,10 +42,10 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
     isPastSlowdownHeight = evaluateIsPastSlowdownHeight();
+    SmartDashboard.putBoolean("ElevatorHigh", isPastSlowdownHeight);
   }
 
-  public boolean evaluateIsPastSlowdownHeight()
-  {
+  public boolean evaluateIsPastSlowdownHeight() {
     if (upperLimit()) {
       return true;
     }
