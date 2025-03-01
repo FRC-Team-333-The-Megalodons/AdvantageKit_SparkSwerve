@@ -6,18 +6,28 @@ package frc.robot.subsystems.elevator;
 
 /** Add your docs here. */
 public class ElevatorConstants {
+//  motors
   public static final int elevatorMotorTopCanId = 7;
   public static final int elevatorMotorLeftCanId = 9;
   public static final int elevatorMotorRightCanId = 8;
-
-  public static final double speed = 0.7;
-
+// limit switch
   public static final int topLimitSwitchID = 8;
   public static final int bottomLimitSwitchID = 9;
-
+// current
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
-
+  public static final double speed = 0.7;
+// grains 
+  // pid
+  public static final double kP = 0.06;
+  public static final double kI = 0.0;
+  public static final double kD = 0.0;
+  //FF
+  public static final double kS = 0.0;
+  public static final double kG = 0.11;
+  public static final double kV = 3.6;
+  public static final double kA = 0.6;
+// setpoints 
   public static final double ELEVATOR_MAX_HEIGHT = 200.0;
   public static final double ELEVATOR_MIN_HEIGHT = 0.0;
 
