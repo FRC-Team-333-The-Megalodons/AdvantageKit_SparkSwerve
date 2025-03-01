@@ -20,6 +20,7 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera0;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.RunningIntake;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
 import frc.robot.commands.photonCamera.PhotonVisonCamera;
 import frc.robot.subsystems.LEDStrip;
@@ -98,8 +100,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    // NamedCommands.registerCommand("RunningIntake", intake.runPercent(0.3));
 
     switch (Constants.currentMode) {
       case REAL:
@@ -171,6 +171,8 @@ public class RobotContainer {
 
         break;
     }
+
+    NamedCommands.registerCommand("RunningIntake", new RunningIntake(intake));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

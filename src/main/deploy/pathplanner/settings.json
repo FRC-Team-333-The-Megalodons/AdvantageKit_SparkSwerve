@@ -3,9 +3,10 @@
   "robotLength": 0.69,
   "holonomicMode": true,
   "pathFolders": [
+    "1 piece coral auto",
     "3 gp",
     "4gp",
-    "4 pieces coral auto",
+    "score 1 coral + coral station",
     "New New Folder"
   ],
   "autoFolders": [],

@@ -38,6 +38,10 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("DSensor", getPositionForDSensor());
   }
 
+  public Command runIntakeAuto(double percent) {
+    return run(() -> io.setVoltage(percent * 12.0));
+  }
+
   public Command runPercent(double percent) {
     if (!io.inRange()) {
       return run(() -> io.setVoltage(0.0));
