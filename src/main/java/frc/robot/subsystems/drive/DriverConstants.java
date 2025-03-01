@@ -24,4 +24,6 @@ public class DriverConstants {
     RIGHT_TOP_REEF,
     TOP_REEF
   }
+
+  public static double MAGIC_INVALID_DEGREES_NUMBER = -333;
 }

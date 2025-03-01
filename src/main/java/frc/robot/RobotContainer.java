@@ -93,7 +93,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = false;
+  private final boolean isInSoloDrivingMode = true;
 
   private double applyJoystickAllianceAndLimits(double value) {
     if (!drive.isRed()) {
@@ -172,6 +172,7 @@ public class RobotContainer { // Subsystems
                 drive,
                 () -> getDriverLeftY(),
                 () -> getDriverLeftX(),
+                () -> getDriverRightX(), // only used if no valid reef angle
                 () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));

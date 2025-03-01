@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.Vision;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -111,6 +112,7 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
+      DoubleSupplier omegaSupplier,
       Supplier<Rotation2d> rotationSupplier) {
 
     // Create PID controller
@@ -129,10 +131,31 @@ public class DriveCommands {
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
+              final double TAG_SEEN_DEADBAND = 5000;
+
+              boolean useVisionTagAngle = false;
+              // Decide if we've seen the tag recently enough to use the ID.
+              if (Vision.visionTagId >= 0
+                  && Vision.visionTagLastSeen > 0
+                  && System.currentTimeMillis() - Vision.visionTagLastSeen < TAG_SEEN_DEADBAND) {
+                useVisionTagAngle = true;
+              }
+
               // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+              double omega;
+
+              if (useVisionTagAngle) {
+                omega =
+                    angleController.calculate(
+                        drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+              } else {
+                // This means we didn't actually get valid degrees, and we need to just trust the
+                // joystick.
+                omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+                // Square rotation value for more precise control
+                omega = Math.copySign(omega * omega, omega);
+              }
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =

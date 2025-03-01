@@ -29,10 +29,13 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   public static Pose3d visionRobotPose;
+  public static int visionTagId = -1;
+  public static long visionTagLastSeen = -1;
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
@@ -214,6 +217,34 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+    Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
+
+    // Find the closest tag.
+    if (bestRobotPose != null) {
+      double closestTagDistance = Double.MAX_VALUE;
+      int closestTagId = -1;
+      for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+        for (int tagId : inputs[cameraIndex].tagIds) {
+          Optional<Pose3d> tagPoseOpt = aprilTagLayout.getTagPose(tagId);
+          if (tagPoseOpt.isPresent()) {
+            Pose3d tagPose = tagPoseOpt.get();
+            double distance = tagPose.getTranslation().getDistance(bestRobotPose.getTranslation());
+            if (distance < closestTagDistance) {
+              closestTagDistance = distance;
+              closestTagId = tagId;
+            }
+          }
+        }
+      }
+      if (closestTagId >= 0) {
+        visionTagId = closestTagId;
+        visionTagLastSeen = System.currentTimeMillis();
+      }
+    }
+
+    Logger.recordOutput("Vision/Summary/ClosestSeenTag/TagId", visionTagId);
+    Logger.recordOutput("Vision/Summary/ClosestSeenTag/LastSeen", visionTagLastSeen);
+
     Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
   }
 

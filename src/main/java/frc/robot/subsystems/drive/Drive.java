@@ -411,8 +411,16 @@ public class Drive extends SubsystemBase {
     return reefPoseStates;
   }
 
-  public int reefDriveAngle(Vision vision) {
-    int id = vision.getFudicialId();
+  public double reefDriveAngle(Vision vision) {
+    //  int id = vision.getFudicialId();
+    int id = Vision.visionTagId;
+
+    // If there's no valid ID, we don't want to spin the robot.
+
+    if (id < 0) {
+      return DriverConstants.MAGIC_INVALID_DEGREES_NUMBER;
+    }
+
     int driveAngle = 0;
     if (id == 18 || id == 7) {
 
