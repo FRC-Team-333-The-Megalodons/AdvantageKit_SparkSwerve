@@ -15,6 +15,6 @@ public class RunningIntake extends SequentialCommandGroup {
   public RunningIntake(Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(intake.runIntakeAuto(-0.378).withTimeout(1));
+    addCommands(intake.runIntakeAuto(-0.330).withTimeout(1));
   }
 }

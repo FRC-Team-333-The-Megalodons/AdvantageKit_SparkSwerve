@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntakeAuto(double percent) {
-    return run(() -> io.setVoltage(percent * 12.0));
+    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
 
   public Command runPercent(double percent) {

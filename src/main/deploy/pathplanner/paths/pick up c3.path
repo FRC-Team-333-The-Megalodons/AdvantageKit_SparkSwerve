@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.324487704918032,
-        "y": 6.308657786885245
+        "x": 4.195696721311475,
+        "y": 5.085911885245901
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.873975409836066,
-        "y": 6.128842213114753
+        "x": 3.0328893442622946,
+        "y": 5.877100409836064
       },
       "isLocked": false,
-      "linkedName": "StartPos"
+      "linkedName": "ScoreC2"
     },
     {
       "anchor": {
-        "x": 5.214651639344262,
-        "y": 4.894108606557377
+        "x": 1.6063524590163931,
+        "y": 7.387551229508197
       },
       "prevControl": {
-        "x": 5.9219262295081965,
-        "y": 5.469518442622951
+        "x": 2.8770491803278686,
+        "y": 6.512448770491804
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Score_PreL_Coral"
+      "linkedName": "PickUp3"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -116.56505117707795
+    "rotation": -50.59933933652054
   },
   "reversed": false,
-  "folder": "1 piece coral auto",
+  "folder": "multiple pieces auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -175.68397248013437
+    "rotation": -57.54744991288329
   },
   "useDefaultConstraints": true
 }
