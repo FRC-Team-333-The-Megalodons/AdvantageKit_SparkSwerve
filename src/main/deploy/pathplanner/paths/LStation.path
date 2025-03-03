@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.529,
-        "y": 0.572
+        "x": 5.283779182879377,
+        "y": 5.138946984435798
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.779,
-        "y": 0.572
+        "x": 3.863766891891892,
+        "y": 6.623902027027027
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "I4"
     },
     {
       "anchor": {
-        "x": 7.529,
-        "y": 0.572
+        "x": 1.6601351351351352,
+        "y": 7.355152027027026
       },
       "prevControl": {
-        "x": 7.279,
-        "y": 0.572
+        "x": 3.4289695945945944,
+        "y": 6.584375
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LCStation"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "intake coral",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.929175545213
+    "rotation": -53.365886124032656
   },
   "reversed": false,
-  "folder": "TestPaths",
+  "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.97750242319367
+    "rotation": -118.79097507219208
   },
   "useDefaultConstraints": true
 }

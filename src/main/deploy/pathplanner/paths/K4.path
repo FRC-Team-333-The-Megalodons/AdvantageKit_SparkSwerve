@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.529,
-        "y": 0.572
+        "x": 1.6601351351351352,
+        "y": 7.355152027027026
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.779,
-        "y": 0.572
+        "x": 2.6779560810810805,
+        "y": 6.376858108108107
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LCStation"
     },
     {
       "anchor": {
-        "x": 7.529,
-        "y": 0.572
+        "x": 3.903293918918919,
+        "y": 5.349155405405404
       },
       "prevControl": {
-        "x": 7.279,
-        "y": 0.572
+        "x": 3.1226351351351354,
+        "y": 5.9815878378378375
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "l4 position",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.929175545213
+    "rotation": -59.85609356975517
   },
   "reversed": false,
-  "folder": "TestPaths",
+  "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.97750242319367
+    "rotation": -53.365886124032656
   },
   "useDefaultConstraints": true
 }

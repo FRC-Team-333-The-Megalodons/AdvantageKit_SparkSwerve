@@ -137,4 +137,9 @@ public class AutomatedCommands {
         .until(elevator::atL4Setpoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
   }
+  public static Command autoIntakeCoral(EndEffecter endEffecter, Ramp ramp, LEDStrip led){
+    return ramp.setRampPosition(RampConstants.intakeSetpoint)
+                .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter))
+                .until(endEffecter::isTriggered);
+  }
 }
