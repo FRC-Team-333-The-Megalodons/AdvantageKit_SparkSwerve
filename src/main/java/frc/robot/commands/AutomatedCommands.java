@@ -129,6 +129,8 @@ public class AutomatedCommands {
         .onlyWhile(wrist::atL4Setpoint);
   }
 
+  /* Autonomous Commands */
+
   public static Command autoScoreL4(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, LEDStrip led) {
     return wrist

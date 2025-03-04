@@ -93,7 +93,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = true;
+  private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
     if (!drive.isRed()) {
@@ -132,39 +132,6 @@ public class RobotContainer { // Subsystems
   }
 
   private void configureDriverControllerBindings() {
-    // driverController
-    //     .R3()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> getDriverLeftY(),
-    //             () -> getDriverLeftX(),
-    //             () -> Rotation2d.fromDegrees(drive.setAngle())));
-
-    // switch (drive.setReefAngle(vision)) {
-    //   case BOTTOM_REEF:
-    //     DriverConstants.driveAngle = 0;
-    //     break;
-    //   case RIGHT_BOTTOM_REEF:
-    //     DriverConstants.driveAngle = 45;
-    //     break;
-    //   case LEFT_BOTTOM_REEF:
-    //     DriverConstants.driveAngle = -45;
-    //     break;
-    //   case RIGHT_TOP_REEF:
-    //     DriverConstants.driveAngle = 135;
-    //     break;
-    //   case LEFT_TOP_REEF:
-    //     DriverConstants.driveAngle = -135;
-    //     break;
-    //   case TOP_REEF:
-    //     DriverConstants.driveAngle = 180;
-    //     break;
-    //   default:
-    //     DriverConstants.driveAngle = 200;
-    //     break;
-    // }
-
     driverController
         .R3()
         .whileTrue(
@@ -507,7 +474,6 @@ public class RobotContainer { // Subsystems
     // Configure the button bindings
     configureInitialControllerBindings();
     SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, false);
-    // configureButtonBindings();
     updateDashboard();
   }
 

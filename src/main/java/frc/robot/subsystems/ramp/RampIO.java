@@ -14,6 +14,8 @@ public interface RampIO {
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
     public boolean atSetpoint = false;
+    public boolean limitSwicth1 = false;
+    public boolean limitSwitch2 = false;
   }
 
   /** Update the set of loggable inputs. */
