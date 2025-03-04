@@ -470,7 +470,7 @@ public class RobotContainer { // Subsystems
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter, ramp, ledStrip));
     NamedCommands.registerCommand(
-        "HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp, ledStrip));
+        "HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator, ramp, ledStrip));
     NamedCommands.registerCommand(
         "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator, ledStrip));
 
