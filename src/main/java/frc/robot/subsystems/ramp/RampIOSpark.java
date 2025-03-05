@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -22,7 +23,7 @@ public class RampIOSpark implements RampIO {
   private final SparkFlex ramp = new SparkFlex(rampCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = ramp.getEncoder();
   private final PIDController pidController = new PIDController(kP, kI, kD);
-  // private final DigitalInput limitSwitch1 = new DigitalInput(rampLimitSwitch1Id);
+  private final DigitalInput limitSwitch1 = new DigitalInput(rampLimitSwitch1Id);
   // private final DigitalInput limitSwitch2 = new DigitalInput(rampLimitSwitch2Id);
 
   public RampIOSpark() {
@@ -54,7 +55,7 @@ public class RampIOSpark implements RampIO {
     ifOk(ramp, ramp::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
     inputs.atSetpoint = pidController.atSetpoint();
-    // inputs.limitSwicth1 = limitSwitch1.get();
+    inputs.limitSwicth1 = limitSwitch1.get();
     // inputs.limitSwitch2 = limitSwitch2.get();
   }
 

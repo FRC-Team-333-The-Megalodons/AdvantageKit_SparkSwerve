@@ -7,7 +7,7 @@ package frc.robot.subsystems.ramp;
 /** Add your docs here. */
 public class RampConstants {
   public static final int rampCanId = 6;
-  public static final int rampLimitSwitch1Id = -1;
+  public static final int rampLimitSwitch1Id = 3;
   public static final int rampLimitSwitch2Id = -1;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 20;
@@ -15,8 +15,8 @@ public class RampConstants {
 
   // Ramp Setpoints
   public static double coralStationSetpoint = 0.0;
-  public static double intakeSetpoint = 15.0;
-  public static double climbSetpoint = -96.5638;
+  public static double intakeSetpoint = -20.0;
+  public static double climbSetpoint = 91.5638;
 
   // PID Constants
   public static final double kP = 0.06;
