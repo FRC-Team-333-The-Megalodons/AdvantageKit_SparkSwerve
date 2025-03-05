@@ -8,8 +8,9 @@
   ],
   "autoFolders": [
     "1pc",
+    "2pc",
     "Leave+DoNothing",
-    "2pc"
+    "3pc"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
