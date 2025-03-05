@@ -132,4 +132,13 @@ public class AutomatedCommands {
         .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter))
         .until(endEffecter::isTriggered);
   }
+  public static Command autoHomeCommand(Wrist wrist, Elevator elevator, Ramp ramp) {
+    return elevator
+        .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
+        .until(elevator::lowerLimit)
+        .andThen(
+            wrist
+                .setWristPosition(WristConstants.homeSetpoint).until(wrist::atHomePosition));
+  }
 }
