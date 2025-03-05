@@ -471,8 +471,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
     // SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
     // SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
-    SmartDashboard.putData("RampUp", ramp.runPercent(0.1));
-    SmartDashboard.putData("RampDown", ramp.runPercent(-0.1));
+    SmartDashboard.putData("RampUp", ramp.runPercent(-0.1));
+    SmartDashboard.putData("RampDown", ramp.runPercent(0.1));
 
     // Advanced Commands
     SmartDashboard.putData(
