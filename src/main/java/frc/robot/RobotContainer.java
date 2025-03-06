@@ -426,8 +426,7 @@ public class RobotContainer { // Subsystems
             .onlyWhile(endEffecter::isTriggered)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter, ramp));
-    NamedCommands.registerCommand(
-        "HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator, ramp));
+    NamedCommands.registerCommand("HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp));
     NamedCommands.registerCommand(
         "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator));
 

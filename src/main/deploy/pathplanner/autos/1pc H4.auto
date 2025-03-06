@@ -28,25 +28,6 @@
           "data": {
             "name": "ScoreCoral"
           }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BackUpH4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HomePos"
-                }
-              }
-            ]
-          }
         }
       ]
     }
