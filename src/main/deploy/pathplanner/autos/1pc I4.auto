@@ -22,6 +22,31 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackUpI4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HomePos"
+                }
+              }
+            ]
+          }
         }
       ]
     }

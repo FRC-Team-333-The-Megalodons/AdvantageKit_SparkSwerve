@@ -14,14 +14,13 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
 public class ClimberIOSpark implements ClimberIO {
   private final SparkFlex climber = new SparkFlex(climberCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = climber.getEncoder();
-  private final DigitalInput limitSwitch = new DigitalInput(limitSwitchId);
+  // private final DigitalInput limitSwitch = new DigitalInput(limitSwitchId);
 
   public ClimberIOSpark() {
     var config = new SparkFlexConfig();
@@ -52,7 +51,7 @@ public class ClimberIOSpark implements ClimberIO {
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(climber, climber::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
-    inputs.limitSwitch = !limitSwitch.get();
+    // inputs.limitSwitch = !limitSwitch.get();
   }
 
   @Override
