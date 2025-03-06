@@ -51,6 +51,9 @@ public class ClimberIOSpark implements ClimberIO {
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(climber, climber::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
+    inputs.isFullyIn = inputs.positionRad == ClimberConstants.fullyIn;
+    inputs.isFullyOut = inputs.positionRad > 0.5 && inputs.positionRad < 0.52 ? true : false;
+
     // inputs.limitSwitch = !limitSwitch.get();
   }
 
@@ -63,4 +66,5 @@ public class ClimberIOSpark implements ClimberIO {
   public void setSpeed(double speed) {
     climber.set(speed);
   }
+  
 }

@@ -11,4 +11,6 @@ public class ClimberConstants {
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
   public static final double speed = 1.0;
+  public static final double fullyOut = 0.519;
+  public static final double fullyIn = 0.0;
 }

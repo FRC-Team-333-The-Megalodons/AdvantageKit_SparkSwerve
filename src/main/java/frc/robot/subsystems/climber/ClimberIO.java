@@ -13,6 +13,8 @@ public interface ClimberIO {
     public double velocityRadPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
+    public boolean isFullyOut = false;
+    public boolean isFullyIn = false;
     // public boolean limitSwitch = false;
   }
 

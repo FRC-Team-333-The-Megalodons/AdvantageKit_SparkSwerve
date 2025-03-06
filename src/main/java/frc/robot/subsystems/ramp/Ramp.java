@@ -47,4 +47,8 @@ public class Ramp extends SubsystemBase {
   public boolean atSetpoint() {
     return inputs.atSetpoint;
   }
+
+  public boolean isCoralInside() {
+    return inputs.digitalInputSensor;
+  }
 }

@@ -188,15 +188,6 @@ public class RobotContainer { // Subsystems
       driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
       driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
 
-      driverController
-          .PS()
-          .onTrue(
-              Commands.runOnce(
-                      () ->
-                          drive.setPose(
-                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                      drive)
-                  .ignoringDisable(true));
     } else {
       operatorController
           .povUp()
@@ -232,8 +223,8 @@ public class RobotContainer { // Subsystems
       driverController
           .touchpad()
           .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
-      //   driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      //   driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
       driverController
           .triangle()
@@ -303,7 +294,7 @@ public class RobotContainer { // Subsystems
           .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
 
       //
-      // operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+      operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
       operatorController
           .povUp()
@@ -426,7 +417,8 @@ public class RobotContainer { // Subsystems
             .onlyWhile(endEffecter::isTriggered)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter, ramp));
-    NamedCommands.registerCommand("HomePos", AutomatedCommands.homeCommand(wrist, elevator, ramp));
+    NamedCommands.registerCommand(
+        "HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator, ramp));
     NamedCommands.registerCommand(
         "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator));
 
@@ -476,8 +468,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    // SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
-    // SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
+    SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
+    SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
     SmartDashboard.putData("RampUp", ramp.runPercent(-0.1));
     SmartDashboard.putData("RampDown", ramp.runPercent(0.1));
 

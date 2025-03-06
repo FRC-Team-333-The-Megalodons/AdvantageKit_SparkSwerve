@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -25,6 +26,8 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
+    SmartDashboard.putBoolean("FullyIn", isFullyIn());
+    SmartDashboard.putBoolean("IsFullyOut", isFullyOut());
   }
 
   public Command runPercent(double percent) {
@@ -35,5 +38,11 @@ public class Climber extends SubsystemBase {
     return runEnd(
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
         () -> io.setVoltage(0.0));
+  }
+  public boolean isFullyIn(){
+    return inputs.isFullyIn;
+  }
+  public boolean isFullyOut(){
+    return inputs.isFullyOut;
   }
 }

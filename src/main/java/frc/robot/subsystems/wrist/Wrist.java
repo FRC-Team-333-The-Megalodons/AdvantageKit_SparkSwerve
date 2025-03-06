@@ -41,4 +41,8 @@ public class Wrist extends SubsystemBase {
   public boolean atL4Setpoint() {
     return inputs.atL4Setpoint;
   }
+
+  public boolean atHomePosition() {
+    return inputs.atHomePosition;
+  }
 }
