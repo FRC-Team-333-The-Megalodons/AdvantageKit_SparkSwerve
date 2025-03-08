@@ -18,7 +18,7 @@ public class ElevatorConstants {
   // Setpoints
   public static final double homeSetpoint = 0.0;
   public static final double coralL4Setpoint = 210.0;
-  public static final double coralL3Setpoint = 95.0;
+  public static final double coralL3Setpoint = 100.0;
   public static final double coralL2Setpoint = 45.0;
   public static final double aglaeL2Setpoint = 80.0;
   public static final double aglaeL3Setpoint = 130.0;

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.915442607003891,
-        "y": 4.182915856031129
+        "x": 5.817974452554745,
+        "y": 4.163777372262772
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.165431883500924,
-        "y": 4.185231376812736
+        "x": 6.067963729051778,
+        "y": 4.166092893044379
       },
       "isLocked": false,
       "linkedName": "H4"
@@ -48,7 +48,7 @@
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.42127443439222
+    "rotation": 179.2374021022507
   },
   "useDefaultConstraints": true
 }

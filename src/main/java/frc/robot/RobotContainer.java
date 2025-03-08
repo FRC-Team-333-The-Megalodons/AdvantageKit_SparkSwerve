@@ -54,11 +54,6 @@ import frc.robot.subsystems.ramp.RampConstants;
 import frc.robot.subsystems.ramp.RampIO;
 import frc.robot.subsystems.ramp.RampIOSim;
 import frc.robot.subsystems.ramp.RampIOSpark;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIO;
@@ -80,7 +75,7 @@ public class RobotContainer { // Subsystems
   private final Wrist wrist;
   private final Climber climber;
   private final Ramp ramp;
-  private final Vision vision;
+  //   private final Vision vision;
 
   // Controller
   private final CommandPS5Controller driverController = new CommandPS5Controller(0);
@@ -93,9 +88,9 @@ public class RobotContainer { // Subsystems
   private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
-    if (!drive.isRed()) {
-      value *= -1; // Flip the direction if we're not Red.
-    }
+    // if (!drive.isRed()) {
+    //   value *= -1; // Flip the direction if we're not Red.
+    // }
     // Remove this code if you want to remove Speed Limiting when elevator up
     if (Elevator.isPastSlowdownHeight) {
       // If the elevator is higher than the slow-limiter height, cut the joystick in half.
@@ -119,7 +114,7 @@ public class RobotContainer { // Subsystems
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
+            drive, () -> -getDriverLeftY(), () -> -getDriverLeftX(), () -> getDriverRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
@@ -129,15 +124,15 @@ public class RobotContainer { // Subsystems
   }
 
   private void configureDriverControllerBindings() {
-    driverController
-        .R3()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> getDriverLeftY(),
-                () -> getDriverLeftX(),
-                () -> getDriverRightX(), // only used if no valid reef angle
-                () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
+    // driverController
+    //     .R3()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -getDriverLeftY(),
+    //             () -> -getDriverLeftX(),
+    //             () -> getDriverRightX(), // only used if no valid reef angle
+    //             () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -153,7 +148,7 @@ public class RobotContainer { // Subsystems
                   .ignoringDisable(true));
     } else {
       driverController
-          .options()
+          .R2()
           .onTrue(
               Commands.runOnce(
                       () ->
@@ -224,17 +219,19 @@ public class RobotContainer { // Subsystems
           .touchpad()
           .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
       driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      driverController
+          .create()
+          .whileTrue(climber.runPercent(ClimberConstants.speed).until(climber::isAtMin));
 
       driverController
           .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ramp));
       driverController
           .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ramp));
       driverController
           .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ramp));
 
       driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
@@ -281,17 +278,19 @@ public class RobotContainer { // Subsystems
       operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
       operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      operatorController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      operatorController
+          .create()
+          .whileTrue(climber.runPercent(ClimberConstants.speed).until(climber::isAtMin));
 
       operatorController
           .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator, ramp));
       operatorController
           .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator, ramp));
       operatorController
           .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator, ramp));
 
       //
       operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
@@ -362,11 +361,11 @@ public class RobotContainer { // Subsystems
         wrist = new Wrist(new WristIOSpark());
         climber = new Climber(new ClimberIOSpark());
         ramp = new Ramp(new RampIOSpark());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+        //         new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         break;
 
       case SIM:
@@ -383,13 +382,14 @@ public class RobotContainer { // Subsystems
         wrist = new Wrist(new WristIOSim());
         climber = new Climber(new ClimberIOSim());
         ramp = new Ramp(new RampIOSim());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVisionSim(
+        //             VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+        //         new VisionIOPhotonVisionSim(
+        //             VisionConstants.camera1Name, VisionConstants.robotToCamera1,
+        // drive::getPose));
         break;
 
       default:
@@ -406,7 +406,7 @@ public class RobotContainer { // Subsystems
         wrist = new Wrist(new WristIO() {});
         climber = new Climber(new ClimberIO() {});
         ramp = new Ramp(new RampIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 

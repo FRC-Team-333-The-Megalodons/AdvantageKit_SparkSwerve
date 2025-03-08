@@ -55,7 +55,7 @@ public class RampIOSpark implements RampIO {
     ifOk(ramp, ramp::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
     inputs.atSetpoint = pidController.atSetpoint();
-    inputs.digitalInputSensor = digitalInputSensor.get();
+   // inputs.digitalInputSensor = digitalInputSensor.get();
     // inputs.limitSwitch2 = limitSwitch2.get();
   }
 

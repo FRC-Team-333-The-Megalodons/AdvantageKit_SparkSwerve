@@ -39,10 +39,25 @@ public class Climber extends SubsystemBase {
         () -> io.setVoltage((forward.getAsDouble() - reverse.getAsDouble()) * 12.0),
         () -> io.setVoltage(0.0));
   }
-  public boolean isFullyIn(){
+
+  public boolean isFullyIn() {
     return inputs.isFullyIn;
   }
-  public boolean isFullyOut(){
+
+  public boolean isFullyOut() {
     return inputs.isFullyOut;
+  }
+
+  public boolean limitSwitch() {
+    return inputs.limitSwitch;
+  }
+
+  public boolean isAtMin() {
+    if (limitSwitch()) {
+      io.resetEncoder();
+      return true;
+    } else {
+      return false;
+    }
   }
 }

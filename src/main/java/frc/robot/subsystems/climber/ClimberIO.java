@@ -15,7 +15,7 @@ public interface ClimberIO {
     public double currentAmps = 0.0;
     public boolean isFullyOut = false;
     public boolean isFullyIn = false;
-    // public boolean limitSwitch = false;
+    public boolean limitSwitch = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -25,4 +25,6 @@ public interface ClimberIO {
   public default void setVoltage(double volts) {}
 
   public default void setSpeed(double speed) {}
+
+  public default void resetEncoder() {}
 }

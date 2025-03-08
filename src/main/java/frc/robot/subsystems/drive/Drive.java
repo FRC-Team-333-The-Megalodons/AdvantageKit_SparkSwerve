@@ -59,7 +59,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-  public static Pose2d estimatedPose2d;
+  // public static Pose2d estimatedPose2d;
   public DriverConstants.PoseState poseState;
   public DriverConstants.ReefPoseStates reefPoseStates;
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -221,7 +221,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
-    estimatedPose2d = getPose();
+    // estimatedPose2d = getPose();
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }

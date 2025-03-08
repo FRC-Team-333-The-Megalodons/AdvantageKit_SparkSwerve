@@ -52,10 +52,12 @@ public class AutomatedCommands {
                 .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
 
-  public static Command coralL4Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+  public static Command coralL4Command(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::atL4Setpoint)
         .andThen(
             wrist
@@ -63,16 +65,20 @@ public class AutomatedCommands {
                 .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false)));
   }
 
-  public static Command coralL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+  public static Command coralL3Command(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true))
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
-  public static Command coralL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+  public static Command coralL2Command(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true))
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
   public static Command algaeL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
@@ -129,7 +135,7 @@ public class AutomatedCommands {
 
   public static Command autoIntakeCoral(EndEffecter endEffecter, Ramp ramp) {
     return ramp.setRampPosition(RampConstants.intakeSetpoint)
-        .onlyWhile(ramp::isCoralInside)
+        // .onlyWhile(ramp::isCoralInside)
         .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter))
         .until(endEffecter::isTriggered);
   }
