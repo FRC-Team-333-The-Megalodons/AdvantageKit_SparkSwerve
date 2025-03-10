@@ -189,20 +189,20 @@ public class Vision extends SubsystemBase {
     // In that case, we can use the physical odometry as a reference to help us "break the tie" -
     // Of the poses, the one with the closes Position2d to the drivetrain's (motors+gyro) odometry
     //  is (probably) the correct one!
-    // Pose2d drivetrainPose2d = Drive.estimatedPose2d;
-    // Logger.recordOutput("Vision/Summary/DriveTrainPose", drivetrainPose2d);
-    // Pose3d bestRobotPose = null;
-    // double bestRobotPoseScore = Double.MAX_VALUE;
-    // for (int i = 0; i < allRobotPosesAccepted.size(); ++i) {
-    //   Pose3d pose3d = allRobotPosesAccepted.get(i);
-    //   double score = getScaledPose2dDiff(drivetrainPose2d, pose3d.toPose2d());
-    //   if (score < bestRobotPoseScore) {
-    //     bestRobotPose = pose3d;
-    //     bestRobotPoseScore = score;
-    //   }
-    // }
+    Pose2d drivetrainPose2d = Drive.estimatedPose2d;
+    Logger.recordOutput("Vision/Summary/DriveTrainPose", drivetrainPose2d);
+    Pose3d bestRobotPose = null;
+    double bestRobotPoseScore = Double.MAX_VALUE;
+    for (int i = 0; i < allRobotPosesAccepted.size(); ++i) {
+      Pose3d pose3d = allRobotPosesAccepted.get(i);
+      double score = getScaledPose2dDiff(drivetrainPose2d, pose3d.toPose2d());
+      if (score < bestRobotPoseScore) {
+        bestRobotPose = pose3d;
+        bestRobotPoseScore = score;
+      }
+    }
 
-    // visionRobotPose = bestRobotPose;
+    visionRobotPose = bestRobotPose;
 
     // Log summary data
     Logger.recordOutput(
@@ -218,28 +218,28 @@ public class Vision extends SubsystemBase {
     // Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
 
     // Find the closest tag.
-    // if (bestRobotPose != null) {
-    //   double closestTagDistance = Double.MAX_VALUE;
-    //   int closestTagId = -1;
-    //   for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
-    //     for (int tagId : inputs[cameraIndex].tagIds) {
-    //       Optional<Pose3d> tagPoseOpt = aprilTagLayout.getTagPose(tagId);
-    //       if (tagPoseOpt.isPresent()) {
-    //         Pose3d tagPose = tagPoseOpt.get();
-    //         double distance =
-    // tagPose.getTranslation().getDistance(bestRobotPose.getTranslation());
-    //         if (distance < closestTagDistance) {
-    //           closestTagDistance = distance;
-    //           closestTagId = tagId;
-    //         }
-    //       }
-    //     }
-    //   }
-    //   if (closestTagId >= 0) {
-    //     visionTagId = closestTagId;
-    //     visionTagLastSeen = System.currentTimeMillis();
-    //   }
-    // }
+    if (bestRobotPose != null) {
+      double closestTagDistance = Double.MAX_VALUE;
+      int closestTagId = -1;
+      for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+        for (int tagId : inputs[cameraIndex].tagIds) {
+          Optional<Pose3d> tagPoseOpt = aprilTagLayout.getTagPose(tagId);
+          if (tagPoseOpt.isPresent()) {
+            Pose3d tagPose = tagPoseOpt.get();
+            double distance =
+    tagPose.getTranslation().getDistance(bestRobotPose.getTranslation());
+            if (distance < closestTagDistance) {
+              closestTagDistance = distance;
+              closestTagId = tagId;
+            }
+          }
+        }
+      }
+      if (closestTagId >= 0) {
+        visionTagId = closestTagId;
+        visionTagLastSeen = System.currentTimeMillis();
+      }
+    }
 
     Logger.recordOutput("Vision/Summary/ClosestSeenTag/TagId", visionTagId);
     Logger.recordOutput("Vision/Summary/ClosestSeenTag/LastSeen", visionTagLastSeen);
