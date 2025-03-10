@@ -114,7 +114,10 @@ public class RobotContainer { // Subsystems
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -getDriverLeftY(), () -> -getDriverLeftX(), () -> getDriverRightX()));
+            drive,
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
@@ -134,7 +137,7 @@ public class RobotContainer { // Subsystems
     //             () -> getDriverRightX(), // only used if no valid reef angle
     //             () -> Rotation2d.fromDegrees(drive.reefDriveAngle(vision))));
 
-    driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     if (isInSoloDrivingMode) {
       driverController

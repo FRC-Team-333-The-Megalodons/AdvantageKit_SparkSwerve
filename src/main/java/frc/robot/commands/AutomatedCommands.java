@@ -135,7 +135,7 @@ public class AutomatedCommands {
 
   public static Command autoIntakeCoral(EndEffecter endEffecter, Ramp ramp) {
     return ramp.setRampPosition(RampConstants.intakeSetpoint)
-        // .onlyWhile(ramp::isCoralInside)
+        .onlyWhile(ramp::isCoralInside)
         .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter))
         .until(endEffecter::isTriggered);
   }
