@@ -56,6 +56,7 @@ import frc.robot.subsystems.ramp.RampIOSim;
 import frc.robot.subsystems.ramp.RampIOSpark;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.wrist.Wrist;
@@ -79,7 +80,7 @@ public class RobotContainer { // Subsystems
   private final Wrist wrist;
   private final Climber climber;
   private final Ramp ramp;
-    private final Vision vision;
+  private final Vision vision;
 
   // Controller
   private final CommandPS5Controller driverController = new CommandPS5Controller(0);
@@ -118,10 +119,7 @@ public class RobotContainer { // Subsystems
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -getDriverLeftY(),
-            () -> -getDriverLeftX(),
-            () -> -getDriverRightX()));
+            drive, () -> -getDriverLeftY(), () -> -getDriverLeftX(), () -> -getDriverRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
@@ -395,8 +393,7 @@ public class RobotContainer { // Subsystems
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1,
-        drive::getPose));
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose));
         break;
 
       default:

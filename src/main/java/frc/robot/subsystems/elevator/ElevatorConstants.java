@@ -23,7 +23,7 @@ public class ElevatorConstants {
   public static final double aglaeL2Setpoint = 80.0;
   public static final double aglaeL3Setpoint = 130.0;
   public static final double processorSetpoint = 0.0;
-  public static final double bargeSetPoint = 210.0;
+  public static final double bargeSetPoint = 240.0;
   public static final double closeToL4 = 190.0;
 
   // PID Constants

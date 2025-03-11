@@ -25,9 +25,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -226,8 +228,7 @@ public class Vision extends SubsystemBase {
           Optional<Pose3d> tagPoseOpt = aprilTagLayout.getTagPose(tagId);
           if (tagPoseOpt.isPresent()) {
             Pose3d tagPose = tagPoseOpt.get();
-            double distance =
-    tagPose.getTranslation().getDistance(bestRobotPose.getTranslation());
+            double distance = tagPose.getTranslation().getDistance(bestRobotPose.getTranslation());
             if (distance < closestTagDistance) {
               closestTagDistance = distance;
               closestTagId = tagId;
