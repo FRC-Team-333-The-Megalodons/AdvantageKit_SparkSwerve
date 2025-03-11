@@ -90,7 +90,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = false;
+  private final boolean isInSoloDrivingMode = true;
 
   private double applyJoystickAllianceAndLimits(double value) {
     if (!drive.isRed()) {
@@ -119,7 +119,7 @@ public class RobotContainer { // Subsystems
   private void configureInitialControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -getDriverLeftY(), () -> -getDriverLeftX(), () -> -getDriverRightX()));
+            drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
     configureDriverControllerBindings();
     if (startInManualMode) {
       configureOperatorControllerManualModeBindings();
