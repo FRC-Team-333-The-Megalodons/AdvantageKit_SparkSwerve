@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "I4"
+                  "pathName": "H4"
                 }
               },
               {
@@ -30,21 +30,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BackUpI4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HomePos"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackUpH4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HomePos"
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "1pc",
+  "resetOdom": true,
+  "folder": "1pc+Algae",
   "choreoAuto": false
 }

@@ -8,18 +8,20 @@
   ],
   "autoFolders": [
     "1pc",
+    "2pc",
+    "3pc",
     "Leave+DoNothing",
-    "2pc"
+    "1pc+Algae"
   ],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 50.8023,
+  "robotMass": 50.807,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.048,
+  "driveWheelRadius": 0.051,
   "driveGearing": 5.143,
   "maxDriveSpeed": 5.45,
   "driveMotorType": "krakenX60FOC",
