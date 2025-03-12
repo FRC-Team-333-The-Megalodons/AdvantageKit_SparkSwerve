@@ -17,14 +17,14 @@ public class ElevatorConstants {
 
   // Setpoints
   public static final double homeSetpoint = 0.0;
-  public static final double coralL4Setpoint = 210.0;
+  public static final double coralL4Setpoint = 185.0;
   public static final double coralL3Setpoint = 100.0;
   public static final double coralL2Setpoint = 45.0;
   public static final double aglaeL2Setpoint = 80.0;
   public static final double aglaeL3Setpoint = 130.0;
   public static final double processorSetpoint = 0.0;
-  public static final double bargeSetPoint = 240.0;
-  public static final double closeToL4 = 190.0;
+  public static final double bargeSetPoint = 185.0;
+  public static final double closeToL4 = 185.0;
 
   // PID Constants
   public static final double kP = 0.07;

@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
@@ -29,6 +30,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
   private final PIDController elevatorUpPidController = new PIDController(0.012, 0.0, 0.0005);
   private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
+  private ElevatorFeedforward feedForward = new ElevatorFeedforward(0, 0.6, 1.33, 0.25);
+
   private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
   private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
@@ -89,12 +92,21 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void setElevator(double currentPos, double targetPos, boolean down) {
     if (down) {
       topElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      // + feedForward.calculate(targetPos));
       leftElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      // + feedForward.calculate(targetPos));
       rightElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      // + feedForward.calculate(targetPos));
     } else {
-      topElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
-      leftElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
-      rightElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
+      topElevatorMotor.set(
+          elevatorUpPidController.calculate(currentPos, targetPos)
+              + feedForward.calculate(targetPos));
+      leftElevatorMotor.set(
+          elevatorUpPidController.calculate(currentPos, targetPos)
+              + feedForward.calculate(targetPos));
+      rightElevatorMotor.set(
+          elevatorUpPidController.calculate(currentPos, targetPos)
+              + feedForward.calculate(targetPos));
     }
   }
 
