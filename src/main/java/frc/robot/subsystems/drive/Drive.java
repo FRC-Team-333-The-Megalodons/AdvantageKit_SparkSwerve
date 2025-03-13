@@ -422,20 +422,35 @@ public class Drive extends SubsystemBase {
     }
 
     int driveAngle = 0;
-    if (id == 18 || id == 7) {
 
+    // blue alliance
+    if (id == 18) {
       driveAngle = 0;
-    } else if (id == 19 || id == 6) {
-      driveAngle = -45;
-    } else if (id == 17 || id == 8) {
-      driveAngle = 45;
-    } else if (id == 20 || id == 11) {
-      driveAngle = -135;
-    } else if (id == 22 || id == 9) {
-      driveAngle = 135;
-    } else if (id == 21 || id == 10) {
+    } else if (id == 19) {
+      driveAngle = -60;
+    } else if (id == 17) {
+      driveAngle = 60;
+    } else if (id == 20) {
+      driveAngle = -120;
+    } else if (id == 22) {
+      driveAngle = 120;
+    } else if (id == 21) {
       driveAngle = 180;
+      // red alliance
+    } else if (id == 7) {
+      driveAngle = 180;
+    } else if (id == 6) {
+      driveAngle = 120;
+    } else if (id == 8) {
+      driveAngle = -120;
+    } else if (id == 9) {
+      driveAngle = -60;
+    } else if (id == 10) {
+      driveAngle = 0;
+    } else if (id == 11) {
+      driveAngle = 60;
     }
+
     return driveAngle;
   }
 }
