@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +15,7 @@ public class Intake extends SubsystemBase {
 
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
+  // private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
   private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
 
   DigitalInput dSensor = new DigitalInput(0);
@@ -38,7 +37,11 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("DSensor", getPositionForDSensor());
   }
 
-  public Command runIntakeAuto(double percent) {
+  public Command runIntakeAutoSequential(double percent) {
+    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+  }
+
+  public Command runIntakeAutoParallel(double percent) {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
 

@@ -5,73 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "leave"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunningIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "pick up c2"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "score c2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunningIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "pick up c3"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "score c3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunningIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "pick up c4"
                 }
               }
             ]

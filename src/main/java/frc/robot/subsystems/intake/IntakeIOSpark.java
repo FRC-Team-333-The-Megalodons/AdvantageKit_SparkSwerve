@@ -7,7 +7,6 @@ package frc.robot.subsystems.intake;
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
-import com.ctre.phoenix6.hardware.CANrange;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -23,7 +22,7 @@ public class IntakeIOSpark implements IntakeIO {
   private SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
   private RelativeEncoder encoder = intake.getEncoder();
   private PIDController pid = new PIDController(1.4, 0, 0);
-  private CANrange canRange = new CANrange(IntakeConstants.canRangeId);
+  // private CANrange canRange = new CANrange(IntakeConstants.canRangeId);
 
   public IntakeIOSpark() {
     var config = new SparkMaxConfig();
@@ -67,8 +66,8 @@ public class IntakeIOSpark implements IntakeIO {
     intake.set(pid.calculate(sensor, setPoint));
   }
 
-  @Override
-  public boolean inRange() {
-    return canRange.getIsDetected().getValue();
-  }
+  //   @Override
+  //   public boolean inRange() {
+  //     return canRange.getIsDetected().getValue();
+  //   }
 }

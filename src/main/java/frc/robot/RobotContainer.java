@@ -39,7 +39,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.RunningIntake;
+import frc.robot.commands.RunningIntakeP;
+import frc.robot.commands.RunningIntakeS;
 import frc.robot.commands.assistedDrive.DriveToClosestReef;
 import frc.robot.commands.photonCamera.PhotonVisonCamera;
 import frc.robot.subsystems.LEDStrip;
@@ -172,7 +173,8 @@ public class RobotContainer {
         break;
     }
 
-    NamedCommands.registerCommand("RunningIntake", new RunningIntake(intake));
+    NamedCommands.registerCommand("RunningIntakeSequential", new RunningIntakeS(intake));
+    NamedCommands.registerCommand("RunningIntakeParallel", new RunningIntakeP(intake));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
