@@ -30,28 +30,21 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BackUpH4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HomePos"
-                }
-              }
-            ]
+            "pathName": "BackUpH4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "HomePos"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "1pc",
   "choreoAuto": false
 }

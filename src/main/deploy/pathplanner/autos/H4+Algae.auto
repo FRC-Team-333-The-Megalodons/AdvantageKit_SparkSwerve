@@ -30,19 +30,44 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "BackUpH4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BackUpH4"
+                  "pathName": "AlgaeH2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "HomePos"
+                  "name": "AlgaeL2Position"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "AlgaeH2toNet"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeInNet"
                 }
               }
             ]
@@ -51,7 +76,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "1pc+Algae",
   "choreoAuto": false
 }

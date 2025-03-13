@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7047297297297291
+        "x": 5.82340909090909,
+        "y": 4.000071022727272
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5791385135135134,
-        "y": 1.5446790540540531
+        "x": 6.512077702702702,
+        "y": 4.400506756756756
       },
       "isLocked": false,
-      "linkedName": "RCStation"
+      "linkedName": "Algae"
     },
     {
       "anchor": {
-        "x": 3.952702702702703,
-        "y": 2.809543918918919
+        "x": 7.717652027027026,
+        "y": 5.032939189189189
       },
       "prevControl": {
-        "x": 3.1325168918918918,
-        "y": 2.038766891891892
+        "x": 7.016047297297298,
+        "y": 4.568496621621621
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 56.309932474020194
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 54.16234704572172
+    "rotation": -179.64234743583452
   },
   "useDefaultConstraints": true
 }

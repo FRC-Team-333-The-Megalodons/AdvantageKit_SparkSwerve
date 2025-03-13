@@ -425,6 +425,10 @@ public class RobotContainer { // Subsystems
         "HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator, ramp));
     NamedCommands.registerCommand(
         "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator));
+        NamedCommands.registerCommand(
+        "AlgaeL2Position", AutomatedCommands.autoAlgaeL2Command(endEffecter, wrist, elevator));
+        NamedCommands.registerCommand(
+        "AlgaeInNet", AutomatedCommands.autoNetCommand(endEffecter, wrist, elevator));
 
     new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
     new EventTrigger("l3 position").whileTrue(Commands.print("Going to L3 position"));

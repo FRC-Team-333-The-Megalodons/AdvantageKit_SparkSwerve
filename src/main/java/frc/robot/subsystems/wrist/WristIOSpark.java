@@ -57,6 +57,7 @@ public class WristIOSpark implements WristIO {
     inputs.atSetpoint = pidController.atSetpoint();
     inputs.atL4Setpoint = inputs.positionAbs > 0.35 && inputs.positionAbs < 0.39 ? true : false;
     inputs.atHomePosition = inputs.positionAbs > 0.53 && inputs.positionAbs < 0.55 ? true : false;
+    inputs.atAlgaeSetpoint = inputs.positionAbs > 0.11 && inputs.positionAbs < 0.13 ? true : false;
   }
 
   @Override

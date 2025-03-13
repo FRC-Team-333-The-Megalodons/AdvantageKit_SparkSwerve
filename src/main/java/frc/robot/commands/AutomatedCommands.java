@@ -147,4 +147,14 @@ public class AutomatedCommands {
         .until(elevator::lowerLimit)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint).until(wrist::atHomePosition));
   }
+  public static Command autoAlgaeL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return wrist
+        .setWristPosition(WristConstants.aglaeSetpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true)).withTimeout(3);
+  }
+  public static Command autoNetCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return wrist
+        .setWristPosition(WristConstants.netSetPoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint, true));
+  }
 }

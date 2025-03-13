@@ -16,6 +16,7 @@ public interface WristIO {
     public boolean atSetpoint = false;
     public boolean atL4Setpoint = false;
     public boolean atHomePosition = false;
+    public boolean atAlgaeSetpoint = false;
   }
 
   /** Update the set of loggable inputs. */
