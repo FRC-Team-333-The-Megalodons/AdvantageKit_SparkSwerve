@@ -30,7 +30,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
   private final PIDController elevatorUpPidController = new PIDController(0.012, 0.0, 0.0005);
   private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
-  private ElevatorFeedforward feedForward = new ElevatorFeedforward(0, 0.6, 1.33, 0.25);
+  private ElevatorFeedforward feedForward = new ElevatorFeedforward(0, 0.7, 1.4, 0.25);
 
   private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
   private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
@@ -99,14 +99,11 @@ public class ElevatorIOSpark implements ElevatorIO {
       // + feedForward.calculate(targetPos));
     } else {
       topElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos)
-              + feedForward.calculate(targetPos));
+          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
       leftElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos)
-              + feedForward.calculate(targetPos));
+          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
       rightElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos)
-              + feedForward.calculate(targetPos));
+          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
     }
   }
 
