@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.drive.DriverConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -131,16 +131,17 @@ public class DriveCommands {
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-              boolean useVisionTagAngle = false;
-              // Decide if we've seen the tag recently enough to use the ID.
-              if (Vision.getCurrentVisionTagId() >= 0) {
-                useVisionTagAngle = true;
+              boolean respectAutoDriveAngle = true;
+              // Decide if we've got valid data from the Automatic Rotation system.
+              if (rotationSupplier.get().getDegrees()
+                  == DriverConstants.MAGIC_INVALID_DEGREES_NUMBER) {
+                respectAutoDriveAngle = false;
               }
 
               // Calculate angular speed
               double omega;
 
-              if (useVisionTagAngle) {
+              if (respectAutoDriveAngle) {
                 omega =
                     angleController.calculate(
                         drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
