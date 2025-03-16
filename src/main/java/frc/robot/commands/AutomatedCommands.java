@@ -55,7 +55,7 @@ public class AutomatedCommands {
   public static Command coralL4Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
-        .setWristPosition(WristConstants.coralL23Setpoint)
+        .setWristPosition(WristConstants.coralL23Setpoint - 0.2)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::atL4Setpoint)
@@ -127,8 +127,8 @@ public class AutomatedCommands {
 
   public static Command autoScoreL4(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
-        .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
+        .setWristPosition(WristConstants.coralL23Setpoint - 0.2)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint + 2, false))
         .until(elevator::atL4Setpoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
   }
