@@ -88,9 +88,12 @@ public class RobotContainer { // Subsystems
   private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
+    /*
     if (drive.isRed()) {
       value *= -1; // Flip the direction if we're not Red.
     }
+    */
+
     // Remove this code if you want to remove Speed Limiting when elevator up
     if (Elevator.isPastSlowdownHeight) {
       // If the elevator is higher than the slow-limiter height, cut the joystick in half.

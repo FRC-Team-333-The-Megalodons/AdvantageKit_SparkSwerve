@@ -245,7 +245,21 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/Summary/ClosestSeenTag/TagId", visionTagId);
     Logger.recordOutput("Vision/Summary/ClosestSeenTag/LastSeen", visionTagLastSeen);
 
+    // This call is inexpensive (i think), and we're using it purely for logging;
+    // But if things get laggy, delete this line!
+    Drive.reefDriveAngle(this);
+
     // Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
+  }
+
+  public static int getCurrentVisionTagId() {
+    final long TAG_SEEN_DEADBAND = 2000;
+    if (Vision.visionTagId >= 0
+        && Vision.visionTagLastSeen > 0
+        && System.currentTimeMillis() - Vision.visionTagLastSeen < TAG_SEEN_DEADBAND) {
+      return Vision.visionTagId;
+    }
+    return -1;
   }
 
   private static Double hypotenuse = null;

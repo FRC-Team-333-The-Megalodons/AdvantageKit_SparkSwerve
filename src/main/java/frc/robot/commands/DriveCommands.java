@@ -92,7 +92,7 @@ public class DriveCommands {
                   omega * drive.getMaxAngularSpeedRadPerSec());
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
+                  && DriverStation.getAlliance().get() == Alliance.Blue;
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds,
@@ -131,13 +131,9 @@ public class DriveCommands {
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-              final double TAG_SEEN_DEADBAND = 5000;
-
               boolean useVisionTagAngle = false;
               // Decide if we've seen the tag recently enough to use the ID.
-              if (Vision.visionTagId >= 0
-                  && Vision.visionTagLastSeen > 0
-                  && System.currentTimeMillis() - Vision.visionTagLastSeen < TAG_SEEN_DEADBAND) {
+              if (Vision.getCurrentVisionTagId() >= 0) {
                 useVisionTagAngle = true;
               }
 
@@ -165,7 +161,7 @@ public class DriveCommands {
                       omega);
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
+                      && DriverStation.getAlliance().get() == Alliance.Blue;
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       speeds,

@@ -43,7 +43,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -412,7 +411,7 @@ public class Drive extends SubsystemBase {
     return reefPoseStates;
   }
 
-  public final class Tags {
+  public static final class Tags {
     public static final int BLUE_NEAR_RIGHT = 17;
     public static final int BLUE_NEAR_MID = 18;
     public static final int BLUE_NEAR_LEFT = 19;
@@ -428,67 +427,83 @@ public class Drive extends SubsystemBase {
     public static final int RED_FAR_LEFT = 11;
   }
 
-  public double reefDriveAngle(Vision vision) {
+  public static double reefDriveAngle(Vision vision) {
     //  int id = vision.getFudicialId();
-    Logger.recordOutput("Vision/Summary/AutoRotate/Rotata", true);
-    int id = Vision.visionTagId;
-    int odom_id = -1;
+    int id = Vision.getCurrentVisionTagId();
+    int odom_id = guessTagByCurrentOdometry();
 
     double angle = reefDriveAngleByTagId(id);
+    boolean using_odometry = false;
 
     if (angle == DriverConstants.MAGIC_INVALID_DEGREES_NUMBER) {
       // If we didnt pick up a valid tag to point to, it probably means were just facing the wrong
       // way (or maybe on the wrong side of the field).
       // In that case, check our physical location on the field, and use that to pick a driveAngle
-      // to face.
-      // Once we rotate enough, we should start seeing the actual tag, and the above-logic should
-      // take over!
-
-      odom_id = guessTagByCurrentOdometry();
+      // to face. We should pretty quick
       angle = reefDriveAngleByTagId(odom_id);
+      using_odometry = true;
     }
 
     Logger.recordOutput("Vision/Summary/AutoRotate/VisionTagId", id);
     Logger.recordOutput("Vision/Summary/AutoRotate/OdometryTagId", odom_id);
+    Logger.recordOutput(
+        "Vision/Summary/AutoRotate/AngleMethod", using_odometry ? "Odometry" : "Vision");
     Logger.recordOutput("Vision/Summary/AutoRotate/ReefDriveAngle", angle);
 
     return angle;
   }
 
-  public boolean isBlueAlliance() {
+  public static boolean isBlueAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
   }
 
-  public boolean isLeftOfForwardSlash(double robot_x, double robot_y) {
-    double line_y = -0.567 * robot_x + 7.215;
-    boolean left =
-        line_y
-            < robot_y; // The lines are actually above-below, with a field aligned 90deg from what
+  public static boolean isLeftOfForwardSlash(double robot_x, double robot_y) {
+    double m = -0.567;
+    double b = isBlueAlliance() ? 7.215 : 11.752;
+    double line_y = m * robot_x + b;
+    boolean left = line_y < robot_y;
+    // The lines are actually above-below, with a field aligned 90deg from what
     // we think of, but calling `above` as `left` is a valid approximation
     // (flipped for red).
     return isBlueAlliance() ? left : !left;
   }
 
-  public boolean isLeftOfBackSlash(double robot_x, double robot_y) {
-    double line_y = 0.567 * robot_x + 1.665;
-    boolean left =
-        line_y
-            < robot_y; // The lines are actually above-below, with a field aligned 90deg from what
+  public static boolean isLeftOfBackSlash(double robot_x, double robot_y) {
+    double m = 0.567;
+    double b = isBlueAlliance() ? 1.665 : -3.362;
+    double line_y = m * robot_x + b;
+    boolean left = line_y < robot_y;
+    // The lines are actually above-below, with a field aligned 90deg from what
     // we think of, but calling `above` as `left` is a valid approximation
     // (flipped for red).
     return isBlueAlliance() ? left : !left;
   }
 
-  public boolean isBelowMidline(double robot_x) {
-    boolean below = robot_x < 4.9;
+  public static boolean isBelowMidline(double robot_x) {
+    double b = isBlueAlliance() ? 4.9 : 13.07;
+    boolean below = robot_x < b;
     return isBlueAlliance() ? below : !below;
   }
 
-  public int guessTagByCurrentOdometry() {
+  public static int guessTagByCurrentOdometry() {
 
-    Pose2d pose2d = Vision.visionRobotPose.toPose2d();
-    double x = pose2d.getX(); // I think this is in the right units?
-    double y = pose2d.getY();
+    Pose2d robotPose;
+    if (Vision.visionRobotPose != null) {
+      robotPose = Vision.visionRobotPose.toPose2d();
+    } else {
+      // The vision robot pose is more accurate (driven by seeing tags) - but, if it's not there,
+      // even just raw odometry-based is better than nothing!
+      robotPose = Drive.estimatedPose2d;
+    }
+
+    if (robotPose == null) {
+      // Not sure how we'd get here (i guess all of odometry would need to be down?), but if we did,
+      // much better to bail than crash.
+      return -1;
+    }
+
+    double x = robotPose.getX(); // I think this is in the right units?
+    double y = robotPose.getY();
 
     boolean leftOfForwardslash = isLeftOfForwardSlash(x, y);
     boolean leftOfBackslash = isLeftOfBackSlash(x, y);
@@ -501,7 +516,7 @@ public class Drive extends SubsystemBase {
           return isBlueAlliance() ? Tags.BLUE_NEAR_MID : Tags.RED_NEAR_MID;
         }
       } else {
-        return isBlueAlliance() ? Tags.BLUE_NEAR_RIGHT : Tags.BLUE_NEAR_RIGHT;
+        return isBlueAlliance() ? Tags.BLUE_NEAR_RIGHT : Tags.RED_NEAR_RIGHT;
       }
     } else {
       if (leftOfForwardslash) {
@@ -516,7 +531,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public double reefDriveAngleByTagId(int id) {
+  public static double reefDriveAngleByTagId(int id) {
 
     double driveAngle = DriverConstants.MAGIC_INVALID_DEGREES_NUMBER;
 
