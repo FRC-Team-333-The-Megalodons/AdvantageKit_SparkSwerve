@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -140,7 +141,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.7, 0.5), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(5.0, 0.7, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -411,44 +412,144 @@ public class Drive extends SubsystemBase {
     return reefPoseStates;
   }
 
+  public final class Tags {
+    public static final int BLUE_NEAR_RIGHT = 17;
+    public static final int BLUE_NEAR_MID = 18;
+    public static final int BLUE_NEAR_LEFT = 19;
+    public static final int BLUE_FAR_LEFT = 20;
+    public static final int BLUE_FAR_MID = 21;
+    public static final int BLUE_FAR_RIGHT = 22;
+
+    public static final int RED_NEAR_LEFT = 6;
+    public static final int RED_NEAR_MID = 7;
+    public static final int RED_NEAR_RIGHT = 8;
+    public static final int RED_FAR_RIGHT = 9;
+    public static final int RED_FAR_MID = 10;
+    public static final int RED_FAR_LEFT = 11;
+  }
+
   public double reefDriveAngle(Vision vision) {
     //  int id = vision.getFudicialId();
+    Logger.recordOutput("Vision/Summary/AutoRotate/Rotata", true);
     int id = Vision.visionTagId;
+    int odom_id = -1;
 
-    // If there's no valid ID, we don't want to spin the robot.
+    double angle = reefDriveAngleByTagId(id);
 
-    if (id < 0) {
-      return DriverConstants.MAGIC_INVALID_DEGREES_NUMBER;
+    if (angle == DriverConstants.MAGIC_INVALID_DEGREES_NUMBER) {
+      // If we didnt pick up a valid tag to point to, it probably means were just facing the wrong
+      // way (or maybe on the wrong side of the field).
+      // In that case, check our physical location on the field, and use that to pick a driveAngle
+      // to face.
+      // Once we rotate enough, we should start seeing the actual tag, and the above-logic should
+      // take over!
+
+      odom_id = guessTagByCurrentOdometry();
+      angle = reefDriveAngleByTagId(odom_id);
     }
 
-    int driveAngle = 0;
+    Logger.recordOutput("Vision/Summary/AutoRotate/VisionTagId", id);
+    Logger.recordOutput("Vision/Summary/AutoRotate/OdometryTagId", odom_id);
+    Logger.recordOutput("Vision/Summary/AutoRotate/ReefDriveAngle", angle);
 
-    // blue alliance
-    if (id == 18) {
-      driveAngle = 0;
-    } else if (id == 19) {
-      driveAngle = -60;
-    } else if (id == 17) {
-      driveAngle = 60;
-    } else if (id == 20) {
-      driveAngle = -120;
-    } else if (id == 22) {
-      driveAngle = 120;
-    } else if (id == 21) {
-      driveAngle = 180;
-      // red alliance
-    } else if (id == 7) {
-      driveAngle = 180;
-    } else if (id == 6) {
-      driveAngle = 120;
-    } else if (id == 8) {
-      driveAngle = -120;
-    } else if (id == 9) {
-      driveAngle = -60;
-    } else if (id == 10) {
-      driveAngle = 0;
-    } else if (id == 11) {
-      driveAngle = 60;
+    return angle;
+  }
+
+  public boolean isBlueAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+  }
+
+  public boolean isLeftOfForwardSlash(double robot_x, double robot_y) {
+    double line_y = -0.567 * robot_x + 7.215;
+    boolean left =
+        line_y
+            < robot_y; // The lines are actually above-below, with a field aligned 90deg from what
+    // we think of, but calling `above` as `left` is a valid approximation
+    // (flipped for red).
+    return isBlueAlliance() ? left : !left;
+  }
+
+  public boolean isLeftOfBackSlash(double robot_x, double robot_y) {
+    double line_y = 0.567 * robot_x + 1.665;
+    boolean left =
+        line_y
+            < robot_y; // The lines are actually above-below, with a field aligned 90deg from what
+    // we think of, but calling `above` as `left` is a valid approximation
+    // (flipped for red).
+    return isBlueAlliance() ? left : !left;
+  }
+
+  public boolean isBelowMidline(double robot_x) {
+    boolean below = robot_x < 4.9;
+    return isBlueAlliance() ? below : !below;
+  }
+
+  public int guessTagByCurrentOdometry() {
+
+    Pose2d pose2d = Vision.visionRobotPose.toPose2d();
+    double x = pose2d.getX(); // I think this is in the right units?
+    double y = pose2d.getY();
+
+    boolean leftOfForwardslash = isLeftOfForwardSlash(x, y);
+    boolean leftOfBackslash = isLeftOfBackSlash(x, y);
+
+    if (isBelowMidline(x)) {
+      if (leftOfBackslash) {
+        if (leftOfForwardslash) {
+          return isBlueAlliance() ? Tags.BLUE_NEAR_LEFT : Tags.RED_NEAR_LEFT;
+        } else {
+          return isBlueAlliance() ? Tags.BLUE_NEAR_MID : Tags.RED_NEAR_MID;
+        }
+      } else {
+        return isBlueAlliance() ? Tags.BLUE_NEAR_RIGHT : Tags.BLUE_NEAR_RIGHT;
+      }
+    } else {
+      if (leftOfForwardslash) {
+        if (leftOfBackslash) {
+          return isBlueAlliance() ? Tags.BLUE_FAR_LEFT : Tags.RED_FAR_LEFT;
+        } else {
+          return isBlueAlliance() ? Tags.BLUE_FAR_MID : Tags.RED_FAR_MID;
+        }
+      } else {
+        return isBlueAlliance() ? Tags.BLUE_FAR_RIGHT : Tags.RED_FAR_RIGHT;
+      }
+    }
+  }
+
+  public double reefDriveAngleByTagId(int id) {
+
+    double driveAngle = DriverConstants.MAGIC_INVALID_DEGREES_NUMBER;
+
+    // Actually make sure were not gravitating towards tags from the other alliance.
+    // Aint nobody got time for that.
+    if (isBlueAlliance()) {
+      if (id == Tags.BLUE_NEAR_MID) {
+        driveAngle = 0;
+      } else if (id == Tags.BLUE_NEAR_LEFT) {
+        driveAngle = -60;
+      } else if (id == Tags.BLUE_NEAR_RIGHT) {
+        driveAngle = 60;
+      } else if (id == Tags.BLUE_FAR_LEFT) {
+        driveAngle = -120;
+      } else if (id == Tags.BLUE_FAR_RIGHT) {
+        driveAngle = 120;
+      } else if (id == Tags.BLUE_FAR_MID) {
+        driveAngle = 180;
+      }
+    } else { // Red Alliance
+      if (id == Tags.RED_NEAR_MID) {
+        driveAngle = 180;
+      } else if (id == Tags.RED_NEAR_LEFT) {
+        driveAngle = 120;
+      } else if (id == Tags.RED_NEAR_RIGHT) {
+        driveAngle = -120;
+      } else if (id == Tags.RED_FAR_RIGHT) {
+        driveAngle = -60;
+      } else if (id == Tags.RED_FAR_MID) {
+        driveAngle = 0;
+      } else if (id == Tags.RED_FAR_LEFT) {
+        driveAngle = 60;
+      }
     }
 
     return driveAngle;
