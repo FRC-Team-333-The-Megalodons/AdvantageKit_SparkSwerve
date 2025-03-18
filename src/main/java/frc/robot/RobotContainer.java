@@ -85,7 +85,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = false;
+  private final boolean isInSoloDrivingMode = true;
 
   private double applyJoystickAllianceAndLimits(double value) {
     /*

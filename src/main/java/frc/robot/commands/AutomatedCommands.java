@@ -127,8 +127,8 @@ public class AutomatedCommands {
 
   public static Command autoScoreL4(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
-        .setWristPosition(WristConstants.coralL23Setpoint - 0.2)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint + 2, false))
+        .setWristPosition(WristConstants.coralL23Setpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .until(elevator::atL4Setpoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
   }
