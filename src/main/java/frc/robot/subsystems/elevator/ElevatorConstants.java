@@ -26,8 +26,13 @@ public class ElevatorConstants {
   public static final double bargeSetPoint = 240.0;
   public static final double closeToL4 = 200.0;
 
-  // PID Constants
-  public static final double kP = 0.07;
-  public static final double kI = 0.05;
-  public static final double kD = 0.05;
+  // PID Constants (REV)
+  public static final double kP_REV = 0.006;
+  public static final double kI_REV = 0.0;
+  public static final double kD_REV = 0.0;
+
+  // PID Constants (CTRE)
+  public static final double kP_CTRE = 0.006;
+  public static final double kI_CTRE = 0.0;
+  public static final double kD_CTRE = 0.0;
 }

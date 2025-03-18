@@ -17,18 +17,21 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
- * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
+ * This implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
  */
 public class ElevatorIOTalonFX implements ElevatorIO {
-  private final TalonFX topElevatorMotor = new TalonFX(toplElevatorMotorCanId);
-  private final TalonFX leftElevatorMotor = new TalonFX(leftElevatorMotorCanId);
-  private final TalonFX rightElevatorMotor = new TalonFX(rightElevatorMotorCanId);
+  private final TalonFX topElevatorMotor = new TalonFX(toplElevatorMotorCanId, "rio");
+  private final TalonFX leftElevatorMotor = new TalonFX(leftElevatorMotorCanId, "rio");
+  private final TalonFX rightElevatorMotor = new TalonFX(rightElevatorMotorCanId, "rio");
   private final StatusSignal<Angle> positionRot = topElevatorMotor.getPosition();
   private final StatusSignal<AngularVelocity> velocityRotPerSec = topElevatorMotor.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = topElevatorMotor.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = topElevatorMotor.getSupplyCurrent();
+  private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
+  private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
@@ -37,12 +40,19 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.CurrentLimits.SupplyCurrentLimit = currentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.Slot0.kP = ElevatorConstants.kP_CTRE;
+    config.Slot0.kI = ElevatorConstants.kI_CTRE;
+    config.Slot0.kD = ElevatorConstants.kD_CTRE;
 
     tryUntilOk(5, () -> topElevatorMotor.getConfigurator().apply(config, 0.25));
+    tryUntilOk(5, () -> leftElevatorMotor.getConfigurator().apply(config, 0.25));
+    tryUntilOk(5, () -> rightElevatorMotor.getConfigurator().apply(config, 0.25));
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, positionRot, velocityRotPerSec, appliedVolts, currentAmps);
     topElevatorMotor.optimizeBusUtilization();
+
+    topElevatorMotor.setPosition(0);
   }
 
   @Override
@@ -51,6 +61,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
+    inputs.lowerLimit = !lowerLimitSwitch.get();
+    inputs.upperLimit = !upperLimitSwitch.get();
+    inputs.atL4Setpoint = inputs.position > ElevatorConstants.closeToL4;
   }
 
   @Override
