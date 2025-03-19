@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-I4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -49,15 +55,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "HomePos"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-K4"
           }
         },
         {

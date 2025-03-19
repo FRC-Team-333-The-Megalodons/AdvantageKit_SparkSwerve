@@ -19,9 +19,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-/**
- * This implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
- */
+/** This implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60. */
 public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX topElevatorMotor = new TalonFX(toplElevatorMotorCanId, "rio");
   private final TalonFX leftElevatorMotor = new TalonFX(leftElevatorMotorCanId, "rio");

@@ -20,4 +20,8 @@ public class EndEffecterCommands {
   public static Command runEndEffecterBackward(EndEffecter endEffecter) {
     return endEffecter.runPercent(-speed * 2);
   }
+
+  public static Command autoRunEndEffecterForward(EndEffecter endEffecter) {
+    return endEffecter.runPercent(speed + 0.25);
+  }
 }

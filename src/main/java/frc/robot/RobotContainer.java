@@ -422,7 +422,7 @@ public class RobotContainer { // Subsystems
     NamedCommands.registerCommand(
         "HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator, ramp));
     NamedCommands.registerCommand(
-        "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator));
+        "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator, ramp));
     NamedCommands.registerCommand(
         "AlgaeL2Position", AutomatedCommands.autoAlgaeL2Command(endEffecter, wrist, elevator));
     NamedCommands.registerCommand(

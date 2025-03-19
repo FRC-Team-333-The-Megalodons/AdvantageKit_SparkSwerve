@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.018551136363637,
-        "y": 5.126860795454545
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.3360810810810815,
-        "y": 5.762123003685504
-      },
-      "isLocked": false,
-      "linkedName": "K4"
-    },
-    {
-      "anchor": {
         "x": 1.6752272727322244,
         "y": 7.370468750005643
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.6930482186781695,
+        "y": 6.392174831086724
+      },
+      "isLocked": false,
+      "linkedName": "LCStation"
+    },
+    {
+      "anchor": {
+        "x": 3.819119318181818,
+        "y": 5.535696022727272
+      },
       "prevControl": {
-        "x": 2.268671683051634,
-        "y": 6.76754683661498
+        "x": 3.0384605343980344,
+        "y": 6.168128455159706
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LCStation"
+      "linkedName": "Prep-K4"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.365886124032656
+    "rotation": -59.237280465761025
   },
   "reversed": false,
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.237280465760975
+    "rotation": -53.365886124032656
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

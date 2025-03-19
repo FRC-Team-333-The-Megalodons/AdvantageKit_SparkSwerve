@@ -125,9 +125,11 @@ public class AutomatedCommands {
 
   /* Autonomous Commands */
 
-  public static Command autoScoreL4(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+  public static Command autoScoreL4(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
+        .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .until(elevator::atL4Setpoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
@@ -136,7 +138,7 @@ public class AutomatedCommands {
   public static Command autoIntakeCoral(EndEffecter endEffecter, Ramp ramp) {
     return ramp.setRampPosition(RampConstants.intakeSetpoint)
         .onlyWhile(ramp::isCoralInside)
-        .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter))
+        .alongWith(EndEffecterCommands.autoRunEndEffecterForward(endEffecter))
         .until(endEffecter::isTriggered);
   }
 
