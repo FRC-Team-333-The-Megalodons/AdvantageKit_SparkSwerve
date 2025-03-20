@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.216,
-        "y": 4.041
+        "x": 6.112585227272728,
+        "y": 4.164
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5492244525547445,
-        "y": 4.08905109489051
+        "x": 5.862679533825872,
+        "y": 4.157133823272996
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Prep-H4"
     },
     {
       "anchor": {
-        "x": 5.817974452554745,
-        "y": 4.163777372262772
+        "x": 5.818,
+        "y": 4.164
       },
       "prevControl": {
-        "x": 6.3036952554744525,
-        "y": 4.110401459854014
+        "x": 6.117147727272727,
+        "y": 4.159616477272727
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.2374021022507
+    "rotation": -179.5502362032713
   },
   "reversed": false,
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -179.5502362032713
   },
   "useDefaultConstraints": true
 }

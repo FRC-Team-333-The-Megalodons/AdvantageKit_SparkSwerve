@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7047297297297291
+        "x": 3.488260135135135,
+        "y": 2.7304898648648646
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3419763513513514,
-        "y": 1.4952702702702712
+        "x": 3.626935184191442,
+        "y": 2.9385024384493255
       },
       "isLocked": false,
-      "linkedName": "RCStation"
+      "linkedName": "Prep-C4"
     },
     {
       "anchor": {
-        "x": 3.6068412162162162,
-        "y": 2.898479729729729
+        "x": 3.7056587837837838,
+        "y": 2.9874155405405403
       },
       "prevControl": {
-        "x": 3.0040540540540537,
-        "y": 2.275929054054053
+        "x": 3.5556587837837834,
+        "y": 2.7874155405405405
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "C4"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 54.16234704572172
+    "rotation": 57.77124256490139
   },
   "useDefaultConstraints": true
 }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.817974452554745,
-        "y": 4.163777372262772
+        "x": 5.818,
+        "y": 4.164
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.165133543463837,
-        "y": 4.160337031353682
+        "x": 6.165159090909091,
+        "y": 4.160559659090909
       },
       "isLocked": false,
       "linkedName": "H4"
@@ -48,7 +48,7 @@
   "folder": "TestPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.2374021022507
+    "rotation": -179.5502362032713
   },
   "useDefaultConstraints": true
 }

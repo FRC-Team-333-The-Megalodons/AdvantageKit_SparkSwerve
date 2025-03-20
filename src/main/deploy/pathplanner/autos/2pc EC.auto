@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-E4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -49,15 +55,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "HomePos"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-C4"
           }
         },
         {
@@ -82,7 +94,7 @@
         {
           "type": "named",
           "data": {
-            "name": "HomePos"
+            "name": "ScoreCoral"
           }
         }
       ]

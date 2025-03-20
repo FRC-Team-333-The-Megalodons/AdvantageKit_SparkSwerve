@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6008445945945946,
-        "y": 0.7047297297297291
+        "x": 3.7649493243243244,
+        "y": 2.532854729729729
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5791385135135134,
-        "y": 1.5446790540540531
+        "x": 3.942820945945946,
+        "y": 2.7601351351351355
       },
       "isLocked": false,
-      "linkedName": "RCStation"
+      "linkedName": "Prep-D4"
     },
     {
       "anchor": {
         "x": 3.952702702702703,
-        "y": 2.809543918918919
+        "y": 2.849070945945946
       },
       "prevControl": {
-        "x": 3.1325168918918918,
-        "y": 2.038766891891892
+        "x": 3.8362331081081087,
+        "y": 2.6231418918918914
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 56.309932474020194
+    "rotation": 56.633633998940354
   },
   "reversed": false,
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 54.16234704572172
+    "rotation": 56.309932474020194
   },
   "useDefaultConstraints": true
 }

@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-E4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [

@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-H4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -58,6 +64,12 @@
           "type": "named",
           "data": {
             "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-C4"
           }
         },
         {
