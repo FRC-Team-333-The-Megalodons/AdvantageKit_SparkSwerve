@@ -38,7 +38,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endEffecter.EndEffecter;
 import frc.robot.subsystems.endEffecter.EndEffecterConstants;
 import frc.robot.subsystems.endEffecter.EndEffecterIO;
@@ -359,7 +359,7 @@ public class RobotContainer { // Subsystems
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        elevator = new Elevator(new ElevatorIOSpark());
+        elevator = new Elevator(new ElevatorIOTalonFX());
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOSpark());
         // climber = new Climber(new ClimberIOSpark());
@@ -507,7 +507,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData(
         "ElevatorAlgaeL3Pos",
         elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
-    SmartDashboard.putData("RampHomePos", ramp.setRampPosition(RampConstants.coralStationSetpoint));
+    SmartDashboard.putData(
+        "RampCoralStationPos", ramp.setRampPosition(RampConstants.coralStationSetpoint));
     SmartDashboard.putData("RampIntakePos", ramp.setRampPosition(RampConstants.intakeSetpoint));
     SmartDashboard.putData("RampClimbPos", ramp.setRampPosition(RampConstants.climbSetpoint));
   }

@@ -10,9 +10,13 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -21,9 +25,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 /** This implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60. */
 public class ElevatorIOTalonFX implements ElevatorIO {
-  private final TalonFX topElevatorMotor = new TalonFX(toplElevatorMotorCanId, "rio");
-  private final TalonFX leftElevatorMotor = new TalonFX(leftElevatorMotorCanId, "rio");
-  private final TalonFX rightElevatorMotor = new TalonFX(rightElevatorMotorCanId, "rio");
+  private final TalonFX topElevatorMotor = new TalonFX(toplElevatorMotorCanId, "canivore");
+  private final TalonFX leftElevatorMotor = new TalonFX(leftElevatorMotorCanId, "canivore");
+  private final TalonFX rightElevatorMotor = new TalonFX(rightElevatorMotorCanId, "canivore");
   private final StatusSignal<Angle> positionRot = topElevatorMotor.getPosition();
   private final StatusSignal<AngularVelocity> velocityRotPerSec = topElevatorMotor.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = topElevatorMotor.getMotorVoltage();
@@ -32,6 +36,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
+  private final PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
+
+  private final PIDController elevatorUpPidController = new PIDController(0.5, 0.0, 0.0005);
+  private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
 
   public ElevatorIOTalonFX() {
     var config = new TalonFXConfiguration();
@@ -51,12 +59,18 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     topElevatorMotor.optimizeBusUtilization();
 
     topElevatorMotor.setPosition(0);
+    leftElevatorMotor.setPosition(0);
+    rightElevatorMotor.setPosition(0);
+
+    leftElevatorMotor.setControl(new Follower(toplElevatorMotorCanId, false));
+    rightElevatorMotor.setControl(new Follower(toplElevatorMotorCanId, false));
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     BaseStatusSignal.refreshAll(positionRot, velocityRotPerSec, appliedVolts, currentAmps);
 
+    inputs.position = Units.rotationsToRadians(positionRot.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
     inputs.lowerLimit = !lowerLimitSwitch.get();
@@ -67,8 +81,17 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setVoltage(double volts) {
     topElevatorMotor.setControl(voltageRequest.withOutput(volts));
-    leftElevatorMotor.setControl(voltageRequest.withOutput(volts));
-    rightElevatorMotor.setControl(voltageRequest.withOutput(volts));
+  }
+
+  @Override
+  public void setElevator(double currentPos, double targetPos, boolean down) {
+    if (down) {
+      topElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+      // topElevatorMotor.setControl(positionRequest.withPosition(targetPos));
+    } else {
+      topElevatorMotor.set(elevatorUpPidController.calculate(currentPos, targetPos));
+      // topElevatorMotor.setControl(positionRequest.withPosition(targetPos));
+    }
   }
 
   @Override

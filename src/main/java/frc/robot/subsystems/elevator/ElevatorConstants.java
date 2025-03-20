@@ -17,14 +17,14 @@ public class ElevatorConstants {
 
   // Setpoints
   public static final double homeSetpoint = 0.0;
-  public static final double coralL4Setpoint = 210.0;
-  public static final double coralL3Setpoint = 100.0;
-  public static final double coralL2Setpoint = 45.0;
-  public static final double aglaeL2Setpoint = 75.0;
-  public static final double aglaeL3Setpoint = 125.0;
+  public static final double coralL4Setpoint = 126.0;
+  public static final double coralL3Setpoint = 70.0;
+  public static final double coralL2Setpoint = 20.0;
+  public static final double aglaeL2Setpoint = 25.0;
+  public static final double aglaeL3Setpoint = 55.0;
   public static final double processorSetpoint = 0.0;
-  public static final double bargeSetPoint = 240.0;
-  public static final double closeToL4 = 200.0;
+  public static final double bargeSetPoint = 100.0;
+  public static final double closeToL4 = 100.0;
 
   // PID Constants (REV)
   public static final double kP_REV = 0.006;
@@ -32,7 +32,7 @@ public class ElevatorConstants {
   public static final double kD_REV = 0.0;
 
   // PID Constants (CTRE)
-  public static final double kP_CTRE = 0.006;
+  public static final double kP_CTRE = 0.5;
   public static final double kI_CTRE = 0.0;
   public static final double kD_CTRE = 0.0;
 }
