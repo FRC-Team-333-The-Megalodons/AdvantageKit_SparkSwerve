@@ -27,4 +27,6 @@ public interface IntakeIO {
   public default boolean inRange() {
     return false;
   }
+
+  public default void setIntakeEncoderToZero() {}
 }

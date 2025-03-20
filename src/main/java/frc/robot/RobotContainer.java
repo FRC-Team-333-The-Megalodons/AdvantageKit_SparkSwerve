@@ -217,8 +217,10 @@ public class RobotContainer {
     intake.setDefaultCommand(
         intake.runTeleop(() -> controller.getR2Axis(), () -> controller.getL2Axis()));
 
-    // Running wrist encoder
+    // Running intake encoder
     controller.circle().whileTrue(intake.runIntake(IntakeConstants.setPoint));
+    // Setting intake encoder to 0
+    controller.triangle().whileTrue(intake.runIntakeEncoder());
 
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5
@@ -235,7 +237,7 @@ public class RobotContainer {
     //             : intake.runPercent(0))
     //     .onFalse(new RunCommand(() -> LEDStrip.setLEDs(Color.kBlack)));
 
-    controller.triangle().whileTrue(intake.runPercent(-0.333));
+    // controller.triangle().whileTrue(intake.runPercent(-0.333));
 
     // Lock to 0°
     controller

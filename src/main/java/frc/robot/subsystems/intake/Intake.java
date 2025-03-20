@@ -63,6 +63,10 @@ public class Intake extends SubsystemBase {
     return run(() -> io.runWristPIDController(getPosition(), setPoint));
   }
 
+  public Command runIntakeEncoder() {
+    return run(() -> io.setIntakeEncoderToZero());
+  }
+
   //
 
   // public boolean isTriggered() {

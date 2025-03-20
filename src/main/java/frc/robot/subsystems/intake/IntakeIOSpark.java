@@ -71,6 +71,11 @@ public class IntakeIOSpark implements IntakeIO {
     m_controller.setReference(setPoint, ControlType.kPosition, 0);
   }
 
+  @Override
+  public void setIntakeEncoderToZero() {
+    encoder.setPosition(0);
+  }
+
   // @Override
   // public void runWristPIDController(double sensor, double setPoint) {
   //   intake.set(pid.calculate(sensor, setPoint));
