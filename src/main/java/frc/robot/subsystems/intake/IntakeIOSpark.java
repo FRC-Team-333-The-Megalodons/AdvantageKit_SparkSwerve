@@ -7,6 +7,7 @@ package frc.robot.subsystems.intake;
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -23,6 +24,7 @@ public class IntakeIOSpark implements IntakeIO {
   private SparkMax intake = new SparkMax(intakeCanId, MotorType.kBrushless);
   private RelativeEncoder encoder = intake.getEncoder();
   SparkClosedLoopController m_controller = intake.getClosedLoopController();
+  private CANcoder intakeEncoder = new CANcoder(6);
 
   // private PIDController pid = new PIDController(1.4, 0, 0);
   // private CANrange canRange = new CANrange(IntakeConstants.canRangeId);
@@ -38,7 +40,7 @@ public class IntakeIOSpark implements IntakeIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / motorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    config.closedLoop.p(1.4).i(0).d(0);
+    config.closedLoop.p(0.8).i(0).d(1.0);
 
     tryUntilOk(
         intake,
@@ -58,6 +60,8 @@ public class IntakeIOSpark implements IntakeIO {
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(intake, intake::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
+    inputs.positionAbs = intakeEncoder.getAbsolutePosition().getValueAsDouble();
+
     inputs.inRange = inRange();
   }
 
@@ -71,9 +75,14 @@ public class IntakeIOSpark implements IntakeIO {
     m_controller.setReference(setPoint, ControlType.kPosition, 0);
   }
 
+  // @Override
+  // public void setIntakeEncoderToZero() {
+  //   encoder.setPosition(0);
+  // }
+
   @Override
-  public void setIntakeEncoderToZero() {
-    encoder.setPosition(0);
+  public double getPosition() {
+    return intakeEncoder.getAbsolutePosition().getValueAsDouble();
   }
 
   // @Override

@@ -5,7 +5,6 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -16,7 +15,7 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   // private final CANrange canRange = new CANrange(IntakeConstants.canRangeId);
-  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
+  // private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(2);
 
   DigitalInput dSensor = new DigitalInput(0);
   // private IntakeIOSpark intakeIOSpark = new IntakeIOSpark();
@@ -32,8 +31,9 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
     // Logger.recordOutput("CANRange", isTriggered());
-    // Logger.recordOutput("CANRangeDistance", getDistance());
-    Logger.recordOutput("WristEncoder", wristEncoder.get());
+    // Logger.recordOutput("CANRangeDistance", geDistance());
+    // Logger.recordOutput("IntakeEncoder", getPosition());
+    Logger.recordOutput("IntakeEncoder", io.getPosition());
     Logger.recordOutput("DSensor", getPositionForDSensor());
   }
 
@@ -78,12 +78,12 @@ public class Intake extends SubsystemBase {
   // }
 
   public double getPosition() {
-    return wristEncoder.get();
+    return io.getPosition();
   }
 
-  public boolean rotationForWrist() {
-    return (getPosition() >= 0);
-  }
+  // public boolean rotationForWrist() {
+  //   return (getPosition() >= 0);
+  // }
 
   public boolean getPositionForDSensor() {
     return dSensor.get();

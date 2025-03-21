@@ -14,6 +14,7 @@ public interface IntakeIO {
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
     public boolean inRange = false;
+    public double positionAbs = 0.0;
   }
 
   /** Update the set of loggable inputs. */
@@ -26,6 +27,10 @@ public interface IntakeIO {
 
   public default boolean inRange() {
     return false;
+  }
+
+  public default double getPosition() {
+    return 0.0;
   }
 
   public default void setIntakeEncoderToZero() {}
