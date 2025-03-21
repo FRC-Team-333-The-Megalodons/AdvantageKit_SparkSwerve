@@ -21,6 +21,10 @@ public class AutomatedCommands {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
   }
 
+  public static Command moveJustWrist(Wrist wrist) {
+    return wrist.setWristPosition(WristConstants.coralL23Setpoint);
+  }
+
   public static Command intakeCoral(EndEffecter endEffecter, Ramp ramp) {
     return endEffecter
         .runPercent(EndEffecterConstants.speed)

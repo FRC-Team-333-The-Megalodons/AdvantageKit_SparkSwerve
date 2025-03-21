@@ -27,7 +27,7 @@ public class ElevatorConstants {
   public static final double closeToL4 = 170.0;
 
   // PID Constants
-  // public static final double kP = 0.07;
-  // public static final double kI = 0.05;
-  // public static final double kD = 0.05;
+  public static final double kP = 0.07;
+  public static final double kI = 0.05;
+  public static final double kD = 0.05;
 }

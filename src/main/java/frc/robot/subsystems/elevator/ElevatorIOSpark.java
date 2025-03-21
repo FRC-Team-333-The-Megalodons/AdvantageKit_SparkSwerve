@@ -10,6 +10,7 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -28,9 +29,11 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkFlex rightElevatorMotor =
       new SparkFlex(rightElevatorMotorCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = topElevatorMotor.getEncoder();
+//   private final SparkClosedLoopController elevatorUpPidController = 
+//       topElevatorMotor.getClosedLoopController();
   private final PIDController elevatorUpPidController = new PIDController(0.012, 0.0, 0.0005);
   private final PIDController elevatorDownPidController = new PIDController(0.006, 0.0, 0.0);
-  private ElevatorFeedforward feedForward = new ElevatorFeedforward(0, 0.7, 1.4, 0.25);
+  // private ElevatorFeedforward feedForward = new ElevatorFeedforward(0, 0.7, 1.4, 0.25);
 
   private DigitalInput lowerLimitSwitch = new DigitalInput(lowerLimitSwitchId);
   private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
@@ -45,6 +48,11 @@ public class ElevatorIOSpark implements ElevatorIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / motorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+        config.closedLoop
+        .p(0.012)
+        .i(0.0)
+        .d(0.0005)
+        .outputRange(-1, 1);
 
     tryUntilOk(
         topElevatorMotor,
@@ -74,8 +82,9 @@ public class ElevatorIOSpark implements ElevatorIO {
         topElevatorMotor::getOutputCurrent,
         (value) -> inputs.currentAmps = value);
 
-    inputs.atSetpoint =
+     inputs.atSetpoint =
         elevatorDownPidController.atSetpoint() || elevatorDownPidController.atSetpoint();
+
     inputs.lowerLimit = !lowerLimitSwitch.get();
     inputs.upperLimit = !upperLimitSwitch.get();
     inputs.atL4Setpoint = inputs.position > ElevatorConstants.closeToL4;
@@ -88,24 +97,24 @@ public class ElevatorIOSpark implements ElevatorIO {
     rightElevatorMotor.setVoltage(volts);
   }
 
-  @Override
-  public void setElevator(double currentPos, double targetPos, boolean down) {
-    if (down) {
-      topElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
-      // + feedForward.calculate(targetPos));
-      leftElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
-      // + feedForward.calculate(targetPos));
-      rightElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
-      // + feedForward.calculate(targetPos));
-    } else {
-      topElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
-      leftElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
-      rightElevatorMotor.set(
-          elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
-    }
-  }
+  // @Override
+  // public void setElevator(double currentPos, double targetPos, boolean down) {
+  //   if (down) {
+  //     topElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+  //     // + feedForward.calculate(targetPos));
+  //     leftElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+  //     // + feedForward.calculate(targetPos));
+  //     rightElevatorMotor.set(elevatorDownPidController.calculate(currentPos, targetPos));
+  //     // + feedForward.calculate(targetPos));
+  //   } else {
+  //     topElevatorMotor.set(
+  //         elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
+  //     leftElevatorMotor.set(
+  //         elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
+  //     rightElevatorMotor.set(
+  //         elevatorUpPidController.calculate(currentPos, targetPos) + feedForward.calculate(3, 3));
+  //   }
+  // }
 
   @Override
   public void resetEncoder() {

@@ -7,14 +7,16 @@ package frc.robot.subsystems.wrist;
 import static frc.robot.subsystems.wrist.WristConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import java.util.function.DoubleSupplier;
 
@@ -22,8 +24,9 @@ import java.util.function.DoubleSupplier;
 public class WristIOSpark implements WristIO {
   private final SparkFlex wrist = new SparkFlex(wristCanId, MotorType.kBrushless);
   private final RelativeEncoder internalEncoder = wrist.getEncoder();
-  private final DutyCycleEncoder externalEncoder = new DutyCycleEncoder(wristEncoderId);
-  private final PIDController pidController = new PIDController(kP, kI, kD);
+  private final CANcoder externalEncoder = new CANcoder(wristEncoderId);
+  // private final PIDController pidController = new PIDController(kP, kI, kD);
+  private final SparkClosedLoopController wristController = wrist.getClosedLoopController();
 
   public WristIOSpark() {
     var config = new SparkFlexConfig();
@@ -35,6 +38,7 @@ public class WristIOSpark implements WristIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / motorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+    config.closedLoop.p(kP).i(kI).d(kD);
 
     tryUntilOk(
         wrist,
@@ -44,6 +48,7 @@ public class WristIOSpark implements WristIO {
                 config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
+  
   @Override
   public void updateInputs(WristIOInputs inputs) {
     ifOk(wrist, internalEncoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
@@ -52,9 +57,9 @@ public class WristIOSpark implements WristIO {
         new DoubleSupplier[] {wrist::getAppliedOutput, wrist::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(wrist, wrist::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    ifOk(wrist, externalEncoder::get, (value) -> inputs.positionAbs = value);
 
-    inputs.atSetpoint = pidController.atSetpoint();
+    inputs.positionAbs = externalEncoder.getAbsolutePosition().getValueAsDouble();
+
     inputs.atL4Setpoint = inputs.positionAbs > 0.35 && inputs.positionAbs < 0.39 ? true : false;
     inputs.atHomePosition = inputs.positionAbs > 0.53 && inputs.positionAbs < 0.55 ? true : false;
   }
@@ -65,12 +70,17 @@ public class WristIOSpark implements WristIO {
   }
 
   @Override
+  public double getPosition() {
+      return externalEncoder.getAbsolutePosition().getValueAsDouble();
+    }
+
+  @Override
   public void setSpeed(double speed) {
     wrist.set(speed);
   }
 
   @Override
-  public void setWristPosition(double currentPos, double targetPos) {
-    wrist.set(-pidController.calculate(currentPos, targetPos));
+  public void setWristPosition(double sensor, double targetPos) {
+    wristController.setReference(targetPos, ControlType.kPosition, 0);
   }
 }

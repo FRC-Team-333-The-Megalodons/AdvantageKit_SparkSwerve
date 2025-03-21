@@ -269,9 +269,11 @@ public class RobotContainer { // Subsystems
       driverController.R1().whileTrue(ramp.runPercent(-RampConstants.speed));
       driverController.L1().whileTrue(ramp.runPercent(RampConstants.speed));
     } else {
-      operatorController
-          .touchpad()
-          .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
+      //   operatorController
+      //       .touchpad()
+      //       .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
+      operatorController.touchpad().whileTrue(AutomatedCommands.moveJustWrist(wrist));
+
       operatorController
           .L2()
           .whileTrue(
