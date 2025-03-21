@@ -28,6 +28,9 @@ import frc.robot.commands.AutomatedCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.EndEffecterCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -73,7 +76,7 @@ public class RobotContainer { // Subsystems
   private final Elevator elevator;
   private final EndEffecter endEffecter;
   private final Wrist wrist;
-  //   private final Climber climber;
+  private final Climber climber;
   private final Ramp ramp;
   private final Vision vision;
 
@@ -280,10 +283,8 @@ public class RobotContainer { // Subsystems
 
       operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-      //   operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      //   operatorController
-      //       .create()
-      //       .whileTrue(climber.runPercent(ClimberConstants.speed).until(climber::isAtMin));
+      operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      operatorController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
       operatorController
           .triangle()
@@ -362,7 +363,7 @@ public class RobotContainer { // Subsystems
         elevator = new Elevator(new ElevatorIOTalonFX());
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
         wrist = new Wrist(new WristIOTalonFX());
-        // climber = new Climber(new ClimberIOSpark());
+        climber = new Climber(new ClimberIOTalonFX());
         ramp = new Ramp(new RampIOSpark());
         vision =
             new Vision(
@@ -383,7 +384,7 @@ public class RobotContainer { // Subsystems
         elevator = new Elevator(new ElevatorIOSim());
         endEffecter = new EndEffecter(new EndEffecterIOSim());
         wrist = new Wrist(new WristIOSim());
-        // climber = new Climber(new ClimberIOSim());
+        climber = new Climber(new ClimberIOTalonFX());
         ramp = new Ramp(new RampIOSim());
         vision =
             new Vision(
@@ -406,7 +407,7 @@ public class RobotContainer { // Subsystems
         elevator = new Elevator(new ElevatorIO() {});
         endEffecter = new EndEffecter(new EndEffecterIO() {});
         wrist = new Wrist(new WristIO() {});
-        // climber = new Climber(new ClimberIO() {});
+        climber = new Climber(new ClimberIOTalonFX() {});
         ramp = new Ramp(new RampIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
@@ -474,8 +475,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    // SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
-    // SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
+    SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
+    SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
     SmartDashboard.putData("RampUp", ramp.runPercent(-0.1));
     SmartDashboard.putData("RampDown", ramp.runPercent(0.1));
 
