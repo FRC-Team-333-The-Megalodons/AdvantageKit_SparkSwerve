@@ -55,7 +55,7 @@ public class AutomatedCommands {
   public static Command coralL4Command(
       EndEffecter endEffecter, Wrist wrist, Elevator elevator, Ramp ramp) {
     return wrist
-        .setWristPosition(WristConstants.coralL23Setpoint - 0.2)
+        .setWristPosition(WristConstants.coralL23Setpoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::atL4Setpoint)

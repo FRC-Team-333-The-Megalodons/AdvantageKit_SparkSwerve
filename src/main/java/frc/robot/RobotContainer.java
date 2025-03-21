@@ -58,7 +58,7 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristIO;
 import frc.robot.subsystems.wrist.WristIOSim;
-import frc.robot.subsystems.wrist.WristIOSpark;
+import frc.robot.subsystems.wrist.WristIOTalonFX;
 import frc.robot.util.GlobalConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -361,7 +361,7 @@ public class RobotContainer { // Subsystems
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         elevator = new Elevator(new ElevatorIOTalonFX());
         endEffecter = new EndEffecter(new EndEffecterIOSpark());
-        wrist = new Wrist(new WristIOSpark());
+        wrist = new Wrist(new WristIOTalonFX());
         // climber = new Climber(new ClimberIOSpark());
         ramp = new Ramp(new RampIOSpark());
         vision =

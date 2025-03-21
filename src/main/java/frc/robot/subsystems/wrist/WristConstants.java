@@ -14,7 +14,7 @@ public class WristConstants {
   // Wrist Setpoints
   public static final double homeSetpoint = 0.54;
   public static final double coralL23Setpoint = 0.49;
-  public static final double coralL4Setpoint = 0.35;
+  public static final double coralL4Setpoint = 0.38;
   public static final double processorSetpoint = 0.09;
   public static final double netSetPoint = 0.4;
   public static final double aglaeSetpoint = 0.12;
@@ -24,4 +24,9 @@ public class WristConstants {
   public static final double kP = 1.5;
   public static final double kI = 0.05;
   public static final double kD = 0.05;
+
+  // OnBoard PID Controller
+  public static final double kP_CTRE = 0;
+  public static final double kI_CTRE = 0;
+  public static final double kD_CTRE = 0;
 }
