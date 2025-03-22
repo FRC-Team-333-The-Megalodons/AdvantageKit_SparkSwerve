@@ -134,26 +134,7 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     // Configure AutoBuilder for PathPlanner
-    AutoBuilder.configure(
-        this::getPose,
-        this::setPose,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.7, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-        PP_CONFIG,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
-    Pathfinding.setPathfinder(new LocalADStarAK());
-    PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+    configAutoBuildPathPlannerForAuto();
 
     // Configure SysId
     sysId =
@@ -224,6 +205,41 @@ public class Drive extends SubsystemBase {
     estimatedPose2d = getPose();
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+  }
+
+  public void configAutoBuildPathPlannerForAuto() {
+    configAutoBuildPathPlanner(new PIDConstants(0.5, 0.7, 0.0));
+  }
+
+  public void configAutoBuildPathPlannerForTeleop() {
+    // This lets us use custom PID Constants for Teleop AutoBuild PathPlanner.
+    // However, at the moment we'll just keep using the Auto settings, since we can't find good
+    // values
+    //  solve our deadband problem.
+    // configAutoBuildPathPlanner(new PIDConstants(0.2, 0.5, 0.1, 0.0));
+    configAutoBuildPathPlannerForAuto();
+  }
+
+  public void configAutoBuildPathPlanner(PIDConstants pidConstants) {
+    AutoBuilder.configure(
+        this::getPose,
+        this::setPose,
+        this::getChassisSpeeds,
+        this::runVelocity,
+        new PPHolonomicDriveController(pidConstants, new PIDConstants(5.0, 0.0, 0.0)),
+        PP_CONFIG,
+        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        this);
+    Pathfinding.setPathfinder(new LocalADStarAK());
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
   }
 
   /**

@@ -133,6 +133,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    robotContainer.drive.configAutoBuildPathPlannerForAuto();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -152,6 +153,7 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    robotContainer.drive.configAutoBuildPathPlannerForTeleop();
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }

@@ -69,7 +69,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer { // Subsystems
-  private final Drive drive;
+  public final Drive drive;
   private final Elevator elevator;
   private final EndEffecter endEffecter;
   private final Wrist wrist;
