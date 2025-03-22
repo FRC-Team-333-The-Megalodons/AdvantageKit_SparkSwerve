@@ -216,7 +216,7 @@ public class Drive extends SubsystemBase {
     // However, at the moment we'll just keep using the Auto settings, since we can't find good
     // values
     //  solve our deadband problem.
-    configAutoBuildPathPlanner(new PIDConstants(10.0, 0.2, 0.0));
+    //configAutoBuildPathPlanner(new PIDConstants(10.0, 0.2, 0.0));
     configAutoBuildPathPlannerForAuto();
   }
 
