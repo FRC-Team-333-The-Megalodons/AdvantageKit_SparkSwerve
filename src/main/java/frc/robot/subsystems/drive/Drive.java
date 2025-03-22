@@ -427,6 +427,8 @@ public class Drive extends SubsystemBase {
     public static final int RED_FAR_LEFT = 11;
   }
 
+  public static int odometryTagId = -1;
+
   public static double reefDriveAngle(Vision vision) {
     //  int id = vision.getFudicialId();
     int id = Vision.getCurrentVisionTagId();
@@ -445,7 +447,8 @@ public class Drive extends SubsystemBase {
     }
 
     Logger.recordOutput("Vision/Summary/AutoRotate/VisionTagId", id);
-    Logger.recordOutput("Vision/Summary/AutoRotate/OdometryTagId", odom_id);
+    odometryTagId = odom_id;
+    Logger.recordOutput("Vision/Summary/AutoRotate/OdometryTagId", odometryTagId);
     Logger.recordOutput(
         "Vision/Summary/AutoRotate/AngleMethod", using_odometry ? "Odometry" : "Vision");
     Logger.recordOutput("Vision/Summary/AutoRotate/ReefDriveAngle", angle);

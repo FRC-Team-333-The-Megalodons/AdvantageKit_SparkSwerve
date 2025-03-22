@@ -28,11 +28,6 @@ import frc.robot.commands.AutomatedCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.EndEffecterCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberConstants;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -78,7 +73,7 @@ public class RobotContainer { // Subsystems
   private final Elevator elevator;
   private final EndEffecter endEffecter;
   private final Wrist wrist;
-//   private final Climber climber;
+  //   private final Climber climber;
   private final Ramp ramp;
   private final Vision vision;
 
@@ -144,6 +139,41 @@ public class RobotContainer { // Subsystems
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+    // TODO: Pick a better button, just R1/L1 currently taken.
+    // driverController.povLeft()
+    //         .whileTrue(() -> DriveCommands.getDriveToReefSideCommand('L'));
+
+    // driverController
+    //     .povLeft()
+    //     .whileTrue(
+    //         new Command() {
+    //           Command command = null;
+
+    //           @Override
+    //           public void initialize() {
+    //             command = DriveCommands.getDriveToReefSideCommand('L');
+    //             command.initialize();
+    //           }
+
+    //           @Override
+    //           public void execute() {
+    //             command.execute(); // Execute the generated command
+    //           }
+
+    //           @Override
+    //           public void end(boolean interrupted) {
+    //             command.end(interrupted);
+    //           }
+
+    //           @Override
+    //           public boolean isFinished() {
+    //             return command.isFinished();
+    //           }
+    //         });
+    driverController.povUp().whileTrue(DriveCommands.getDriveToReefWrapper('M'));
+    driverController.povLeft().whileTrue(DriveCommands.getDriveToReefWrapper('L'));
+    driverController.povRight().whileTrue(DriveCommands.getDriveToReefWrapper('R'));
+
     if (isInSoloDrivingMode) {
       driverController
           .PS()
@@ -180,8 +210,8 @@ public class RobotContainer { // Subsystems
       driverController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-    //   driverController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-    //   driverController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      //   driverController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+      //   driverController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
       driverController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       driverController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
@@ -198,8 +228,8 @@ public class RobotContainer { // Subsystems
       operatorController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-    //   operatorController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-    //   operatorController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      //   operatorController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
+      //   operatorController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
 
       operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
@@ -227,9 +257,9 @@ public class RobotContainer { // Subsystems
           .touchpad()
           .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
 
-    //   driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      //   driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
 
-    //   driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      //   driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
       driverController
           .triangle()
@@ -285,8 +315,8 @@ public class RobotContainer { // Subsystems
 
       operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-    //   operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-    //   operatorController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      //   operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      //   operatorController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
 
       operatorController
           .triangle()
