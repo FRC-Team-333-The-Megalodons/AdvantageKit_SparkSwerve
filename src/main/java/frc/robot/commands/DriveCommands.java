@@ -16,6 +16,8 @@ package frc.robot.commands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -320,7 +322,7 @@ public class DriveCommands {
     double gyroDelta = 0.0;
   }
 
-  public static Pose2d getReefSide(char side) {
+  public static Pose2d getNearestReefSidePose(char side) {
     int reefTag = Drive.odometryTagId;
     Logger.recordOutput("Vision/Summary/DriveToReef/ReefTag", reefTag);
     double tagAngle = Drive.reefDriveAngleByTagId(reefTag);
@@ -371,7 +373,7 @@ public class DriveCommands {
   }
 
   public static Command getDriveToReefSideCommand(char side) {
-    Pose2d targetPose = getReefSide(side);
+    Pose2d targetPose = getNearestReefSidePose(side);
 
     // If targetPose is null, it means we couldn't figure out where to go.
     if (targetPose == null) {
@@ -386,7 +388,43 @@ public class DriveCommands {
     return pathfindingCommand;
   }
 
-  public static Command getDriveToReefWrapper(char side) {
+  public static Command generatePreciseDriveToReefCommand(char side, Drive drive) {
+    final double kMaxAngularVelocity = 60;
+    final double kMaxAngularAcceleration = 60;
+    final double kP = 5.0, kI = 0.7, kD = 0.0;
+    final double kPtheta = 0.5, kItheta = 0.1, kDtheta = 0.2;
+    Supplier<Pose2d> robotPoseSupplier = () -> Drive.estimatedPose2d;
+    HolonomicDriveController controller =
+        new HolonomicDriveController(
+            new PIDController(kP, kI, kD), // X controller
+            new PIDController(kP, kI, kD), // Y controller
+            new ProfiledPIDController(
+                kPtheta,
+                kItheta,
+                kDtheta,
+                new TrapezoidProfile.Constraints(
+                    Units.degreesToRadians(kMaxAngularVelocity),
+                    Units.degreesToRadians(kMaxAngularAcceleration))) // Theta controller
+            );
+    /*
+    controller.setTolerance(
+        new Pose2d(
+            0.05, // Keep X tolerance the same (5 cm)
+            0.05, // Keep Y tolerance the same (5 cm)
+            Rotation2d.fromDegrees(10))); // Increase rotational tolerance to 10 degrees
+            */
+
+    PathConstraints constraints =
+        new PathConstraints(
+            3.0,
+            4.0,
+            Units.degreesToRadians(kMaxAngularVelocity),
+            Units.degreesToRadians(kMaxAngularAcceleration));
+    return new ReefAutoAlignment(
+        constraints, controller, robotPoseSupplier, drive.getChassisSpeedsConsumer(), drive, side);
+  }
+
+  public static Command generateDriveToReefCommand(char side) {
     return new Command() {
       Command command = null;
 

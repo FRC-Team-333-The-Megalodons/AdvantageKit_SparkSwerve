@@ -139,40 +139,17 @@ public class RobotContainer { // Subsystems
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // TODO: Pick a better button, just R1/L1 currently taken.
-    // driverController.povLeft()
-    //         .whileTrue(() -> DriveCommands.getDriveToReefSideCommand('L'));
-
+    // TODO: Figure out how to fix the crazy jumping with the Precise Drive to Reef Command
+    driverController.povUp().whileTrue(DriveCommands.generateDriveToReefCommand('M'));
+    driverController.povLeft().whileTrue(DriveCommands.generateDriveToReefCommand('L'));
+    driverController.povRight().whileTrue(DriveCommands.generateDriveToReefCommand('R'));
+    // driverController.povUp().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     // driverController
     //     .povLeft()
-    //     .whileTrue(
-    //         new Command() {
-    //           Command command = null;
-
-    //           @Override
-    //           public void initialize() {
-    //             command = DriveCommands.getDriveToReefSideCommand('L');
-    //             command.initialize();
-    //           }
-
-    //           @Override
-    //           public void execute() {
-    //             command.execute(); // Execute the generated command
-    //           }
-
-    //           @Override
-    //           public void end(boolean interrupted) {
-    //             command.end(interrupted);
-    //           }
-
-    //           @Override
-    //           public boolean isFinished() {
-    //             return command.isFinished();
-    //           }
-    //         });
-    driverController.povUp().whileTrue(DriveCommands.getDriveToReefWrapper('M'));
-    driverController.povLeft().whileTrue(DriveCommands.getDriveToReefWrapper('L'));
-    driverController.povRight().whileTrue(DriveCommands.getDriveToReefWrapper('R'));
+    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    // driverController
+    //     .povRight()
+    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
 
     if (isInSoloDrivingMode) {
       driverController

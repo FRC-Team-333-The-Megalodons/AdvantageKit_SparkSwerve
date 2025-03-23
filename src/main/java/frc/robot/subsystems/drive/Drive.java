@@ -55,6 +55,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -216,7 +217,7 @@ public class Drive extends SubsystemBase {
     // However, at the moment we'll just keep using the Auto settings, since we can't find good
     // values
     //  solve our deadband problem.
-    //configAutoBuildPathPlanner(new PIDConstants(10.0, 0.2, 0.0));
+    // configAutoBuildPathPlanner(new PIDConstants(10.0, 0.2, 0.0));
     configAutoBuildPathPlannerForAuto();
   }
 
@@ -326,6 +327,12 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
   private ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public Consumer<ChassisSpeeds> getChassisSpeedsConsumer() {
+    return (ChassisSpeeds speeds) -> {
+      runVelocity(speeds);
+    };
   }
 
   /** Returns the position of each module in radians. */
