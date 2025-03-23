@@ -69,7 +69,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer { // Subsystems
-  private final Drive drive;
+  public final Drive drive;
   private final Elevator elevator;
   private final EndEffecter endEffecter;
   private final Wrist wrist;
@@ -138,6 +138,41 @@ public class RobotContainer { // Subsystems
                 () -> Rotation2d.fromDegrees(Drive.reefDriveAngle(vision))));
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    // TODO: Pick a better button, just R1/L1 currently taken.
+    // driverController.povLeft()
+    //         .whileTrue(() -> DriveCommands.getDriveToReefSideCommand('L'));
+
+    // driverController
+    //     .povLeft()
+    //     .whileTrue(
+    //         new Command() {
+    //           Command command = null;
+
+    //           @Override
+    //           public void initialize() {
+    //             command = DriveCommands.getDriveToReefSideCommand('L');
+    //             command.initialize();
+    //           }
+
+    //           @Override
+    //           public void execute() {
+    //             command.execute(); // Execute the generated command
+    //           }
+
+    //           @Override
+    //           public void end(boolean interrupted) {
+    //             command.end(interrupted);
+    //           }
+
+    //           @Override
+    //           public boolean isFinished() {
+    //             return command.isFinished();
+    //           }
+    //         });
+    driverController.povUp().whileTrue(DriveCommands.getDriveToReefWrapper('M'));
+    driverController.povLeft().whileTrue(DriveCommands.getDriveToReefWrapper('L'));
+    driverController.povRight().whileTrue(DriveCommands.getDriveToReefWrapper('R'));
 
     if (isInSoloDrivingMode) {
       driverController

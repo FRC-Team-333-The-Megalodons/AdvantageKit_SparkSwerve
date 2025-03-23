@@ -13,10 +13,13 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,12 +33,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriverConstants;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -312,5 +318,98 @@ public class DriveCommands {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
+  }
+
+  public static Pose2d getReefSide(char side) {
+    int reefTag = Drive.odometryTagId;
+    Logger.recordOutput("Vision/Summary/DriveToReef/ReefTag", reefTag);
+    double tagAngle = Drive.reefDriveAngleByTagId(reefTag);
+    Logger.recordOutput("Vision/Summary/DriveToReef/ReefAngle", tagAngle);
+
+    Logger.recordOutput(
+        "Vision/Summary/DriveToReef/LastCalledTimestamp", System.currentTimeMillis() % 1000);
+    if (tagAngle == DriverConstants.MAGIC_INVALID_DEGREES_NUMBER) {
+      // we know that this isn't a valid Reef Tag for our alliance, so bail out.
+      return null;
+    }
+
+    Optional<Pose3d> tagPose3d = VisionConstants.aprilTagLayout.getTagPose(reefTag);
+    if (tagPose3d.isEmpty()) {
+      // for some reason, we couldn't find the particular tag in the field layout.
+      return null;
+    }
+
+    // If we made it this far, we know we found the real pose of the real tag
+    Pose2d tagPose = tagPose3d.get().toPose2d();
+
+    // This is the left/right distance from the Tag center we want to be for placing the coral on
+    // the left/right posts.
+    // (If M is passed, we're getting the Ball, so we want to be centered.)
+    double sideDistance = 0.3;
+    if (side == 'M') {
+      sideDistance = 0; // If we're staying in the middle, there's no side distance.
+    } else if (side == 'L') {
+      sideDistance *= -1; // If going left, flip the side direction
+    }
+
+    // This is the buffer to the tag position (i.e. don't slam into wall)
+    double forwardDistance = 0.8;
+
+    // 1. Define the movement (forward by forwardDistance units, side by sideDistance units)
+    double forwardX = forwardDistance * Math.cos(tagPose.getRotation().getRadians());
+    double forwardY = forwardDistance * Math.sin(tagPose.getRotation().getRadians());
+    double sideX = -sideDistance * Math.sin(tagPose.getRotation().getRadians());
+    double sideY = sideDistance * Math.cos(tagPose.getRotation().getRadians());
+
+    Translation2d newTranslation =
+        tagPose
+            .getTranslation()
+            .plus(new Translation2d(forwardX, forwardY))
+            .plus(new Translation2d(sideX, sideY));
+    Pose2d newPose = new Pose2d(newTranslation, Rotation2d.fromDegrees(tagAngle));
+    return newPose;
+  }
+
+  public static Command getDriveToReefSideCommand(char side) {
+    Pose2d targetPose = getReefSide(side);
+
+    // If targetPose is null, it means we couldn't figure out where to go.
+    if (targetPose == null) {
+      return Commands.print("Could not find Reef Side Target");
+    }
+
+    PathConstraints constraints =
+        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+
+    return pathfindingCommand;
+  }
+
+  public static Command getDriveToReefWrapper(char side) {
+    return new Command() {
+      Command command = null;
+
+      @Override
+      public void initialize() {
+        command = DriveCommands.getDriveToReefSideCommand(side);
+        command.initialize();
+      }
+
+      @Override
+      public void execute() {
+        command.execute(); // Execute the generated command
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        command.end(interrupted);
+      }
+
+      @Override
+      public boolean isFinished() {
+        return command.isFinished();
+      }
+    };
   }
 }
