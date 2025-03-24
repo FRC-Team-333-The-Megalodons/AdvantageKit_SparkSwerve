@@ -381,7 +381,8 @@ public class DriveCommands {
     PathConstraints constraints =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+    Command pathfindingCommand =
+        AutoBuilder.pathfindToPose(targetPose, PathConstraints.unlimitedConstraints(12.0), 0.0);
 
     return pathfindingCommand;
   }
