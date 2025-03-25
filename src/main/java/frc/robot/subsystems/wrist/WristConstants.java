@@ -12,7 +12,7 @@ public class WristConstants {
   public static final double speed = 0.1;
 
   // Wrist Setpoints
-  public static final double homeSetpoint = 0.54;
+  public static final double homeSetpoint = 0.52;
   public static final double coralL23Setpoint = 0.49;
   public static final double coralL4Setpoint = 0.37;
   public static final double processorSetpoint = 0.09;
