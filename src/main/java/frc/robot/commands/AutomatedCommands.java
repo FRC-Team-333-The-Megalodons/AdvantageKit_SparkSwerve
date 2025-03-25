@@ -109,7 +109,17 @@ public class AutomatedCommands {
   public static Command netCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
+  }
+
+  public Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return elevator
+        .setElevatorPosition(ElevatorConstants.netSetPoint, false)
+        .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
+        .andThen(
+            wrist
+                .setWristPosition(WristConstants.netSetPoint)
+                .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)));
   }
 
   public static Command rampIntakeCommand(Ramp ramp) {
@@ -161,6 +171,6 @@ public class AutomatedCommands {
   public static Command autoNetCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.bargeSetPoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
   }
 }
