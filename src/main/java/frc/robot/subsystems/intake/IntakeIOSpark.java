@@ -10,7 +10,6 @@ import static frc.robot.util.SparkUtil.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -27,7 +26,6 @@ public class IntakeIOSpark implements IntakeIO {
   SparkClosedLoopController m_controller = intake.getClosedLoopController();
   private CANcoder intakeEncoder = new CANcoder(6);
   private TalonFXConfiguration newMagicMotion = new TalonFXConfiguration();
-
 
   // private PIDController pid = new PIDController(1.4, 0, 0);
   // private CANrange canRange = new CANrange(IntakeConstants.canRangeId);
@@ -55,7 +53,8 @@ public class IntakeIOSpark implements IntakeIO {
 
     var motionMagicConfigs = newMagicMotion.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicAcceleration =
+        160; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     tryUntilOk(
@@ -86,10 +85,10 @@ public class IntakeIOSpark implements IntakeIO {
     intake.setVoltage(volts);
   }
 
-  @Override
-  public void runWristPIDController(double sensor, double setPoint) {
-    m_controller.setReference(setPoint, ControlType.kPosition, 0);
-  }
+  // @Override
+  // public void runWristPIDController(double sensor, double setPoint) {
+  //   m_controller.setReference(setPoint, ControlType.kPosition, 0);
+  // }
 
   // @Override
   // public void setIntakeEncoderToZero() {

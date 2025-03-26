@@ -221,6 +221,7 @@ public class RobotContainer {
     controller.circle().whileTrue(intake.runIntake(IntakeConstants.setPoint));
     // Setting intake encoder to 0
     controller.triangle().whileTrue(intake.runIntakeEncoder());
+    // Running kraken with potion profile
 
     // Eject game pieve when triangle is held
     // Commented out until something can be plugged into Can ID 5
