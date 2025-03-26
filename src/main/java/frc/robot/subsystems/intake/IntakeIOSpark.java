@@ -43,7 +43,7 @@ public class IntakeIOSpark implements IntakeIO {
         .velocityConversionFactor((2.0 * Math.PI) / 60.0 / motorReduction)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    config.closedLoop.p(0.8).i(0).d(1.0);
+    config.closedLoop.p(0.022).i(0).d(0.629);
 
     var slot0Configs = newMagicMotion.Slot0;
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
