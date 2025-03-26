@@ -112,14 +112,13 @@ public class AutomatedCommands {
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
   }
 
-  public Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
-    return elevator
-        .setElevatorPosition(ElevatorConstants.netSetPoint, false)
-        .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
-        .andThen(
-            wrist
-                .setWristPosition(WristConstants.netSetPoint)
-                .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)));
+  public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return EndEffecterCommands.runEndEffecterBackward(endEffecter)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
+        .until(elevator::atL4Setpoint)
+        .andThen(wrist.setWristPosition(WristConstants.netSetPoint))
+        .until(wrist::atNetSetPoint)
+        .andThen(EndEffecterCommands.runEndEffecterForward(endEffecter));
   }
 
   public static Command rampIntakeCommand(Ramp ramp) {

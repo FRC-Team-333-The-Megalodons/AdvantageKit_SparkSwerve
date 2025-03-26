@@ -85,7 +85,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = true;
+  private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
     /*
@@ -340,6 +340,10 @@ public class RobotContainer { // Subsystems
       operatorController.R1().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
       operatorController.PS().whileTrue(ramp.runPercent(RampConstants.speed));
+
+      operatorController
+          .R3()
+          .whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
     }
   }
 
@@ -427,7 +431,11 @@ public class RobotContainer { // Subsystems
     NamedCommands.registerCommand(
         "ScoreCoral",
         EndEffecterCommands.runEndEffecterForward(endEffecter)
-            .onlyWhile(endEffecter::isTriggered)); // onlyIf(endEffecter::isTriggered));
+            .onlyWhile(endEffecter::isTriggered)
+            .andThen(
+                wrist
+                    .setWristPosition(WristConstants.coralL23Setpoint)
+                    .until(wrist::atL3Setpoint))); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand(
         "IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter, ramp));
     NamedCommands.registerCommand(
