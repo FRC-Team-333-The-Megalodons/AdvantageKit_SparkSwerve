@@ -55,6 +55,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "HomePos"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 2.0

@@ -5,13 +5,19 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-H4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Prep-H4"
+                  "pathName": "H4"
                 }
               },
               {
@@ -49,6 +55,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "HomePos"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 2.0
@@ -61,13 +73,19 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-K4"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Prep-K4"
+                  "pathName": "K4"
                 }
               },
               {
