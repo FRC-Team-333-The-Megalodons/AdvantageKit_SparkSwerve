@@ -23,7 +23,7 @@ import edu.wpi.first.units.measure.Voltage;
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
  */
 public class ClimberIOTalonFX implements ClimberIO {
-  private final TalonFX climber = new TalonFX(climberCanId, "canivore");
+  private final TalonFX climber = new TalonFX(climberCanId, "rio");
   private final StatusSignal<Angle> positionRot = climber.getPosition();
   private final StatusSignal<AngularVelocity> velocityRotPerSec = climber.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = climber.getMotorVoltage();
