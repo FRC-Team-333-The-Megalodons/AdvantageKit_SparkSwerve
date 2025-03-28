@@ -18,16 +18,18 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Servo;
 
 /**
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
  */
 public class ClimberIOTalonFX implements ClimberIO {
-  private final TalonFX climber = new TalonFX(climberCanId, "rio");
+  private final TalonFX climber = new TalonFX(climberCanId, "canivore");
   private final StatusSignal<Angle> positionRot = climber.getPosition();
   private final StatusSignal<AngularVelocity> velocityRotPerSec = climber.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = climber.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = climber.getSupplyCurrent();
+  private final Servo climberServo = new Servo(9); // out a servo port pls
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
 
@@ -57,5 +59,11 @@ public class ClimberIOTalonFX implements ClimberIO {
   @Override
   public void setVoltage(double volts) {
     climber.setControl(voltageRequest.withOutput(volts));
+  }
+
+  @Override
+  public void setSpeedServo(double speed, int angle) {
+    climberServo.set(speed);
+    climberServo.setAngle(angle);
   }
 }

@@ -79,7 +79,7 @@ public class RobotContainer { // Subsystems
   private final EndEffecter endEffecter;
   private final Wrist wrist;
   private final Climber climber;
-  
+
   private final Ramp ramp;
   private final Vision vision;
 
@@ -503,6 +503,7 @@ public class RobotContainer { // Subsystems
     // SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
     SmartDashboard.putData("RampUp", ramp.runPercent(-0.1));
     SmartDashboard.putData("RampDown", ramp.runPercent(0.1));
+    SmartDashboard.putData("ServoDown", climber.runServo(-0.5));
 
     // Advanced Commands
     SmartDashboard.putData(

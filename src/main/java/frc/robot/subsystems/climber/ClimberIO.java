@@ -27,4 +27,6 @@ public interface ClimberIO {
   public default void setSpeed(double speed) {}
 
   public default void resetEncoder() {}
+
+  public default void setSpeedServo(double speed, int angle) {}
 }

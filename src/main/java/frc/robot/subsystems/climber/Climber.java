@@ -40,6 +40,10 @@ public class Climber extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
+  public Command runServo(double speed) {
+    return runEnd(() -> io.setSpeedServo(speed, 90), () -> io.setSpeedServo(0, 90));
+  }
+
   public boolean isFullyIn() {
     return inputs.isFullyIn;
   }
