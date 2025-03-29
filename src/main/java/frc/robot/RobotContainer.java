@@ -194,8 +194,20 @@ public class RobotContainer { // Subsystems
       driverController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      driverController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-      driverController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      driverController
+          .povLeft()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt0deg)
+                  .andThen(climber.runPercent(ClimberConstants.speed)));
+      driverController
+          .povRight()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt90deg)
+                  .andThen(climber.runPercent(-ClimberConstants.speed)));
       driverController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       driverController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
@@ -212,8 +224,20 @@ public class RobotContainer { // Subsystems
       operatorController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      operatorController.povLeft().whileTrue(climber.runPercent(ClimberConstants.speed));
-      operatorController.povRight().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      operatorController
+          .povLeft()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt0deg)
+                  .andThen(climber.runPercent(ClimberConstants.speed)));
+      operatorController
+          .povRight()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt90deg)
+                  .andThen(climber.runPercent(-ClimberConstants.speed)));
 
       operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
@@ -241,9 +265,21 @@ public class RobotContainer { // Subsystems
           .touchpad()
           .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
 
-      driverController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
+      driverController
+          .options()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt90deg)
+                  .andThen(climber.runPercent(-ClimberConstants.speed)));
 
-      driverController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      driverController
+          .create()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt0deg)
+                  .andThen(climber.runPercent(ClimberConstants.speed)));
 
       driverController
           .triangle()
@@ -299,8 +335,20 @@ public class RobotContainer { // Subsystems
 
       operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-      operatorController.options().whileTrue(climber.runPercent(-ClimberConstants.speed));
-      operatorController.create().whileTrue(climber.runPercent(ClimberConstants.speed));
+      operatorController
+          .options()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt90deg)
+                  .andThen(climber.runPercent(-ClimberConstants.speed)));
+      operatorController
+          .create()
+          .whileTrue(
+              climber
+                  .runServo(0.5)
+                  .until(climber::isAt0deg)
+                  .andThen(climber.runPercent(ClimberConstants.speed)));
 
       operatorController
           .triangle()
@@ -499,11 +547,19 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    // SmartDashboard.putData("ExtendClimber", climber.runPercent(0.5));
-    // SmartDashboard.putData("RetractClimber", climber.runPercent(-0.5));
+    SmartDashboard.putData(
+        "ExtendClimber",
+        climber
+            .runServo(1)
+            .until(climber::isAt90deg)
+            .andThen(climber.runPercent(-0.5))); // .alongWith(climber.runServo(0.5, 90)));
+    SmartDashboard.putData(
+        "RetractClimber",
+        climber.runServo(0).until(climber::isAt0deg).andThen(climber.runPercent(0.5)));
     SmartDashboard.putData("RampUp", ramp.runPercent(-0.1));
     SmartDashboard.putData("RampDown", ramp.runPercent(0.1));
-    SmartDashboard.putData("ServoDown", climber.runServo(-0.5));
+    SmartDashboard.putData("ServoDown", climber.runServo(0));
+    SmartDashboard.putData("ServoUp", climber.runServo(1.0));
 
     // Advanced Commands
     SmartDashboard.putData(

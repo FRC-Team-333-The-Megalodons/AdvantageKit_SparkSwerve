@@ -41,7 +41,15 @@ public class Climber extends SubsystemBase {
   }
 
   public Command runServo(double speed) {
-    return runEnd(() -> io.setSpeedServo(speed, 90), () -> io.setSpeedServo(0, 90));
+    return runEnd(() -> io.setSpeedServo(speed), () -> io.setSpeedServo(0));
+  }
+
+  public boolean isAt0deg() {
+    return inputs.isAt0deg;
+  }
+
+  public boolean isAt90deg() {
+    return inputs.isAt90deg;
   }
 
   public boolean isFullyIn() {

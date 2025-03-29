@@ -33,6 +33,8 @@ public interface ModuleIO {
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
 
+    public boolean isTriggered = false;
+
     public double[] odometryTimestamps = new double[] {};
     public double[] odometryDrivePositionsRad = new double[] {};
     public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
@@ -52,4 +54,8 @@ public interface ModuleIO {
 
   /** Run the turn motor to the specified rotation. */
   public default void setTurnPosition(Rotation2d rotation) {}
+
+  public default boolean isTriggered() {
+    return false;
+  }
 }

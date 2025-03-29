@@ -16,6 +16,9 @@ public interface ClimberIO {
     public boolean isFullyOut = false;
     public boolean isFullyIn = false;
     public boolean limitSwitch = false;
+    public boolean isAt90deg = false;
+    public boolean isAt0deg = false;
+    public double servoPosition = 0.0;
   }
 
   /** Update the set of loggable inputs. */
@@ -28,5 +31,5 @@ public interface ClimberIO {
 
   public default void resetEncoder() {}
 
-  public default void setSpeedServo(double speed, int angle) {}
+  public default void setSpeedServo(double speed) {}
 }
