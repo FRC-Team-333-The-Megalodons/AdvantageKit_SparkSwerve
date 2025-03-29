@@ -27,6 +27,8 @@ public class ReefAutoAlignment extends SequentialCommandGroup {
     /* tolerance for the precise approach */
     holonomicDriveController.setTolerance(new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(10)));
     Supplier<Pose2d> targetPoseSupplier = () -> DriveCommands.getNearestReefSidePose(side);
+    Supplier<Rotation2d> rotationSupplier =
+        () -> DriveCommands.getBestRotation2dTarget(robotPoseSupplier);
     final Command pathFindToTargetRough =
         DriveCommands.generateDriveToReefCommand(side); // Maybe increase goal end velocity?
     final Command preciseAlignment =
@@ -38,7 +40,9 @@ public class ReefAutoAlignment extends SequentialCommandGroup {
                         robotPoseSupplier.get(),
                         targetPoseSupplier.get(),
                         0,
-                        targetPoseSupplier.get().getRotation())),
+                        // targetPoseSupplier.get().getRotation())),
+                        // robotPoseSupplier.get().getRotation())),
+                        rotationSupplier.get())),
             (interrupted) -> robotRelativeSpeedsOutput.accept(new ChassisSpeeds()),
             holonomicDriveController::atReference);
 
