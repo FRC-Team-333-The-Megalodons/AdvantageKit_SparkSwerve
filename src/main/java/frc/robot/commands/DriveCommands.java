@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriverConstants;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.Metric;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -72,6 +73,8 @@ public class DriveCommands {
         .getTranslation();
   }
 
+  public static Metric joyDrive_metric = new Metric("JoystickDrive", "execute");
+  public static Metric joyDriveAngle_metric = new Metric("JoystickDriveAngle", "execute");
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
@@ -82,6 +85,7 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
+          joyDrive_metric.start();
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -107,6 +111,8 @@ public class DriveCommands {
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
+          joyDrive_metric.stop();
+          joyDrive_metric.logThrottled();
         },
         drive);
   }
@@ -135,6 +141,7 @@ public class DriveCommands {
     // Construct command
     return Commands.run(
             () -> {
+              joyDriveAngle_metric.start();
               // Get linear velocity
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -177,6 +184,8 @@ public class DriveCommands {
                       isFlipped
                           ? drive.getRotation().plus(new Rotation2d(Math.PI))
                           : drive.getRotation()));
+              joyDriveAngle_metric.stop();
+              joyDriveAngle_metric.logThrottled();
             },
             drive)
 
@@ -438,23 +447,32 @@ public class DriveCommands {
     return output;
   }
 
+  static Metric reefInit_metric = new Metric("DriveToReef", "initTime");
+  static Metric reefExec_metric = new Metric("DriveToReef", "execTime");
+
   public static Command generateDriveToReefCommand(char side) {
     return new Command() {
       Command command = null;
 
       @Override
       public void initialize() {
+        reefInit_metric.start();
         command = DriveCommands.getDriveToReefSideCommand(side);
         command.initialize();
+        reefInit_metric.stop();
       }
 
       @Override
       public void execute() {
+        reefExec_metric.start();
         command.execute(); // Execute the generated command
+        reefExec_metric.stop();
       }
 
       @Override
       public void end(boolean interrupted) {
+        reefInit_metric.log();
+        reefExec_metric.log();
         command.end(interrupted);
       }
 

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.util.Metric;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -17,6 +18,8 @@ public class ReefAutoAlignment extends SequentialCommandGroup {
    * creates a precise auto-alignment command NOTE: AutoBuilder must be configured! the command has
    * two steps: 1. path-find to the target pose, roughly 2. accurate auto alignment
    */
+  static Metric preciseAlign_metric = new Metric("ReefAutoAlignPrecise", "execute");
+
   public ReefAutoAlignment(
       PathConstraints constraints,
       HolonomicDriveController holonomicDriveController,
@@ -34,16 +37,22 @@ public class ReefAutoAlignment extends SequentialCommandGroup {
     final Command preciseAlignment =
         new FunctionalCommand(
             () -> {},
-            () ->
-                robotRelativeSpeedsOutput.accept(
-                    holonomicDriveController.calculate(
-                        robotPoseSupplier.get(),
-                        targetPoseSupplier.get(),
-                        0,
-                        // targetPoseSupplier.get().getRotation())),
-                        // robotPoseSupplier.get().getRotation())),
-                        rotationSupplier.get())),
-            (interrupted) -> robotRelativeSpeedsOutput.accept(new ChassisSpeeds()),
+            () -> {
+              preciseAlign_metric.start();
+              robotRelativeSpeedsOutput.accept(
+                  holonomicDriveController.calculate(
+                      robotPoseSupplier.get(),
+                      targetPoseSupplier.get(),
+                      0,
+                      // targetPoseSupplier.get().getRotation())),
+                      // robotPoseSupplier.get().getRotation())),
+                      rotationSupplier.get()));
+              preciseAlign_metric.stop();
+            },
+            (interrupted) -> {
+              robotRelativeSpeedsOutput.accept(new ChassisSpeeds());
+              preciseAlign_metric.log();
+            },
             holonomicDriveController::atReference);
 
     super.addCommands(pathFindToTargetRough);
