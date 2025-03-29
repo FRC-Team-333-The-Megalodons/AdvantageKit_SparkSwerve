@@ -156,6 +156,10 @@ public class RobotContainer { // Subsystems
     driverController
         .povRight()
         .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+    driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
 
     if (isInSoloDrivingMode) {
       driverController
