@@ -146,17 +146,20 @@ public class RobotContainer { // Subsystems
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // TODO: Figure out how to fix the crazy jumping with the Precise Drive to Reef Command
-    driverController.povUp().whileTrue(DriveCommands.generateDriveToReefCommand('M'));
-    driverController.povLeft().whileTrue(DriveCommands.generateDriveToReefCommand('L'));
-    driverController.povRight().whileTrue(DriveCommands.generateDriveToReefCommand('R'));
-    // driverController.povUp().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M',
-    // drive));
-    // driverController
-    //     .povLeft()
-    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-    // driverController
-    //     .povRight()
-    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+    // driverController.povUp().whileTrue(DriveCommands.generateDriveToReefCommand('M'));
+    // driverController.povLeft().whileTrue(DriveCommands.generateDriveToReefCommand('L'));
+    // driverController.povRight().whileTrue(DriveCommands.generateDriveToReefCommand('R'));
+    driverController.povUp().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController
+        .povLeft()
+        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    driverController
+        .povRight()
+        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+    driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
 
     if (isInSoloDrivingMode) {
       driverController

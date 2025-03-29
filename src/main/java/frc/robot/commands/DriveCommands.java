@@ -399,14 +399,7 @@ public class DriveCommands {
         new HolonomicDriveController(
             new PIDController(kP, kI, kD), // X controller
             new PIDController(kP, kI, kD), // Y controller
-            new ProfiledPIDController(
-                kPtheta,
-                kItheta,
-                kDtheta,
-                new TrapezoidProfile.Constraints(
-                    Units.degreesToRadians(kMaxAngularVelocity),
-                    Units.degreesToRadians(kMaxAngularAcceleration))) // Theta controller
-            );
+            new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0)));
     /*
     controller.setTolerance(
         new Pose2d(
@@ -415,14 +408,34 @@ public class DriveCommands {
             Rotation2d.fromDegrees(10))); // Increase rotational tolerance to 10 degrees
             */
 
-    PathConstraints constraints =
-        new PathConstraints(
-            3.0,
-            4.0,
-            Units.degreesToRadians(kMaxAngularVelocity),
-            Units.degreesToRadians(kMaxAngularAcceleration));
+    PathConstraints constraints = new PathConstraints(3.0, 4.0, 0, 0);
     return new ReefAutoAlignment(
         constraints, controller, robotPoseSupplier, drive.getChassisSpeedsConsumer(), drive, side);
+  }
+
+  public static Rotation2d getBestRotation2dTarget(Supplier<Pose2d> robotPoseSupplier) {
+    Rotation2d output = null;
+    try {
+      int tagId = Drive.odometryTagId;
+      if (tagId >= 0) {
+        double degrees = Drive.reefDriveAngleByTagId(tagId);
+        output = Rotation2d.fromDegrees(degrees);
+      }
+      if (output == null) {
+        // If we couldn't figure it out, just return the direction we're facing today
+        if (robotPoseSupplier.get() != null) {
+          output = robotPoseSupplier.get().getRotation();
+        }
+      }
+    } catch (Exception e) {
+    }
+
+    if (output == null) {
+      // Anything is better than nothing?
+      output = Rotation2d.fromDegrees(0);
+    }
+
+    return output;
   }
 
   public static Command generateDriveToReefCommand(char side) {

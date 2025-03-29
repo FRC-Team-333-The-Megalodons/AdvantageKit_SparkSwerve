@@ -483,9 +483,22 @@ public class Drive extends SubsystemBase {
     return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
   }
 
+  public static double blue_reef_x = 4.48;
+  public static double blue_reef_y = 4.03;
+
+  public static double red_reef_x = 13.07;
+  public static double red_reef_y = 4.03;
+
+  public static double slope = Math.sqrt(Math.tan(60)); // 60 degrees
+
   public static boolean isLeftOfForwardSlash(double robot_x, double robot_y) {
-    double m = -0.567;
-    double b = isBlueAlliance() ? 7.215 : 11.752;
+    double m = -slope;
+    double y = isBlueAlliance() ? blue_reef_y : red_reef_y;
+    double x = isBlueAlliance() ? blue_reef_x : red_reef_x;
+    // y = mx + b, so solving for b is: b = y - mx
+    double b = y - (m * x);
+    // double b = isBlueAlliance() ? 7.215 : 11.752;
+
     double line_y = m * robot_x + b;
     boolean left = line_y < robot_y;
     // The lines are actually above-below, with a field aligned 90deg from what
@@ -495,8 +508,11 @@ public class Drive extends SubsystemBase {
   }
 
   public static boolean isLeftOfBackSlash(double robot_x, double robot_y) {
-    double m = 0.567;
-    double b = isBlueAlliance() ? 1.665 : -3.362;
+    double m = slope;
+    double y = isBlueAlliance() ? blue_reef_y : red_reef_y;
+    double x = isBlueAlliance() ? blue_reef_x : red_reef_x;
+    double b = y - (m * x);
+    // double b = isBlueAlliance() ? 1.665 : -3.362;
     double line_y = m * robot_x + b;
     boolean left = line_y < robot_y;
     // The lines are actually above-below, with a field aligned 90deg from what
