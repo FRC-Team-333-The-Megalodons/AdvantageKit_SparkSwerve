@@ -156,10 +156,10 @@ public class RobotContainer { // Subsystems
     driverController
         .povRight()
         .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
-    driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-    driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-    driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-    driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+    // driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    // driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    // driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    // driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
 
     if (isInSoloDrivingMode) {
       driverController
@@ -324,7 +324,7 @@ public class RobotContainer { // Subsystems
           .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
       driverController
           .L1()
-          .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
+          .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed));
     } else {
       //   operatorController
       //       .touchpad()
@@ -337,7 +337,13 @@ public class RobotContainer { // Subsystems
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
-      operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+      operatorController
+          .R2()
+          .whileTrue(
+              EndEffecterCommands.runEndEffecterForward(endEffecter)
+                  .onlyWhile(endEffecter::isTriggered)
+                  .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
+                  .until(wrist::atL3Setpoint));
 
       operatorController
           .options()
@@ -490,10 +496,8 @@ public class RobotContainer { // Subsystems
         "ScoreCoral",
         EndEffecterCommands.runEndEffecterForward(endEffecter)
             .onlyWhile(endEffecter::isTriggered)
-            .andThen(
-                wrist
-                    .setWristPosition(WristConstants.coralL23Setpoint)
-                    ).until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
+            .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
+            .until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand("IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter));
     NamedCommands.registerCommand("HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator));
     NamedCommands.registerCommand(

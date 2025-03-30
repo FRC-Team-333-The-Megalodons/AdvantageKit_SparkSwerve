@@ -7,13 +7,13 @@ package frc.robot.subsystems.ramp;
 /** Add your docs here. */
 public class RampConstants {
   public static final int rampCanId = 6;
-  public static final int rightMotorID = 52;
-  public static final int leftMotorID = 53;
+  public static final int rightMotorID = 14;
+  public static final int leftMotorID = 15;
   public static final int rampLimitSwitch1Id = 3;
   public static final int rampLimitSwitch2Id = -1;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 20;
-  public static final double speed = 0.2;
+  public static final double speed = 0.1;
 
   // Ramp Setpoints
   public static double startingSetpoint = 0;

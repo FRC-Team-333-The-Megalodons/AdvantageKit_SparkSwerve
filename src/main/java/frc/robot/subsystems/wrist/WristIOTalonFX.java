@@ -60,8 +60,8 @@ public class WristIOTalonFX implements WristIO {
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
     inputs.atSetpoint = pidController.atSetpoint();
-    inputs.atL4Setpoint = inputs.positionAbs > 0.35 && inputs.positionAbs < 0.39 ? true : false;
-    inputs.atHomePosition = inputs.positionAbs > 0.53 && inputs.positionAbs < 0.55 ? true : false;
+    inputs.atL4Setpoint = inputs.positionAbs > 0.32 && inputs.positionAbs < 0.36 ? true : false;
+    inputs.atHomePosition = inputs.positionAbs > 0.54 && inputs.positionAbs < 0.57 ? true : false;
     inputs.atAlgaeSetpoint = inputs.positionAbs > 0.11 && inputs.positionAbs < 0.13 ? true : false;
     inputs.atNetSetPoint = inputs.positionAbs > 0.39 && inputs.positionAbs < 0.42 ? true : false;
   }

@@ -24,8 +24,8 @@ import edu.wpi.first.units.measure.Voltage;
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
  */
 public class RampIOTalonFX implements RampIO {
-  private final TalonFX leftMotor = new TalonFX(RampConstants.leftMotorID, "rio");
-  private final TalonFX rightMotor = new TalonFX(RampConstants.rightMotorID, "rio");
+  private final TalonFX leftMotor = new TalonFX(RampConstants.leftMotorID, "canivore");
+  private final TalonFX rightMotor = new TalonFX(RampConstants.rightMotorID, "canivore");
   private final StatusSignal<Angle> positionRot = rightMotor.getPosition();
   private final StatusSignal<AngularVelocity> velocityRotPerSec = rightMotor.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = rightMotor.getMotorVoltage();
