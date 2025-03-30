@@ -54,8 +54,8 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.velocityRadPerSec = Units.rotationsToRadians(velocityRotPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
-    inputs.isAt90deg = climberServo.getAngle() == 90 ? true : false;
-    inputs.isAt0deg = climberServo.getAngle() == 0 ? true : false;
+    inputs.isAt90deg = climberServo.getPosition() == 1.0 ? true : false;
+    inputs.isAt0deg = climberServo.getPosition() == 0.0 ? true : false;
     inputs.servoPosition = climberServo.getPosition();
   }
 

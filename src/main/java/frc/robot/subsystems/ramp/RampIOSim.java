@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 public class RampIOSim implements RampIO {
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(1), 0.004, motorReduction),
-          DCMotor.getNeoVortex(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.004, motorReduction),
+          DCMotor.getKrakenX60(2));
 
   private double appliedVolts = 0.0;
   private double speed = Double.MIN_VALUE;
