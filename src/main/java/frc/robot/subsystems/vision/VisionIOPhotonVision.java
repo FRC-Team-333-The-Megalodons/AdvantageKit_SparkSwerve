@@ -16,6 +16,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.util.Metric;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class VisionIOPhotonVision implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
+    Metric photon_metrics = new Metric("VisionPeriodic", "Photon");
+    photon_metrics.start();
     inputs.connected = camera.isConnected();
 
     // Read new camera observations
@@ -104,6 +107,8 @@ public class VisionIOPhotonVision implements VisionIO {
     for (int id : tagIds) {
       inputs.tagIds[i++] = id;
     }
+    photon_metrics.stop();
+    photon_metrics.logThrottled();
   }
 
   // Add more specific field elements here

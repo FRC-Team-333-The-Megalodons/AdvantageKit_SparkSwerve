@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.Metric;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -81,13 +82,23 @@ public class Vision extends SubsystemBase {
     return id;
   }
 
+  final String visPer_comp = "VisionPeriodic";
+
   @Override
   public void periodic() {
+    Metric ioLoop_metric = new Metric(visPer_comp, "IO_UpdateLoop"),
+        camLoop_metric = new Metric(visPer_comp, "Camera_Loop"),
+        poseLoop_metric = new Metric(visPer_comp, "PoseLoop"),
+        tagLoop_metric = new Metric(visPer_comp, "TagLoop"),
+        reefAngle_metric = new Metric(visPer_comp, "ReefAngleCalc");
+
+    ioLoop_metric.start();
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + i, inputs[i]);
       Logger.recordOutput("Fudicial ID HK", getFudicialId());
     }
+    ioLoop_metric.stop();
 
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
@@ -96,6 +107,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
+    camLoop_metric.start();
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
@@ -186,6 +198,7 @@ public class Vision extends SubsystemBase {
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
+    camLoop_metric.stop();
 
     // We can potentially end up with multiple poses, and be unable to determine which is correct.
     // In that case, we can use the physical odometry as a reference to help us "break the tie" -
@@ -195,6 +208,7 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/Summary/DriveTrainPose", drivetrainPose2d);
     Pose3d bestRobotPose = null;
     double bestRobotPoseScore = Double.MAX_VALUE;
+    poseLoop_metric.start();
     for (int i = 0; i < allRobotPosesAccepted.size(); ++i) {
       Pose3d pose3d = allRobotPosesAccepted.get(i);
       double score = getScaledPose2dDiff(drivetrainPose2d, pose3d.toPose2d());
@@ -203,6 +217,7 @@ public class Vision extends SubsystemBase {
         bestRobotPoseScore = score;
       }
     }
+    poseLoop_metric.stop();
 
     visionRobotPose = bestRobotPose;
 
@@ -223,6 +238,7 @@ public class Vision extends SubsystemBase {
     if (bestRobotPose != null) {
       double closestTagDistance = Double.MAX_VALUE;
       int closestTagId = -1;
+      tagLoop_metric.start();
       for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
         for (int tagId : inputs[cameraIndex].tagIds) {
           Optional<Pose3d> tagPoseOpt = aprilTagLayout.getTagPose(tagId);
@@ -236,6 +252,7 @@ public class Vision extends SubsystemBase {
           }
         }
       }
+      tagLoop_metric.stop();
       if (closestTagId >= 0) {
         visionTagId = closestTagId;
         visionTagLastSeen = System.currentTimeMillis();
@@ -247,7 +264,15 @@ public class Vision extends SubsystemBase {
 
     // This call is inexpensive (i think), and we're using it purely for logging;
     // But if things get laggy, delete this line!
+    reefAngle_metric.start();
     Drive.reefDriveAngle(this);
+    reefAngle_metric.stop();
+
+    ioLoop_metric.logThrottled();
+    camLoop_metric.logThrottled();
+    poseLoop_metric.logThrottled();
+    tagLoop_metric.logThrottled();
+    reefAngle_metric.logThrottled();
 
     // Logger.recordOutput("Vision/Summary/BestRobotPose", bestRobotPose);
   }
