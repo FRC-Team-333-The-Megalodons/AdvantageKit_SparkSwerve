@@ -18,8 +18,20 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
+  // private final SysIdRoutine sysId;
+
   public Elevator(ElevatorIO io) {
     this.io = io;
+
+    // sysId =
+    //     new SysIdRoutine(
+    //         new SysIdRoutine.Config(
+    //             null,
+    //             null,
+    //             null,
+    //             (state) -> Logger.recordOutput("Elevator/SysIdState", state.toString())),
+    //         new SysIdRoutine.Mechanism(
+    //             (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public Command runPercent(double percent) {
@@ -35,6 +47,18 @@ public class Elevator extends SubsystemBase {
   public Command setElevatorPosition(double setpoint, boolean down) {
     return runEnd(() -> io.setElevator(inputs.position, setpoint, down), () -> io.setVoltage(0.0));
   }
+
+  // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  //   return run(() -> runCharacterization(0.0))
+  //       .withTimeout(1.0)
+  //       .andThen(sysId.quasistatic(direction));
+  // }
+
+  // /** Returns a command to run a dynamic test in the specified direction. */
+  // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+  //   return run(() ->
+  // runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+  // }
 
   @Override
   public void periodic() {

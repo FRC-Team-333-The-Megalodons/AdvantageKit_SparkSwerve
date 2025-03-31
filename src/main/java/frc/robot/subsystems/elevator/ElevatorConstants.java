@@ -37,4 +37,6 @@ public class ElevatorConstants {
   public static final double kD_CTRE = 0.02;
   public static final double kS_CTRE = 0.1;
   public static final double kV_CTRE = 0.12;
+  public static final double kA_CTRE = 0.02;
+  public static final double kG_CTRE = 0.16;
 }
