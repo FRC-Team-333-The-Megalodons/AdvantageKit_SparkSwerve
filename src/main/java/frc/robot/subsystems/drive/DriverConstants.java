@@ -7,7 +7,7 @@ package frc.robot.subsystems.drive;
 /** Add your docs here. */
 public class DriverConstants {
   public static double driveAngle = 0;
-  public static int driveCANrangeId = 51;
+  public static int driveCANrangeId = 43;
 
   public static enum PoseState {
     DEFAULT,

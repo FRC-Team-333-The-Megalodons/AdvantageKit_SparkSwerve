@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9269425675675675,
-        "y": 1.8016047297297306
+        "x": 2.283494318181818,
+        "y": 1.836235795454545
       },
       "isLocked": false,
       "linkedName": "RCStation"
@@ -20,8 +20,8 @@
         "y": 2.7304898648648646
       },
       "prevControl": {
-        "x": 2.8854729729729724,
-        "y": 2.1079391891891883
+        "x": 2.542755681818182,
+        "y": 1.9459232954545453
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

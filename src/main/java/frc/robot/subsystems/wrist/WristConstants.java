@@ -13,9 +13,9 @@ public class WristConstants {
 
   // Wrist Setpoints
   public static final double homeSetpoint = 0.55;
-  public static final double coralL23Setpoint = 0.49;
+  public static final double coralL23Setpoint = 0.47;
   public static final double coralL4Setpoint = 0.34;
-  public static final double processorSetpoint = 0.09;
+  public static final double processorSetpoint = 0.2;
   public static final double netSetPoint = 0.4;
   public static final double aglaeSetpoint = 0.12;
   public static final double algaeHomeSetpoint = 0.244;

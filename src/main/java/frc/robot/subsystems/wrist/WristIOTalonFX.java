@@ -63,6 +63,7 @@ public class WristIOTalonFX implements WristIO {
     inputs.atL4Setpoint = inputs.positionAbs > 0.32 && inputs.positionAbs < 0.36 ? true : false;
     inputs.atHomePosition = inputs.positionAbs > 0.54 && inputs.positionAbs < 0.57 ? true : false;
     inputs.atAlgaeSetpoint = inputs.positionAbs > 0.11 && inputs.positionAbs < 0.13 ? true : false;
+    inputs.atL3Setpoint = inputs.positionAbs > 0.45 && inputs.positionAbs < 0.49 ? true : false;
     inputs.atNetSetPoint = inputs.positionAbs > 0.39 && inputs.positionAbs < 0.42 ? true : false;
   }
 

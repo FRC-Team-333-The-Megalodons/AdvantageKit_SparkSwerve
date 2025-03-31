@@ -10,6 +10,7 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endEffecter.EndEffecter;
 import frc.robot.subsystems.endEffecter.EndEffecterConstants;
 import frc.robot.subsystems.ramp.Ramp;
+import frc.robot.subsystems.ramp.RampConstants;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristConstants;
 
@@ -37,18 +38,20 @@ public class AutomatedCommands {
     // .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
   }
 
-  public static Command homeCommand(Wrist wrist, Elevator elevator) {
+  public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
         .until(elevator::lowerLimit)
-        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint));
+        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint))
+        .alongWith(rampIntakeCommand(ramp, RampConstants.speed));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
 
   public static Command coralL4Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
+        .until(wrist::atL3Setpoint)
+        .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
         // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::atL4Setpoint)
         .andThen(

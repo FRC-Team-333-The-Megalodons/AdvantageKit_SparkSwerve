@@ -91,7 +91,7 @@ public class RobotContainer { // Subsystems
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final boolean startInManualMode = false;
-  private final boolean isInSoloDrivingMode = true;
+  private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
     /*
@@ -173,7 +173,7 @@ public class RobotContainer { // Subsystems
                   .ignoringDisable(true));
     } else {
       driverController
-          .R2()
+          .povLeft()
           .onTrue(
               Commands.runOnce(
                       () ->
@@ -181,6 +181,10 @@ public class RobotContainer { // Subsystems
                               new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                       drive)
                   .ignoringDisable(true));
+      driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+      driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+      driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+      driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
     }
   }
 
@@ -190,6 +194,8 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerManualModeBindings() {
+    // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
+    ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
     if (isInSoloDrivingMode) {
       driverController
           .povUp()
@@ -227,14 +233,14 @@ public class RobotContainer { // Subsystems
       operatorController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      operatorController
+      driverController
           .povLeft()
           .whileTrue(
               climber
                   .runServo(1)
                   .withTimeout(0.5)
                   .andThen(climber.runPercent(ClimberConstants.speed)));
-      operatorController
+      driverController
           .povRight()
           .whileTrue(
               climber
@@ -253,11 +259,13 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerSmartModeBindings() {
+    // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
+    ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
     if (isInSoloDrivingMode) {
       driverController
           .L2()
           .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator)
+              AutomatedCommands.homeCommand(wrist, elevator, ramp)
                   .alongWith(
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
@@ -332,27 +340,21 @@ public class RobotContainer { // Subsystems
       operatorController
           .L2()
           .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator)
+              AutomatedCommands.homeCommand(wrist, elevator, ramp)
                   .alongWith(
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
-      operatorController
-          .R2()
-          .whileTrue(
-              EndEffecterCommands.runEndEffecterForward(endEffecter)
-                  .onlyWhile(endEffecter::isTriggered)
-                  .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
-                  .until(wrist::atL3Setpoint));
+      operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-      operatorController
+      driverController
           .options()
           .whileTrue(
               climber
                   .runServo(0)
                   .withTimeout(0.5)
                   .andThen(climber.runPercent(-ClimberConstants.speed)));
-      operatorController
+      driverController
           .create()
           .whileTrue(
               climber
@@ -371,7 +373,7 @@ public class RobotContainer { // Subsystems
           .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
 
       //
-      operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+      // operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
       operatorController
           .povUp()
@@ -394,16 +396,20 @@ public class RobotContainer { // Subsystems
               AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
                   .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
       operatorController
-          .touchpad()
+          .cross()
           .whileTrue(
               AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
                   .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
 
       operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
 
-      operatorController.R1().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+      operatorController
+          .R1()
+          .whileTrue(
+              EndEffecterCommands.runEndEffecterBackward(endEffecter)
+                  .alongWith(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed)));
 
-      //   operatorController.PS().whileTrue(ramp.runPercent(RampConstants.speed));
+      //  operatorController.PS().whileTrue(ramp.runPercent(RampConstants.speed));
 
       operatorController
           .R3()
