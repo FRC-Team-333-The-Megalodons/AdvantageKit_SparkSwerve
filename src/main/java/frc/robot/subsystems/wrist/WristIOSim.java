@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 public class WristIOSim implements WristIO {
   private DCMotorSim sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getNeoVortex(1), 0.004, motorReduction),
-          DCMotor.getNeoVortex(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.004, motorReduction),
+          DCMotor.getFalcon500Foc(1));
 
   private double appliedVolts = 0.0;
 

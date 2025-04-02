@@ -6,6 +6,9 @@ package frc.robot.subsystems.endEffecter;
 
 import static frc.robot.subsystems.endEffecter.EndEffecterConstants.*;
 
+import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.sim.CANrangeSimState;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -20,6 +23,9 @@ public class EndEffecterIOSim implements EndEffecterIO {
 
   private double appliedVolts = 0.0;
   private double speed = Double.MIN_VALUE;
+
+  private CANrange caNrange = new CANrange(canRangeId);
+  private CANrangeSimState tofSimState = caNrange.getSimState();
 
   @Override
   public void updateInputs(EndEffecterIOInputs inputs) {
