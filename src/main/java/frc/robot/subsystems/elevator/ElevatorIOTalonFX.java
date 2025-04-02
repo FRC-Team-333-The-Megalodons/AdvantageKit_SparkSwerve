@@ -44,12 +44,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.Slot0.kP = ElevatorConstants.kP_CTRE;
-    config.Slot0.kI = ElevatorConstants.kI_CTRE;
+    // config.Slot0.kI = ElevatorConstants.kI_CTRE;
     config.Slot0.kD = ElevatorConstants.kD_CTRE;
-    config.Slot0.kS = ElevatorConstants.kS_CTRE;
-    config.Slot0.kV = ElevatorConstants.kV_CTRE;
-    config.Slot0.kA = ElevatorConstants.kA_CTRE;
-    config.Slot0.kG = ElevatorConstants.kG_CTRE;
+    // config.Slot0.kS = ElevatorConstants.kS_CTRE;
+    // config.Slot0.kV = ElevatorConstants.kV_CTRE;
+    // config.Slot0.kA = ElevatorConstants.kA_CTRE;
+    // config.Slot0.kG = ElevatorConstants.kG_CTRE;
 
     tryUntilOk(5, () -> topElevatorMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> leftElevatorMotor.getConfigurator().apply(config, 0.25));

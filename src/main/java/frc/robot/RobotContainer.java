@@ -195,7 +195,7 @@ public class RobotContainer { // Subsystems
 
   public void configureOperatorControllerManualModeBindings() {
     // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
-    ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
+    // ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
     if (isInSoloDrivingMode) {
       driverController
           .povUp()
@@ -260,7 +260,7 @@ public class RobotContainer { // Subsystems
 
   public void configureOperatorControllerSmartModeBindings() {
     // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
-    ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
+    // ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
     if (isInSoloDrivingMode) {
       driverController
           .L2()
@@ -505,6 +505,8 @@ public class RobotContainer { // Subsystems
             .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
             .until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand("IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter));
+    NamedCommands.registerCommand(
+        "RunRamp", AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
     NamedCommands.registerCommand("HomePos", AutomatedCommands.autoHomeCommand(wrist, elevator));
     NamedCommands.registerCommand(
         "CoralL4Position", AutomatedCommands.autoScoreL4(endEffecter, wrist, elevator));
