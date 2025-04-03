@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Servo;
 
 /**
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
@@ -62,8 +63,9 @@ public class RampIOTalonFX implements RampIO {
   public void setVoltage(double volts) {
     rightMotor.setControl(voltageRequest.withOutput(volts));
   }
+
   @Override
-  public void runRampServo(double deegree){
-    servo.set(deegree);
-    }
+  public void runRampServo(double deegree) {
+    rampServo.set(deegree);
+  }
 }

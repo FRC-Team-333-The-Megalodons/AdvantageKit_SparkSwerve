@@ -33,8 +33,9 @@ public class Ramp extends SubsystemBase {
   public Command resetEncoder() {
     return run(() -> io.resetEncoder());
   }
-  public Command runServo(double deegree){
-    return run(()-> io.runRampServo(deegree));
+
+  public Command runServo(double deegree) {
+    return run(() -> io.runRampServo(deegree));
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {

@@ -33,5 +33,6 @@ public interface RampIO {
   public default double getRampPosition() {
     return -1;
   }
-  public default void runRampServo(double deegree){}
+
+  public default void runRampServo(double deegree) {}
 }
