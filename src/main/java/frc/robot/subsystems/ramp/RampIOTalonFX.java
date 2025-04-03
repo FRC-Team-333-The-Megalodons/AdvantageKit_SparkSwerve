@@ -31,6 +31,7 @@ public class RampIOTalonFX implements RampIO {
   private final StatusSignal<Voltage> appliedVolts = rightMotor.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = rightMotor.getSupplyCurrent();
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
+  private final Servo rampServo = new Servo(8);
 
   public RampIOTalonFX() {
     var config = new TalonFXConfiguration();
@@ -61,4 +62,8 @@ public class RampIOTalonFX implements RampIO {
   public void setVoltage(double volts) {
     rightMotor.setControl(voltageRequest.withOutput(volts));
   }
+  @Override
+  public void runRampServo(double deegree){
+    servo.set(deegree);
+    }
 }
