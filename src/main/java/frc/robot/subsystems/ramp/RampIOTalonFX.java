@@ -64,15 +64,8 @@ public class RampIOTalonFX implements RampIO {
   public void setVoltage(double volts) {
     rightMotor.setControl(voltageRequest.withOutput(volts));
   }
-
   @Override
-  public void runRampServo(double position) {
-
-    rampServo.setSpeed(position);
-  }
-
-  @Override
-  public double getAngle() {
-    return rampServo.getAngle();
-  }
+  public void runRampServo(double deegree){
+    servo.set(deegree);
+    }
 }

@@ -33,9 +33,8 @@ public class Ramp extends SubsystemBase {
   public Command resetEncoder() {
     return run(() -> io.resetEncoder());
   }
-
-  public Command runServo(double position) {
-    return run(() -> io.runRampServo(position));
+  public Command runServo(double deegree){
+    return run(()-> io.runRampServo(deegree));
   }
   // public BooleanSupplier atAngle(double deegree){
   //   return deegree == io.getAngle() ? true : false;

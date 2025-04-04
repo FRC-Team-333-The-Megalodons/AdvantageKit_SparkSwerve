@@ -34,9 +34,13 @@ public interface RampIO {
     return -1;
   }
 
+<<<<<<< HEAD
   public default void runRampServo(double position) {}
 
   public default double getAngle() {
     return 0.0;
   }
+=======
+  public default void runRampServo(double deegree) {}
+>>>>>>> 27dba79ed2d1e852343e156c78377dc936582e6d
 }
