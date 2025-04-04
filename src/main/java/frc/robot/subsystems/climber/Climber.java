@@ -14,6 +14,8 @@ public class Climber extends SubsystemBase {
 
   private final ClimberIO io;
 
+  public static double SERVO_UNLOCKED = 0;
+  public static double SERVO_LOCKED = 1;
   private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
   /** Creates a new IntakeIO. */
@@ -40,8 +42,8 @@ public class Climber extends SubsystemBase {
         () -> io.setVoltage(0.0));
   }
 
-  public Command runServo(double speed) {
-    return run(() -> io.setSpeedServo(speed));
+  public Command runServoToPosition(double speed) {
+    return run(() -> io.setServoPosition(speed));
   }
 
   public Command runServoAndClimber(double percent, double position) {

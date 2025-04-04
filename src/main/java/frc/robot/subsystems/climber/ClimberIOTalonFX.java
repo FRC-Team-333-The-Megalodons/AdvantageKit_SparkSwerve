@@ -57,7 +57,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
     inputs.positionRad = positionRot.getValueAsDouble();
     inputs.climberAt0deg = positionRot.getValueAsDouble() == 0 ? true : false;
-    inputs.climberAt90deg = positionRot.getValueAsDouble() == 90 ? true : false;
+    inputs.climberAt90deg = positionRot.getValueAsDouble() >= 90;
     inputs.velocityRadPerSec = Units.rotationsToRadians(velocityRotPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
@@ -76,7 +76,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   }
 
   @Override
-  public void setSpeedServo(double speed) {
+  public void setServoPosition(double speed) {
     climberServo.set(speed);
   }
 }
