@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.055596590909091,
-        "y": 2.8134517045454537
+        "x": 5.022532894736842,
+        "y": 2.8126644736842104
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.112944563882064,
-        "y": 1.1533165694103185
+        "x": 6.079880867709815,
+        "y": 1.1525293385490751
       },
       "isLocked": false,
       "linkedName": "E4"
@@ -20,7 +20,7 @@
         "y": 1.0110641891891885
       },
       "prevControl": {
-        "x": 1.9467060810810808,
+        "x": 1.946706081081081,
         "y": 1.9893581081081084
       },
       "nextControl": null,
@@ -48,7 +48,7 @@
   "folder": "AutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 122.47119229084852
+    "rotation": 120.96375653207349
   },
   "useDefaultConstraints": false
 }

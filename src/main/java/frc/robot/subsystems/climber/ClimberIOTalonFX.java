@@ -66,6 +66,15 @@ public class ClimberIOTalonFX implements ClimberIO {
     if (ZERO != null) {
       inputs.zeroTare = ZERO;
     }
+    inputs.tareAdjustedPosition = getTareAdjustedPosition();
+  }
+
+  @Override
+  public double getTareAdjustedPosition() {
+    if (ZERO != null) {
+      return positionRot.getValueAsDouble() - ZERO;
+    }
+    return positionRot.getValueAsDouble();
   }
 
   @Override

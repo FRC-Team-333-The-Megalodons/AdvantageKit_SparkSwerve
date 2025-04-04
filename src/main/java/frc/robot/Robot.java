@@ -145,6 +145,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    TEST_MODE = false;
     robotContainer.drive.configAutoBuildPathPlannerForAuto();
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -158,9 +159,13 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic() {}
 
+  public static boolean TEST_MODE = false;
+
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    TEST_MODE = false;
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -181,12 +186,16 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().cancelAll();
+    teleopInit();
+    TEST_MODE = true;
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    teleopPeriodic();
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override

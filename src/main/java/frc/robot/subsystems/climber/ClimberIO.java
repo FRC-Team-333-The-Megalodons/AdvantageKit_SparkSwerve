@@ -22,6 +22,7 @@ public interface ClimberIO {
     public boolean climberAt90deg = false;
     public boolean climberAt0deg = false;
     public double zeroTare = 0.0;
+    public double tareAdjustedPosition = -0;
   }
 
   /** Update the set of loggable inputs. */
@@ -36,8 +37,11 @@ public interface ClimberIO {
 
   public default void setServoPosition(double speed) {}
 
-
   public default void setClimberPos(double currentPos, double tragetPos) {}
 
   public default void tare() {}
+
+  public default double getTareAdjustedPosition() {
+    return 0;
+  }
 }
