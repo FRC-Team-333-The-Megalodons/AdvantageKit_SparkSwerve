@@ -47,6 +47,9 @@ public class Climber extends SubsystemBase {
   public Command runServoAndClimber(double percent, double position) {
     return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
   }
+  public Command setClimberPosition(double setPoint){
+    return runEnd(() -> io.setClimberPos(inputs.positionRad, setPoint), () -> io.setVoltage(0.0));
+  }
 
   public boolean isAt0deg() {
     return inputs.isAt0deg;

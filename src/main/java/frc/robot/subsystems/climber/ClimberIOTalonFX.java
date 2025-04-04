@@ -10,8 +10,10 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -19,6 +21,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 
 /** This climber implementation is for a Talon FX driving a Kraken X60. */
 public class ClimberIOTalonFX implements ClimberIO {
@@ -30,12 +33,16 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final Servo climberServo = new Servo(9); // out a servo port pls
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
+    private final PositionDutyCycle poisitionRequest = new PositionDutyCycle(0).withSlot(0);
+
 
   public ClimberIOTalonFX() {
     var config = new TalonFXConfiguration();
     config.CurrentLimits.SupplyCurrentLimit = currentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+     config.Slot0.kP = ElevatorConstants.kP_CTRE;
 
     tryUntilOk(5, () -> climber.getConfigurator().apply(config, 0.25));
 
@@ -60,6 +67,10 @@ public class ClimberIOTalonFX implements ClimberIO {
   @Override
   public void setVoltage(double volts) {
     climber.setControl(voltageRequest.withOutput(volts));
+  }
+  @Override
+  public  void setClimberPos(double currentPos, double tragetPos) {
+      climber.setControl(poisitionRequest.withPosition(tragetPos));
   }
 
   @Override

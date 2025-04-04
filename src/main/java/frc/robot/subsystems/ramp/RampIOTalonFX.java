@@ -11,8 +11,10 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -33,10 +35,10 @@ public class RampIOTalonFX implements RampIO {
   private final StatusSignal<Current> currentAmps = rightMotor.getSupplyCurrent();
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final Servo rampServo = new Servo(6);
-
   public RampIOTalonFX() {
     rampServo.setBoundsMicroseconds(1950, 1504, 1500, 1496, 1050);
     var config = new TalonFXConfiguration();
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     config.CurrentLimits.SupplyCurrentLimit = currentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -64,8 +66,9 @@ public class RampIOTalonFX implements RampIO {
   public void setVoltage(double volts) {
     rightMotor.setControl(voltageRequest.withOutput(volts));
   }
+
   @Override
   public void runRampServo(double deegree){
-    servo.set(deegree);
+    rampServo.setSpeed(deegree);
     }
 }
