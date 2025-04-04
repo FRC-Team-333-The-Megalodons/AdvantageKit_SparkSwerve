@@ -23,5 +23,4 @@ public class ClimberConstants {
   public static final double OUT_SPEED = -1.0;
 
   public static final double TIME_FOR_SERVO_TO_UNLOCK = 0.5;
-
 }

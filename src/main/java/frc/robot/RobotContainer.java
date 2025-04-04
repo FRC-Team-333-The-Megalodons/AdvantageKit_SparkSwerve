@@ -29,7 +29,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.EndEffecterCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -203,14 +202,8 @@ public class RobotContainer { // Subsystems
       driverController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      driverController
-          .povLeft()
-          .whileTrue(
-              climber.getClimberInCommand());
-      driverController
-          .povRight()
-          .whileTrue(
-              climber.getClimberOutCommand(ramp));
+      driverController.povLeft().whileTrue(climber.getClimberInCommand());
+      driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
       driverController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       driverController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
@@ -227,14 +220,8 @@ public class RobotContainer { // Subsystems
       operatorController
           .povDown()
           .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      driverController
-          .povLeft()
-          .whileTrue(
-              climber.getClimberInCommand());
-      driverController
-          .povRight()
-          .whileTrue(
-              climber.getClimberOutCommand(ramp));
+      driverController.povLeft().whileTrue(climber.getClimberInCommand());
+      driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
       operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
       operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
@@ -263,13 +250,11 @@ public class RobotContainer { // Subsystems
 
       driverController
           .options() // get ready
-          .whileTrue(
-              climber.getClimberOutCommand(ramp));
+          .whileTrue(climber.getClimberOutCommand(ramp));
 
       driverController
           .create() // actually climb
-          .whileTrue(
-              climber.getClimberInCommand());
+          .whileTrue(climber.getClimberInCommand());
 
       driverController
           .triangle()
@@ -329,15 +314,9 @@ public class RobotContainer { // Subsystems
 
       operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-      driverController
-          .options()
-          .whileTrue(
-              climber.getClimberOutCommand(ramp));
+      driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
 
-      driverController
-          .create()
-          .whileTrue(
-              climber.getClimberInCommand());
+      driverController.create().whileTrue(climber.getClimberInCommand());
 
       operatorController
           .triangle()
@@ -537,13 +516,11 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    SmartDashboard.putData(
-        "ExtendClimber", climber.getClimberOutCommand(ramp, Climber.HALF_SPEED));
+    SmartDashboard.putData("ExtendClimber", climber.getClimberOutCommand(ramp, Climber.HALF_SPEED));
     // .alongWith(climber.runServo(0.5, 90)));
     SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(1.0));
     SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(-1.0));
-    SmartDashboard.putData(
-        "RetractClimber", climber.getClimberInCommand(Climber.HALF_SPEED));
+    SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.HALF_SPEED));
 
     SmartDashboard.putData("ServoDown", climber.runServoToPosition(Climber.SERVO_UNLOCKED));
     SmartDashboard.putData("ServoUp", climber.runServoToPosition(Climber.SERVO_LOCKED));

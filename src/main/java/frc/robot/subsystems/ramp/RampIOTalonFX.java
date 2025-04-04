@@ -11,7 +11,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -35,6 +34,7 @@ public class RampIOTalonFX implements RampIO {
   private final StatusSignal<Current> currentAmps = rightMotor.getSupplyCurrent();
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final Servo rampServo = new Servo(6);
+
   public RampIOTalonFX() {
     rampServo.setBoundsMicroseconds(1950, 1504, 1500, 1496, 1050);
     var config = new TalonFXConfiguration();
@@ -68,7 +68,7 @@ public class RampIOTalonFX implements RampIO {
   }
 
   @Override
-  public void runRampServoSpeed(double speed){
+  public void runRampServoSpeed(double speed) {
     rampServo.setSpeed(speed);
-    }
+  }
 }

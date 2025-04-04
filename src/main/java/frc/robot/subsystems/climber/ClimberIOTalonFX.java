@@ -33,8 +33,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final Servo climberServo = new Servo(9); // out a servo port pls
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
-    private final PositionDutyCycle poisitionRequest = new PositionDutyCycle(0).withSlot(0);
-
+  private final PositionDutyCycle poisitionRequest = new PositionDutyCycle(0).withSlot(0);
 
   public ClimberIOTalonFX() {
     var config = new TalonFXConfiguration();
@@ -42,7 +41,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-     config.Slot0.kP = ElevatorConstants.kP_CTRE;
+    config.Slot0.kP = ElevatorConstants.kP_CTRE;
 
     tryUntilOk(5, () -> climber.getConfigurator().apply(config, 0.25));
 
@@ -70,9 +69,10 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void setVoltage(double volts) {
     climber.setControl(voltageRequest.withOutput(volts));
   }
+
   @Override
-  public  void setClimberPos(double currentPos, double tragetPos) {
-      climber.setControl(poisitionRequest.withPosition(tragetPos));
+  public void setClimberPos(double currentPos, double tragetPos) {
+    climber.setControl(poisitionRequest.withPosition(tragetPos));
   }
 
   @Override

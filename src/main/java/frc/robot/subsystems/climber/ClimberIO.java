@@ -34,6 +34,6 @@ public interface ClimberIO {
   public default void resetEncoder() {}
 
   public default void setServoPosition(double speed) {}
-  public default void setClimberPos(double currentPos, double tragetPos) {}
 
+  public default void setClimberPos(double currentPos, double tragetPos) {}
 }
