@@ -17,7 +17,9 @@ public class ClimberConstants {
 
   public static final double STARTING_POSITION = 0.0;
   public static final double EXTENDED_POSITION = -61.079;
-  public static final double CLIMBED_POSITION = 27.068;
+  public static final double CLIMBED_POSITION = 23.368;
+  //public static final double CLIMBED_POSITION = 24.068;
+  // public static final double CLIMBED_POSITION = 27.068;
   public static final double MAX_CLIMB_POSITION = 37.002;
 
   public static final double positionAbs = 0.0;

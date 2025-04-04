@@ -173,6 +173,7 @@ public class Climber extends SubsystemBase {
 
   public static final double FULL_SPEED = 1.0;
   public static final double HALF_SPEED = 0.5;
+  public static final double QUARTER_SPEED = 0.25;
 
   public Command getClimberInCommand() {
     return getClimberInCommand(FULL_SPEED);

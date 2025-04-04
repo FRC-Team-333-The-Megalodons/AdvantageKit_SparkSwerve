@@ -516,11 +516,11 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    SmartDashboard.putData("ExtendClimber", climber.getClimberOutCommand(ramp, Climber.HALF_SPEED));
+    SmartDashboard.putData("ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED));
     // .alongWith(climber.runServo(0.5, 90)));
     SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(1.0));
     SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(-1.0));
-    SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.HALF_SPEED));
+    SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.QUARTER_SPEED));
 
     SmartDashboard.putData("ServoDown", climber.runServoToPosition(Climber.SERVO_UNLOCKED));
     SmartDashboard.putData("ServoUp", climber.runServoToPosition(Climber.SERVO_LOCKED));
