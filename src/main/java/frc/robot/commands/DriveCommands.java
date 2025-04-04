@@ -360,6 +360,7 @@ public class DriveCommands {
     if (side == 'M') {
       sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
     } else if (side == 'L') {
+      // sideDistance = -0.09; // If going left, flip the side direction
       sideDistance = -0.09; // If going left, flip the side direction
     }
 

@@ -171,6 +171,7 @@ public class Robot extends LoggedRobot {
     }
 
     robotContainer.climber.runServoToPosition(Climber.SERVO_UNLOCKED);
+    robotContainer.climber.tare();
   }
 
   /** This function is called periodically during operator control. */

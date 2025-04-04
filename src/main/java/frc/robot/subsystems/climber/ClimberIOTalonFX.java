@@ -63,6 +63,9 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.isAt90deg = climberServo.getPosition() == 1.0 ? true : false;
     inputs.isAt0deg = climberServo.getPosition() == 0.0 ? true : false;
     inputs.servoPosition = climberServo.getPosition();
+    if (ZERO != null) {
+      inputs.zeroTare = ZERO;
+    }
   }
 
   @Override
@@ -78,5 +81,12 @@ public class ClimberIOTalonFX implements ClimberIO {
   @Override
   public void setServoPosition(double position) {
     climberServo.set(position);
+  }
+
+  public Double ZERO = null;
+
+  @Override
+  public void tare() {
+    ZERO = positionRot.getValueAsDouble();
   }
 }

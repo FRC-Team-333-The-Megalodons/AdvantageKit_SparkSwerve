@@ -34,8 +34,27 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putBoolean("IsFullyOut", isFullyOut());
   }
 
-  public Command runPercent(double percent) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+  public void resetClimberMotorSensor() {}
+
+  public Command runPercent(double percent, double servoPosition) {
+    return runEnd(
+        () -> // Command execute
+        {
+          if (servoPosition == Climber.SERVO_LOCKED) {
+            resetTimer();
+          } else if (servoPosition == Climber.SERVO_UNLOCKED) {
+            startTimer();
+          }
+          io.setServoPosition(servoPosition);
+          io.setVoltage(percent * 12.0);
+        },
+        () -> // On Command End
+        {
+          if (servoPosition == Climber.SERVO_UNLOCKED) {
+            stopTimer();
+          }
+          io.setVoltage(0.0);
+        });
   }
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
@@ -159,8 +178,8 @@ public class Climber extends SubsystemBase {
     // This is for climbing, and requires the servo to be locked (it's in the same direction as the
     // Ratchet, so no delay needed.)
     return runServoToPosition(Climber.SERVO_LOCKED)
-        .alongWith(runPercent(ClimberConstants.IN_SPEED * multiplier))
-        .until(this::reachedClimbedPosition);
+           .andThen(runPercent(ClimberConstants.IN_SPEED * multiplier, Climber.SERVO_LOCKED))
+           .until(this::reachedClimbedPosition);
   }
 
   public Command getClimberOutCommand(Ramp ramp) {
@@ -171,18 +190,37 @@ public class Climber extends SubsystemBase {
     // TODO: We can improve on this by measuring the total time we've spent running the servo to
     // position (reset by going the other way)
 
+  public void tare() {
+    io.tare();
+  }
+
+  public Command getClimberOutCommand(Ramp ramp, double manual_multiplier) {
+    // TODO: We can improve on this by measuring the total time we've spent running the servo to
+    // position (reset by going the other way)
+
+    // If manual_multiplier is not FULL_SPEED, it must mean we don't want to trust the
+    // reachedExtendedPosition
     Supplier<Double> remainingServoTime = () -> remainingTimeForRatchet();
-    return runServoToPosition(Climber.SERVO_UNLOCKED)
-        .withTimeout(
-            remainingServoTime
-                .get()) // we wait to make sure we're not fighting the ratchet, then we continue
-        // .withTimeout(TIME_FOR_SERVO_TO_UNLOCK) // we wait to make sure we're not fighting the
-        // ratchet, then we continue
-        .andThen(runServoToPosition(Climber.SERVO_UNLOCKED))
-        .alongWith(runPercent(ClimberConstants.OUT_SPEED * multiplier))
-        .until(this::reachedExtendedPosition)
-        .andThen(
-            ramp.runServoAtSpeed(
-                Ramp.SERVO_UNLATCH)); // this will unhitch the "wings", and let us climb
+    if (manual_multiplier < FULL_SPEED) {
+      return runServoToPosition(Climber.SERVO_UNLOCKED)
+          .withTimeout(
+              // we wait to make sure we're not fighting the ratchet, then we continue
+              remainingServoTime.get())
+          // .withTimeout(TIME_FOR_SERVO_TO_UNLOCK) // we wait to make sure we're not fighting the
+          .andThen(
+              runPercent(ClimberConstants.OUT_SPEED * manual_multiplier, Climber.SERVO_UNLOCKED));
+    } else {
+      return runServoToPosition(Climber.SERVO_UNLOCKED)
+          .withTimeout(
+              // we wait to make sure we're not fighting the ratchet, then we continue
+              remainingServoTime.get())
+          // .withTimeout(TIME_FOR_SERVO_TO_UNLOCK) // we wait to make sure we're not fighting the
+          .andThen(
+              runPercent(ClimberConstants.OUT_SPEED * manual_multiplier, Climber.SERVO_UNLOCKED))
+          .until(this::reachedExtendedPosition)
+          .andThen(
+              ramp.runServoAtSpeed(
+                  Ramp.SERVO_UNLATCH)); // this will unhitch the "wings", and let us climb
+    }
   }
 }
