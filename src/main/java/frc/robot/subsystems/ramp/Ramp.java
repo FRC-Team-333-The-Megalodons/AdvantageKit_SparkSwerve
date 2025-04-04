@@ -14,6 +14,10 @@ public class Ramp extends SubsystemBase {
   private final RampIO io;
   private final RampIOInputsAutoLogged inputs = new RampIOInputsAutoLogged();
 
+  public static double SERVO_UNLATCH = -1;
+  public static double SERVO_LATCH = 1;
+
+
   /** Creates a new EndEffecterIO. */
   public Ramp(RampIO io) {
     this.io = io;
@@ -33,8 +37,8 @@ public class Ramp extends SubsystemBase {
   public Command resetEncoder() {
     return run(() -> io.resetEncoder());
   }
-  public Command runServo(double deegree){
-    return run(()-> io.runRampServo(deegree));
+  public Command runServoAtSpeed(double speed){
+    return run(()-> io.runRampServoSpeed(speed));
   }
   // public BooleanSupplier atAngle(double deegree){
   //   return deegree == io.getAngle() ? true : false;

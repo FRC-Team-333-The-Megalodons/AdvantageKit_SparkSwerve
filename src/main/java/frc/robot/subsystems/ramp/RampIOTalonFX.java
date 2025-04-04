@@ -68,7 +68,7 @@ public class RampIOTalonFX implements RampIO {
   }
 
   @Override
-  public void runRampServo(double deegree){
-    rampServo.setSpeed(deegree);
+  public void runRampServoSpeed(double speed){
+    rampServo.setSpeed(speed);
     }
 }
