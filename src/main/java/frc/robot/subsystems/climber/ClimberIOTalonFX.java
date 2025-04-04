@@ -76,7 +76,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   }
 
   @Override
-  public void setServoPosition(double speed) {
-    climberServo.set(speed);
+  public void setServoPosition(double position) {
+    climberServo.set(position);
   }
 }
