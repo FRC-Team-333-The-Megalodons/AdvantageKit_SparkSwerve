@@ -70,6 +70,14 @@ public class Climber extends SubsystemBase {
   public boolean limitSwitch() {
     return inputs.limitSwitch;
   }
+  public boolean climberIsFullyIn() {
+    return inputs.climberAt0deg;
+  }
+
+  public boolean clomberisFullyOut() {
+    return inputs.climberAt90deg;
+  }
+
 
   public boolean isAtMin() {
     if (limitSwitch()) {

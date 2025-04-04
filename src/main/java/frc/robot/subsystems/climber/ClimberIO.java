@@ -19,6 +19,8 @@ public interface ClimberIO {
     public boolean isAt90deg = false;
     public boolean isAt0deg = false;
     public double servoPosition = 0.0;
+    public boolean climberAt90deg = false;
+    public boolean climberAt0deg = false;
   }
 
   /** Update the set of loggable inputs. */

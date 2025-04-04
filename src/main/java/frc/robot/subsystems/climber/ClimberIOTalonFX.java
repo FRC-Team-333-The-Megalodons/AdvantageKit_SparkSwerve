@@ -56,6 +56,8 @@ public class ClimberIOTalonFX implements ClimberIO {
     BaseStatusSignal.refreshAll(positionRot, velocityRotPerSec, appliedVolts, currentAmps);
 
     inputs.positionRad = positionRot.getValueAsDouble();
+    inputs.climberAt0deg = positionRot.getValueAsDouble() == 0 ? true : false;
+    inputs.climberAt90deg = positionRot.getValueAsDouble() == 90 ? true : false;
     inputs.velocityRadPerSec = Units.rotationsToRadians(velocityRotPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
