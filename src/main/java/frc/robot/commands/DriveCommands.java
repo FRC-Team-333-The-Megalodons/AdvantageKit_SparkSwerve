@@ -357,13 +357,13 @@ public class DriveCommands {
     // the left/right posts.
     // (If M is passed, we're getting the Ball, so we want to be centered.)
     // double sideDistance = 0.25;
-    double sideDistance = 0.09;
+    double sideDistance = 0.08;
     if (side == 'M') {
       // sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
       sideDistance = 0.0; // If we're staying in the middle, there's no side distance.
     } else if (side == 'L') {
       // sideDistance = -0.09; // If going left, flip the side direction
-      sideDistance = -0.09; // If going left, flip the side direction
+      sideDistance = -0.07; // If going left, flip the side direction
     }
 
     // This is the buffer to the tag position (i.e. don't slam into wall)
@@ -404,7 +404,7 @@ public class DriveCommands {
   public static Command generatePreciseDriveToReefCommand(char side, Drive drive) {
     final double kMaxAngularVelocity = 60;
     final double kMaxAngularAcceleration = 60;
-    final double kP = 3.5, kI = 0.7, kD = 0.0;
+    final double kP = 3.4, kI = 0.6, kD = 0.1;
     final double kPtheta = 0.5, kItheta = 0.1, kDtheta = 0.2;
     Supplier<Pose2d> robotPoseSupplier = () -> Drive.estimatedPose2d;
     HolonomicDriveController controller =
