@@ -38,10 +38,13 @@ public class Ramp extends SubsystemBase {
   }
 
   public Command runServoAtSpeed(double speed) {
+    return run(() -> io.runRampServoSpeed(speed));
+    /*
     return runEnd(
         () -> io.runRampServoSpeed(speed),
         // don't fry the servo!
         () -> io.runRampServoSpeed(0));
+         */
   }
   // public BooleanSupplier atAngle(double deegree){
   //   return deegree == io.getAngle() ? true : false;

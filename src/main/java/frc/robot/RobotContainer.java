@@ -561,8 +561,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData(
         "ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED));
     // .alongWith(climber.runServo(0.5, 90)));
-    SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(1.0));
-    SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(-1.0));
+    SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(Ramp.SERVO_LATCH));
+    SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(Ramp.SERVO_UNLATCH));
     SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.QUARTER_SPEED));
 
     SmartDashboard.putData("ServoDown", climber.runServoToPosition(Climber.SERVO_UNLOCKED));
