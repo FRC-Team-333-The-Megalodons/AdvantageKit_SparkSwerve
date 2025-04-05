@@ -356,10 +356,10 @@ public class DriveCommands {
     // This is the left/right distance from the Tag center we want to be for placing the coral on
     // the left/right posts.
     // (If M is passed, we're getting the Ball, so we want to be centered.)
-    //double sideDistance = 0.25;
+    // double sideDistance = 0.25;
     double sideDistance = 0.09;
     if (side == 'M') {
-      //sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
+      // sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
       sideDistance = 0.0; // If we're staying in the middle, there's no side distance.
     } else if (side == 'L') {
       // sideDistance = -0.09; // If going left, flip the side direction

@@ -312,20 +312,25 @@ public class RobotContainer { // Subsystems
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
-      operatorController.R2().whileTrue(
+      operatorController
+          .R2()
+          .whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+            /*
               Commands.run(
-                () -> {
+                  () -> {
                     // Check if they are currently holding up on the DPAD (0 degrees)
                     if (operatorController.getHID().getPOV() == 0) {
-                        // If they're holding up on the dpad, it likely means that they're holding R2 at the top of 
-                        //  their netposition to shoot. In that case, do the same net command alongside the algae-eject.
-                        AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                        .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
+                      // If they're holding up on the dpad, it likely means that they're holding R2
+                      // at the top of
+                      //  their netposition to shoot. In that case, do the same net command
+                      // alongside the algae-eject.
+                      AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                          .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
                     } else {
-                        EndEffecterCommands.runEndEffecterForward(endEffecter);
+                      EndEffecterCommands.runEndEffecterForward(endEffecter);
                     }
-                }
-              ));
+                  }));
+                  */
 
       // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
       operatorController
@@ -333,9 +338,9 @@ public class RobotContainer { // Subsystems
           .whileTrue(
               AutomatedCommands.netCommand(endEffecter, wrist, elevator)
                   .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-        /*
-         * 
-         */
+      /*
+       *
+       */
 
       operatorController
           .povDown()
@@ -531,7 +536,8 @@ public class RobotContainer { // Subsystems
     SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
     SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
     SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
-    SmartDashboard.putData("ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED));
+    SmartDashboard.putData(
+        "ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED));
     // .alongWith(climber.runServo(0.5, 90)));
     SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(1.0));
     SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(-1.0));
