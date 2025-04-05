@@ -30,7 +30,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final StatusSignal<AngularVelocity> velocityRotPerSec = climber.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = climber.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = climber.getSupplyCurrent();
-  private final Servo climberServo = new Servo(9); // out a servo port pls
+  private final Servo climberServo = new Servo(8); // out a servo port pls
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final PositionDutyCycle poisitionRequest = new PositionDutyCycle(0).withSlot(0);

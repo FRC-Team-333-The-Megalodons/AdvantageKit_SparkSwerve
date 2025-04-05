@@ -14,7 +14,7 @@ public class EndEffecterCommands {
   private EndEffecterCommands() {}
 
   public static Command runEndEffecterForward(EndEffecter endEffecter) {
-    return endEffecter.runPercent(speed);
+    return endEffecter.runPercent(speed + 0.1);
   }
 
   public static Command runEndEffecterBackward(EndEffecter endEffecter) {
