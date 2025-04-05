@@ -6,6 +6,8 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.wpilibj.Servo;
+
 public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
@@ -44,4 +46,6 @@ public interface ClimberIO {
   public default double getTareAdjustedPosition() {
     return 0;
   }
+
+  public default void stopServo() { }
 }

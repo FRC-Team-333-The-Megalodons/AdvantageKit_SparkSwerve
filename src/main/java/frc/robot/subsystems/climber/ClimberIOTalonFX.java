@@ -98,4 +98,9 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void tare() {
     ZERO = positionRot.getValueAsDouble();
   }
+
+  @Override
+  public void stopServo() {
+    climberServo.setDisabled();
+  }
 }

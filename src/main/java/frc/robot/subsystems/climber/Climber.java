@@ -56,6 +56,8 @@ public class Climber extends SubsystemBase {
             stopTimer();
           }
           io.setVoltage(0.0);
+          // Don't fry the servo!
+          io.stopServo();
         });
   }
 
@@ -106,12 +108,11 @@ public class Climber extends SubsystemBase {
         () -> {
           if (position == Climber.SERVO_UNLOCKED) {
             stopTimer();
-          }
-        });
-  }
 
-  public Command runServoAndClimber(double percent, double position) {
-    return runEnd(() -> io.setVoltage(percent * 12.0), () -> io.setVoltage(0.0));
+          }
+          // Stop stressing the servo here
+          io.stopServo();
+        });
   }
 
   public Command setClimberPosition(double setPoint) {
