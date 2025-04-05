@@ -312,30 +312,31 @@ public class RobotContainer { // Subsystems
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
-      operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+      operatorController.R2().whileTrue(
+              Commands.run(
+                () -> {
+                    // Check if they are currently holding up on the DPAD (0 degrees)
+                    if (operatorController.getHID().getPOV() == 0) {
+                        // If they're holding up on the dpad, it likely means that they're holding R2 at the top of 
+                        //  their netposition to shoot. In that case, do the same net command alongside the algae-eject.
+                        AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                        .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
+                    } else {
+                        EndEffecterCommands.runEndEffecterForward(endEffecter);
+                    }
+                }
+              ));
 
-      driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
-
-      driverController.create().whileTrue(climber.getClimberInCommand());
-
-      operatorController
-          .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
-      operatorController
-          .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
-      operatorController
-          .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
-
-      //
-      // operatorController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
-
+      // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
       operatorController
           .povUp()
           .whileTrue(
               AutomatedCommands.netCommand(endEffecter, wrist, elevator)
                   .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+        /*
+         * 
+         */
+
       operatorController
           .povDown()
           .whileTrue(
@@ -356,6 +357,20 @@ public class RobotContainer { // Subsystems
           .whileTrue(
               AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
                   .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+
+      operatorController
+          .triangle()
+          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+      operatorController
+          .circle()
+          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+      operatorController
+          .square()
+          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+
+      driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
+
+      driverController.create().whileTrue(climber.getClimberInCommand());
 
       operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
 
