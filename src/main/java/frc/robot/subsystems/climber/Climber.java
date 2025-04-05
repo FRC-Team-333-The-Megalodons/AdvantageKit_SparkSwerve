@@ -88,11 +88,15 @@ public class Climber extends SubsystemBase {
   }
 
   public double remainingTimeForRatchet() {
+
+    return ClimberConstants.TIME_FOR_SERVO_TO_UNLOCK;
+    /*
     if (collectiveServoOutTime >= ClimberConstants.TIME_FOR_SERVO_TO_UNLOCK) {
       return 0;
     }
 
     return ClimberConstants.TIME_FOR_SERVO_TO_UNLOCK - collectiveServoOutTime;
+    */
   }
 
   public Command runServoToPosition(double position) {
