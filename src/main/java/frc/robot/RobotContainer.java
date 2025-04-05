@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutomatedCommands;
@@ -233,6 +234,10 @@ public class RobotContainer { // Subsystems
     }
   }
 
+  public boolean isPovUpHeld() {
+    return operatorController.getHID().getPOV() == 0;
+  }
+
   public void configureOperatorControllerSmartModeBindings() {
     // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
     // ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
@@ -312,25 +317,35 @@ public class RobotContainer { // Subsystems
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
+      // operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+      // If operator is holding up on the dpad, it means that they're holding R2
+      //   at the Net position with the intent to score in the barge.
+      // In that case, also run the net position command so that it doesn't backdrive.
       operatorController
           .R2()
-          .whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
-            /*
-              Commands.run(
-                  () -> {
-                    // Check if they are currently holding up on the DPAD (0 degrees)
-                    if (operatorController.getHID().getPOV() == 0) {
-                      // If they're holding up on the dpad, it likely means that they're holding R2
-                      // at the top of
-                      //  their netposition to shoot. In that case, do the same net command
-                      // alongside the algae-eject.
-                      AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                          .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
-                    } else {
-                      EndEffecterCommands.runEndEffecterForward(endEffecter);
-                    }
-                  }));
-                  */
+          .whileTrue(
+              new ConditionalCommand(
+                  AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                      .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)),
+                  EndEffecterCommands.runEndEffecterForward(endEffecter),
+                  this::isPovUpHeld));
+      /*
+      Commands.run(
+          () -> {
+            // Check if they are currently holding up on the DPAD (0 degrees)
+            if (operatorController.getHID().getPOV() == 0) {
+              // If they're holding up on the dpad, it likely means that they're holding R2
+              // at the top of
+              //  their netposition to shoot. In that case, do the same net command
+              // alongside the algae-eject.
+              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                  .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
+            } else {
+              EndEffecterCommands.runEndEffecterForward(endEffecter);
+            }
+          }));
+          */
 
       // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
       operatorController
