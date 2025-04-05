@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutomatedCommands;
@@ -317,11 +316,19 @@ public class RobotContainer { // Subsystems
                       EndEffecterCommands.runEndEffecterForward(endEffecter)
                           .until(endEffecter::isTriggered)));
 
-      // operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+      operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+      operatorController
+          .L1()
+          .whileTrue(
+              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                  .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)));
 
       // If operator is holding up on the dpad, it means that they're holding R2
       //   at the Net position with the intent to score in the barge.
       // In that case, also run the net position command so that it doesn't backdrive.
+      /*
+      // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
       operatorController
           .R2()
           .whileTrue(
@@ -330,6 +337,7 @@ public class RobotContainer { // Subsystems
                       .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)),
                   EndEffecterCommands.runEndEffecterForward(endEffecter),
                   this::isPovUpHeld));
+                  */
       /*
       Commands.run(
           () -> {
@@ -347,7 +355,6 @@ public class RobotContainer { // Subsystems
           }));
           */
 
-      // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
       operatorController
           .povUp()
           .whileTrue(
@@ -392,7 +399,7 @@ public class RobotContainer { // Subsystems
 
       driverController.create().whileTrue(climber.getClimberInCommand());
 
-      operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
+      // operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
 
       operatorController
           .R1()

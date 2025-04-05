@@ -108,7 +108,6 @@ public class Climber extends SubsystemBase {
         () -> {
           if (position == Climber.SERVO_UNLOCKED) {
             stopTimer();
-
           }
           // Stop stressing the servo here
           io.stopServo();
