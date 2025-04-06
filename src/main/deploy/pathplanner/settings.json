@@ -7,12 +7,13 @@
     "TestPaths"
   ],
   "autoFolders": [
+    "1.5pc",
     "1pc",
     "1pc+Algae",
     "2pc",
     "3pc",
     "Leave+DoNothing",
-    "1.5pc"
+    "DriveToTheReef"
   ],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 1.0,
