@@ -13,7 +13,7 @@ public class RampConstants {
   public static final int rampLimitSwitch2Id = -1;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 20;
-  public static final double speed = 0.1;
+  public static final double speed = 0.07;
 
   // Ramp Setpoints
   public static double startingSetpoint = 0;
