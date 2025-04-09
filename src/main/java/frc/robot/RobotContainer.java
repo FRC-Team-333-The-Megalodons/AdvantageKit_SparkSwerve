@@ -129,6 +129,10 @@ public class RobotContainer { // Subsystems
     } else {
       configureOperatorControllerSmartModeBindings();
     }
+
+    wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
+
+    elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
   }
 
   private void configureDriverControllerBindings() {
