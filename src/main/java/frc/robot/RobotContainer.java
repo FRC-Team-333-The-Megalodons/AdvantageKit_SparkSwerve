@@ -515,7 +515,7 @@ public class RobotContainer { // Subsystems
     NamedCommands.registerCommand(
         "AlgaeL2Position", AutomatedCommands.autoAlgaeL2Command(endEffecter, wrist, elevator));
     NamedCommands.registerCommand(
-        "AlgaeInNet", AutomatedCommands.autoNetCommand(endEffecter, wrist, elevator));
+        "AlgaeInNet", AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
 
     new EventTrigger("l4 position").whileTrue(Commands.print("Going to L4 position"));
     new EventTrigger("l3 position").whileTrue(Commands.print("Going to L3 position"));

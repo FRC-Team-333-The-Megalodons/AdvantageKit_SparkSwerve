@@ -169,8 +169,8 @@ public class AutomatedCommands {
   }
 
   public static Command autoNetCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
-    return wrist
-        .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
+    return EndEffecterCommands.runEndEffecterBackward(endEffecter).alongWith(wrist
+    .setWristPosition(WristConstants.netSetPoint)
+    .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true)));
   }
 }
