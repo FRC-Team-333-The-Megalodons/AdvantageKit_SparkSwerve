@@ -105,12 +105,21 @@ public class AutomatedCommands {
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
   }
 
+  // public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+  //   return EndEffecterCommands.runEndEffecterBackward(endEffecter)
+  //       .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
+  //       .until(elevator::atL4Setpoint)
+  //       .andThen(wrist.setWristPosition(WristConstants.netLobSetPoint))
+  //       .until(wrist::atNetLobSetPoint)
+  //       .andThen(EndEffecterCommands.runEndEffecterForward(endEffecter));
+  // }
+
   public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return EndEffecterCommands.runEndEffecterBackward(endEffecter)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
+        .alongWith(wrist.setWristPosition(WristConstants.netLobSetPoint))
+        .until(wrist::atNetLobSetPoint)
+        .andThen(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
         .until(elevator::atL4Setpoint)
-        .andThen(wrist.setWristPosition(WristConstants.netSetPoint))
-        .until(wrist::atNetSetPoint)
         .andThen(EndEffecterCommands.runEndEffecterForward(endEffecter));
   }
 

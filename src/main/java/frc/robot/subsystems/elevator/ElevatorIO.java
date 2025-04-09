@@ -17,6 +17,7 @@ public interface ElevatorIO {
     public boolean lowerLimit = false;
     public boolean atSetpoint = false;
     public boolean atL4Setpoint = false;
+    public boolean atNetSetpoint = false;
   }
 
   /** Update the set of loggable inputs. */

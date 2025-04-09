@@ -79,6 +79,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.atL4Setpoint =
         inputs.position > ElevatorConstants.closeToL4 - 1
             && inputs.position < ElevatorConstants.closeToL4 + 1;
+    inputs.atNetSetpoint =
+        inputs.position > ElevatorConstants.closeToL4 - 1
+            && inputs.position < ElevatorConstants.closeToL4 + 1;
   }
 
   @Override
