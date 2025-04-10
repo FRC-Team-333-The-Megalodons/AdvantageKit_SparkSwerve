@@ -128,8 +128,11 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     // CommandScheduler.getInstance().enableComposedCommandDiagnostics();
     CommandScheduler.getInstance().run();
-
-    robotContainer.toggleManualModeWhenButtonPressed();
+    if (TEST_MODE) {
+      robotContainer.getTestModeBindings();
+    } else {
+      robotContainer.toggleManualModeWhenButtonPressed();
+    }
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -187,16 +190,16 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().cancelAll();
     // teleopInit();
-    // TEST_MODE = true;
+    TEST_MODE = true;
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
     // teleopPeriodic();
-    robotContainer.getTestModeBindings();
+    // robotContainer.getTestModeBindings();
   }
 
   /** This function is called once when the robot is first started up. */
