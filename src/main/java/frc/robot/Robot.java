@@ -187,15 +187,16 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    // CommandScheduler.getInstance().cancelAll();
-    teleopInit();
-    TEST_MODE = true;
+     CommandScheduler.getInstance().cancelAll();
+    // teleopInit();
+    // TEST_MODE = true;
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    teleopPeriodic();
+    //teleopPeriodic();
+    robotContainer.getTestModeBindings();
   }
 
   /** This function is called once when the robot is first started up. */
