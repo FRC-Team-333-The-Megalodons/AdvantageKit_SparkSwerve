@@ -36,6 +36,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final PositionDutyCycle positionRequest = new PositionDutyCycle(0).withSlot(0);
+  private final PositionDutyCycle positionRequestAlgae = new PositionDutyCycle(0).withSlot(1);
 
   public ElevatorIOTalonFX() {
     var config = new TalonFXConfiguration();
@@ -50,6 +51,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // config.Slot0.kV = ElevatorConstants.kV_CTRE;
     // config.Slot0.kA = ElevatorConstants.kA_CTRE;
     // config.Slot0.kG = ElevatorConstants.kG_CTRE;
+    config.Slot1.kP = 0.1; // double check the number
+    config.Slot1.kP = 0.001;
 
     tryUntilOk(5, () -> topElevatorMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> leftElevatorMotor.getConfigurator().apply(config, 0.25));
@@ -92,7 +95,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setElevator(double currentPos, double targetPos, boolean down) {
     if (down) {
-      topElevatorMotor.setControl(positionRequest.withPosition(targetPos));
+      topElevatorMotor.setControl(positionRequestAlgae.withPosition(targetPos));
     } else {
       topElevatorMotor.setControl(positionRequest.withPosition(targetPos));
     }

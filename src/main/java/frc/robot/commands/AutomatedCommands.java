@@ -40,7 +40,7 @@ public class AutomatedCommands {
 
   public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp) {
     return elevator
-        .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
+        .setElevatorPosition(ElevatorConstants.homeSetpoint, false)
         .until(elevator::lowerLimit)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint))
         .alongWith(rampIntakeCommand(ramp, RampConstants.speed));
@@ -63,27 +63,27 @@ public class AutomatedCommands {
   public static Command coralL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, false));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
   public static Command coralL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, false));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
   }
 
   public static Command algaeL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, false));
   }
 
   public static Command algaeL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, false));
   }
 
   public static Command processorCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
@@ -102,7 +102,7 @@ public class AutomatedCommands {
   public static Command netCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false));
   }
 
   // public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
@@ -154,7 +154,7 @@ public class AutomatedCommands {
 
   public static Command autoHomeCommand(Wrist wrist, Elevator elevator) {
     return elevator
-        .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
+        .setElevatorPosition(ElevatorConstants.homeSetpoint, false)
         // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::lowerLimit)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint).until(wrist::atHomePosition));
@@ -164,13 +164,15 @@ public class AutomatedCommands {
       EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true))
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, false))
         .withTimeout(3);
   }
 
   public static Command autoNetCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
-    return EndEffecterCommands.runEndEffecterBackward(endEffecter).alongWith(wrist
-    .setWristPosition(WristConstants.netSetPoint)
-    .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true)));
+    return EndEffecterCommands.runEndEffecterBackward(endEffecter)
+        .alongWith(
+            wrist
+                .setWristPosition(WristConstants.netSetPoint)
+                .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false)));
   }
 }

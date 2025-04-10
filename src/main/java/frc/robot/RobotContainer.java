@@ -18,8 +18,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -428,9 +426,9 @@ public class RobotContainer { // Subsystems
       System.out.println("TOGGLE MANUAL MODE from " + before + " to " + after + ".");
       removeOperatorControllerBindings();
       SmartDashboard.putBoolean(GlobalConstants.MANUAL_MODE_KEY, after);
-      if (after ) {
+      if (after) {
         configureOperatorControllerManualModeBindings();
-      } else  {
+      } else {
         configureOperatorControllerSmartModeBindings();
       }
     }
@@ -620,23 +618,23 @@ public class RobotContainer { // Subsystems
     configureDriverControllerBindings();
 
     driverController
-          .R1()
-          .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ramp)
-                  .alongWith(
-                      EndEffecterCommands.runEndEffecterForward(endEffecter)
-                          .until(endEffecter::isTriggered)));
-                          driverController
-                          .povLeft()
-                          .onTrue(
-                              Commands.runOnce(
-                                      () ->
-                                          drive.setPose(
-                                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                                      drive)
-                                  .ignoringDisable(true));
-                      driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-                      driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-                      driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+        .R1()
+        .whileTrue(
+            AutomatedCommands.homeCommand(wrist, elevator, ramp)
+                .alongWith(
+                    EndEffecterCommands.runEndEffecterForward(endEffecter)
+                        .until(endEffecter::isTriggered)));
+    driverController
+        .povLeft()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+    driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
   }
 }
