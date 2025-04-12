@@ -128,11 +128,12 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     // CommandScheduler.getInstance().enableComposedCommandDiagnostics();
     CommandScheduler.getInstance().run();
-    if (TEST_MODE) {
-      robotContainer.getTestModeBindings();
-    } else {
-      robotContainer.toggleManualModeWhenButtonPressed();
-    }
+
+    /* We think we dont need manual mode anymore, because
+     *  Manual Control of the Wrist & the Elevator is always available to the Operator
+     *  via the joysticks.
+     */
+    robotContainer.toggleManualModeWhenButtonPressed();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -140,7 +141,10 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    CommandScheduler.getInstance().cancelAll();
+    // call clear on bindings here
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -170,6 +174,8 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     TEST_MODE = false;
 
+    // call configure normal mode bindings here
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -178,6 +184,10 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    robotContainer.clearAllControllerBindings();
+    robotContainer.configureDriverControllerBindings();
+    robotContainer.configureOperatorControllerSmartModeBindings();
 
     robotContainer.climber.runServoToPosition(Climber.SERVO_UNLOCKED);
     robotContainer.climber.tare();
@@ -193,6 +203,11 @@ public class Robot extends LoggedRobot {
     // CommandScheduler.getInstance().cancelAll();
     // teleopInit();
     TEST_MODE = true;
+    robotContainer.clearAllControllerBindings();
+    robotContainer.getTestModeControllerBindings();
+
+    robotContainer.climber.runServoToPosition(Climber.SERVO_UNLOCKED);
+    robotContainer.climber.tare();
   }
 
   /** This function is called periodically during test mode. */

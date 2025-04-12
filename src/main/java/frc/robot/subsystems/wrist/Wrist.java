@@ -61,4 +61,8 @@ public class Wrist extends SubsystemBase {
   public boolean atNetLobSetPoint() {
     return inputs.atNetLobSetPoint;
   }
+
+  public boolean atAlgaeHomeSetpoint() {
+    return inputs.atAlgaeHomeSetpoint;
+  }
 }

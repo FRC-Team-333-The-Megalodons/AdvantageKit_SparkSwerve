@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 
 /** Add your docs here. */
@@ -22,6 +23,7 @@ public class EndEffecterIOSpark implements EndEffecterIO {
   private final SparkFlex endEffecter = new SparkFlex(endEffecterCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = endEffecter.getEncoder();
   private final CANrange canRange = new CANrange(canRangeId);
+  private final DigitalInput photoEletricSensor = new DigitalInput(photoEletricSensorId);
 
   public EndEffecterIOSpark() {
     var config = new SparkFlexConfig();
@@ -55,6 +57,7 @@ public class EndEffecterIOSpark implements EndEffecterIO {
     inputs.isTriggered = canRange.getIsDetected().getValue();
     inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
     inputs.isConnected = canRange.isConnected();
+    inputs.hasAlgae = photoEletricSensor.get();
   }
 
   @Override

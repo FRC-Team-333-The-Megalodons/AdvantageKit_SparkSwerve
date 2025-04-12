@@ -38,12 +38,19 @@ public class AutomatedCommands {
     // .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
   }
 
-  public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp) {
+  public static Command homeCommand(
+      Wrist wrist, Elevator elevator, Ramp ramp, EndEffecter endEffecter) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, false)
         .until(elevator::lowerLimit)
-        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint))
-        .alongWith(rampIntakeCommand(ramp, RampConstants.speed));
+        .andThen(
+            wrist
+                .setWristPosition(
+                    endEffecter.hasAlgae()
+                        ? WristConstants.homeSetpoint
+                        : WristConstants.algaeHomeSetpoint)
+                .until(endEffecter.hasAlgae() ? wrist::atAlgaeHomeSetpoint : wrist::atHomePosition)
+                .alongWith(rampIntakeCommand(ramp, RampConstants.speed)));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
 

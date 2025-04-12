@@ -33,7 +33,7 @@ public class RampIOTalonFX implements RampIO {
   private final StatusSignal<Voltage> appliedVolts = rightMotor.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = rightMotor.getSupplyCurrent();
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
-  private final Servo rampServo = new Servo(6);
+  private final Servo rampServo = new Servo(9);
 
   public RampIOTalonFX() {
     rampServo.setBoundsMicroseconds(1950, 1504, 1500, 1496, 1050);

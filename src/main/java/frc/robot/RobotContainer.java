@@ -89,7 +89,6 @@ public class RobotContainer { // Subsystems
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private final boolean startInManualMode = false;
   private final boolean isInSoloDrivingMode = false;
 
   private double applyJoystickAllianceAndLimits(double value) {
@@ -124,18 +123,13 @@ public class RobotContainer { // Subsystems
         DriveCommands.joystickDrive(
             drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
     configureDriverControllerBindings();
-    if (startInManualMode) {
-      configureOperatorControllerManualModeBindings();
-    } else {
-      configureOperatorControllerSmartModeBindings();
-    }
+    configureOperatorControllerSmartModeBindings();
 
     wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
-
     elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
   }
 
-  private void configureDriverControllerBindings() {
+  public void configureDriverControllerBindings() {
     driverController
         .R3()
         .whileTrue(
@@ -190,8 +184,12 @@ public class RobotContainer { // Subsystems
     driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
   }
 
-  public void removeOperatorControllerBindings() {
+  public void clearAllControllerBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
+  }
+
+  public void removeOperatorControllerBindings() {
+    clearAllControllerBindings();
     configureDriverControllerBindings();
   }
 
@@ -315,10 +313,13 @@ public class RobotContainer { // Subsystems
     operatorController
         .L2()
         .whileTrue(
-            AutomatedCommands.homeCommand(wrist, elevator, ramp)
+            AutomatedCommands.homeCommand(wrist, elevator, ramp, endEffecter)
                 .alongWith(
-                    EndEffecterCommands.runEndEffecterForward(endEffecter)
-                        .until(endEffecter::isTriggered)));
+                    endEffecter.hasAlgae()
+                        ? EndEffecterCommands.runEndEffecterBackward(endEffecter)
+                            .until(endEffecter::hasAlgae)
+                        : EndEffecterCommands.runEndEffecterForward(endEffecter)
+                            .until(endEffecter::isTriggered)));
 
     operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
@@ -610,19 +611,21 @@ public class RobotContainer { // Subsystems
     return autoChooser.get();
   }
 
-  public void getTestModeBindings() {
+  public void getTestModeControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
-    configureDriverControllerBindings();
 
     driverController
         .L2()
         .whileTrue(
-            AutomatedCommands.homeCommand(wrist, elevator, ramp)
+            AutomatedCommands.homeCommand(wrist, elevator, ramp, endEffecter)
                 .alongWith(
-                    EndEffecterCommands.runEndEffecterForward(endEffecter)
-                        .until(endEffecter::isTriggered)));
+                    endEffecter.hasAlgae()
+                        ? EndEffecterCommands.runEndEffecterBackward(endEffecter)
+                            .until(endEffecter::hasAlgae)
+                        : EndEffecterCommands.runEndEffecterForward(endEffecter)
+                            .until(endEffecter::isTriggered)));
 
     // driverController
     //     .povLeft()
@@ -634,7 +637,7 @@ public class RobotContainer { // Subsystems
     //                 drive)
     //             .ignoringDisable(true));
     driverController
-        .button(15)
+        .button(15) // mute button
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -642,6 +645,7 @@ public class RobotContainer { // Subsystems
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
     driverController
         .touchpad()
         .whileTrue(
@@ -677,10 +681,20 @@ public class RobotContainer { // Subsystems
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
     driverController.L1().whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
     driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+
+    driverController
+        .triangle()
+        .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+    driverController
+        .circle()
+        .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+    driverController
+        .square()
+        .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+
     driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
     driverController
-        .L3()
-        .and(driverController.R3())
+        .povLeft()
         .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     driverController.L3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
     driverController.R3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
