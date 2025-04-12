@@ -152,43 +152,42 @@ public class RobotContainer { // Subsystems
     // driverController.povUp().whileTrue(DriveCommands.generateDriveToReefCommand('M'));
     // driverController.povLeft().whileTrue(DriveCommands.generateDriveToReefCommand('L'));
     // driverController.povRight().whileTrue(DriveCommands.generateDriveToReefCommand('R'));
-    driverController.povUp().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-    driverController
-        .povLeft()
-        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-    driverController
-        .povRight()
-        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+    // driverController.povUp().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M',
+    // drive));
+    // driverController
+    //     .povLeft()
+    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    // driverController
+    //     .povRight()
+    //     .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
     // driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     // driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     // driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
     // driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
 
-    if (isInSoloDrivingMode) {
-      driverController
-          .PS()
-          .onTrue(
-              Commands.runOnce(
-                      () ->
-                          drive.setPose(
-                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                      drive)
-                  .ignoringDisable(true));
-    } else {
-      driverController
-          .povLeft()
-          .onTrue(
-              Commands.runOnce(
-                      () ->
-                          drive.setPose(
-                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                      drive)
-                  .ignoringDisable(true));
-      driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-      driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-      driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-      driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
-    }
+    driverController
+        .PS()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+
+    //   driverController
+    //       .povLeft()
+    //       .onTrue(
+    //           Commands.runOnce(
+    //                   () ->
+    //                       drive.setPose(
+    //                           new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                   drive)
+    //               .ignoringDisable(true));
+    driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController.L2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
+    driverController.R2().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
   }
 
   public void removeOperatorControllerBindings() {
@@ -199,42 +198,41 @@ public class RobotContainer { // Subsystems
   public void configureOperatorControllerManualModeBindings() {
     // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
     // ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
-    if (isInSoloDrivingMode) {
-      driverController
-          .povUp()
-          .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
-      driverController
-          .povDown()
-          .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      driverController.povLeft().whileTrue(climber.getClimberInCommand());
-      driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
-      driverController.create().whileTrue(ramp.runPercent(RampConstants.speed));
-      driverController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
+    // if (isInSoloDrivingMode) {
+    //   driverController
+    //       .povUp()
+    //       .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
+    //   driverController
+    //       .povDown()
+    //       .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
+    //   driverController.povLeft().whileTrue(climber.getClimberInCommand());
+    //   driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
+    //   driverController.create().whileTrue(ramp.runPercent(RampConstants.speed));
+    //   driverController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
-      driverController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
-      driverController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+    //   driverController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+    //   driverController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
 
-      driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-      driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
+    //   driverController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+    //   driverController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
 
-    } else {
-      operatorController
-          .povUp()
-          .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
-      operatorController
-          .povDown()
-          .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
-      driverController.povLeft().whileTrue(climber.getClimberInCommand());
-      driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
-      operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
-      operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
+    // } else {
+    operatorController
+        .povUp()
+        .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
+    operatorController
+        .povDown()
+        .whileTrue(elevator.runPercent(-ElevatorConstants.speed).until(elevator::lowerLimit));
+    driverController.povLeft().whileTrue(climber.getClimberInCommand());
+    driverController.povRight().whileTrue(climber.getClimberOutCommand(ramp));
+    operatorController.create().whileTrue(ramp.runPercent(RampConstants.speed));
+    operatorController.options().whileTrue(ramp.runPercent(-RampConstants.speed));
 
-      operatorController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
-      operatorController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
+    operatorController.L1().whileTrue(wrist.runPercent(WristConstants.speed));
+    operatorController.R1().whileTrue(wrist.runPercent(-WristConstants.speed));
 
-      operatorController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
-      operatorController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
-    }
+    operatorController.L2().whileTrue(endEffecter.runPercent(-EndEffecterConstants.speed));
+    operatorController.R2().whileTrue(endEffecter.runPercent(EndEffecterConstants.speed));
   }
 
   public boolean isPovUpHeld() {
@@ -244,179 +242,180 @@ public class RobotContainer { // Subsystems
   public void configureOperatorControllerSmartModeBindings() {
     // wrist.setDefaultCommand(wrist.setWristPosition(WristConstants.homeSetpoint));
     // ramp.setDefaultCommand(ramp.runPercent(RampConstants.speed));
-    if (isInSoloDrivingMode) {
-      driverController
-          .L2()
-          .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ramp)
-                  .alongWith(
-                      EndEffecterCommands.runEndEffecterForward(endEffecter)
-                          .until(endEffecter::isTriggered)));
+    // if (isInSoloDrivingMode) {
+    //   driverController
+    //       .L2()
+    //       .whileTrue(
+    //           AutomatedCommands.homeCommand(wrist, elevator, ramp)
+    //               .alongWith(
+    //                   EndEffecterCommands.runEndEffecterForward(endEffecter)
+    //                       .until(endEffecter::isTriggered)));
 
-      driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
-      driverController.touchpad().whileTrue(AutomatedCommands.rampGoToIntakePosition(endEffecter));
+    //   driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+    //
+    // driverController.touchpad().whileTrue(AutomatedCommands.rampGoToIntakePosition(endEffecter));
 
-      driverController
-          .options() // get ready
-          .whileTrue(climber.getClimberOutCommand(ramp));
+    //   driverController
+    //       .options() // get ready
+    //       .whileTrue(climber.getClimberOutCommand(ramp));
 
-      driverController
-          .create() // actually climb
-          .whileTrue(climber.getClimberInCommand());
+    //   driverController
+    //       .create() // actually climb
+    //       .whileTrue(climber.getClimberInCommand());
 
-      driverController
-          .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
-      driverController
-          .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
-      driverController
-          .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+    //   driverController
+    //       .triangle()
+    //       .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+    //   driverController
+    //       .circle()
+    //       .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+    //   driverController
+    //       .square()
+    //       .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
 
-      driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+    //
+    // driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
 
-      driverController
-          .povUp()
-          .whileTrue(
-              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      driverController
-          .povDown()
-          .whileTrue(
-              AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      driverController
-          .povLeft()
-          .whileTrue(
-              AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      driverController
-          .povRight()
-          .whileTrue(
-              AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      driverController
-          .touchpad()
-          .whileTrue(
-              AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    //   driverController
+    //       .povUp()
+    //       .whileTrue(
+    //           AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+    //               .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    //   driverController
+    //       .povDown()
+    //       .whileTrue(
+    //           AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
+    //               .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    //   driverController
+    //       .povLeft()
+    //       .whileTrue(
+    //           AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
+    //               .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    //   driverController
+    //       .povRight()
+    //       .whileTrue(
+    //           AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
+    //               .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    //   driverController
+    //       .touchpad()
+    //       .whileTrue(
+    //           AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
+    //               .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
 
-      driverController
-          .R1()
-          .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
-      driverController
-          .L1()
-          .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed));
-    } else {
-      //   operatorController
-      //       .touchpad()
-      //       .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
-      operatorController
-          .L2()
-          .whileTrue(
-              AutomatedCommands.homeCommand(wrist, elevator, ramp)
-                  .alongWith(
-                      EndEffecterCommands.runEndEffecterForward(endEffecter)
-                          .until(endEffecter::isTriggered)));
+    //   driverController
+    //       .R1()
+    //       .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
+    //   driverController
+    //       .L1()
+    //       .whileTrue(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed));
+    // } else {
+    //   operatorController
+    //       .touchpad()
+    //       .whileTrue(AutomatedCommands.rampGoToIntakePosition(ramp, endEffecter));
+    operatorController
+        .L2()
+        .whileTrue(
+            AutomatedCommands.homeCommand(wrist, elevator, ramp)
+                .alongWith(
+                    EndEffecterCommands.runEndEffecterForward(endEffecter)
+                        .until(endEffecter::isTriggered)));
 
-      operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+    operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
-      operatorController
-          .L1()
-          .whileTrue(
-              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)));
+    operatorController
+        .L1()
+        .whileTrue(
+            AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)));
 
-      // If operator is holding up on the dpad, it means that they're holding R2
-      //   at the Net position with the intent to score in the barge.
-      // In that case, also run the net position command so that it doesn't backdrive.
-      /*
-      // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
-      operatorController
-          .R2()
-          .whileTrue(
-              new ConditionalCommand(
-                  AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                      .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)),
-                  EndEffecterCommands.runEndEffecterForward(endEffecter),
-                  this::isPovUpHeld));
-                  */
-      /*
-      Commands.run(
-          () -> {
-            // Check if they are currently holding up on the DPAD (0 degrees)
-            if (operatorController.getHID().getPOV() == 0) {
-              // If they're holding up on the dpad, it likely means that they're holding R2
-              // at the top of
-              //  their netposition to shoot. In that case, do the same net command
-              // alongside the algae-eject.
-              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
-            } else {
-              EndEffecterCommands.runEndEffecterForward(endEffecter);
-            }
-          }));
-          */
+    // If operator is holding up on the dpad, it means that they're holding R2
+    //   at the Net position with the intent to score in the barge.
+    // In that case, also run the net position command so that it doesn't backdrive.
+    /*
+    // TODO: Handle the conflict between Net (PovUP) and Eject (R2) here
+    operatorController
+        .R2()
+        .whileTrue(
+            new ConditionalCommand(
+                AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                    .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter)),
+                EndEffecterCommands.runEndEffecterForward(endEffecter),
+                this::isPovUpHeld));
+                */
+    /*
+    Commands.run(
+        () -> {
+          // Check if they are currently holding up on the DPAD (0 degrees)
+          if (operatorController.getHID().getPOV() == 0) {
+            // If they're holding up on the dpad, it likely means that they're holding R2
+            // at the top of
+            //  their netposition to shoot. In that case, do the same net command
+            // alongside the algae-eject.
+            AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterForward(endEffecter));
+          } else {
+            EndEffecterCommands.runEndEffecterForward(endEffecter);
+          }
+        }));
+        */
 
-      operatorController
-          .povUp()
-          .whileTrue(
-              AutomatedCommands.netCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      /*
-       *
-       */
+    operatorController
+        .povUp()
+        .whileTrue(
+            AutomatedCommands.netCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    /*
+     *
+     */
 
-      operatorController
-          .povDown()
-          .whileTrue(
-              AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      operatorController
-          .povLeft()
-          .whileTrue(
-              AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      operatorController
-          .povRight()
-          .whileTrue(
-              AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-      operatorController
-          .cross()
-          .whileTrue(
-              AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
-                  .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operatorController
+        .povDown()
+        .whileTrue(
+            AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operatorController
+        .povLeft()
+        .whileTrue(
+            AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operatorController
+        .povRight()
+        .whileTrue(
+            AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    operatorController
+        .cross()
+        .whileTrue(
+            AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
 
-      operatorController
-          .triangle()
-          .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
-      operatorController
-          .circle()
-          .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
-      operatorController
-          .square()
-          .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+    operatorController
+        .triangle()
+        .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+    operatorController
+        .circle()
+        .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+    operatorController
+        .square()
+        .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
 
-      driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
+    driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
 
-      driverController.create().whileTrue(climber.getClimberInCommand());
+    driverController.create().whileTrue(climber.getClimberInCommand());
 
-      // operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
+    // operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
 
-      operatorController
-          .R1()
-          .whileTrue(
-              EndEffecterCommands.runEndEffecterBackward(endEffecter)
-                  .alongWith(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed)));
+    operatorController
+        .R1()
+        .whileTrue(
+            EndEffecterCommands.runEndEffecterBackward(endEffecter)
+                .alongWith(AutomatedCommands.rampIntakeCommand(ramp, -RampConstants.speed)));
 
-      //  operatorController.PS().whileTrue(ramp.runPercent(RampConstants.speed));
+    //  operatorController.PS().whileTrue(ramp.runPercent(RampConstants.speed));
 
-      operatorController
-          .R3()
-          .whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
-    }
+    operatorController
+        .R3()
+        .whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
   }
 
   public void toggleManualModeWhenButtonPressed() {
@@ -624,7 +623,7 @@ public class RobotContainer { // Subsystems
                 .alongWith(
                     EndEffecterCommands.runEndEffecterForward(endEffecter)
                         .until(endEffecter::isTriggered)));
-    
+
     // driverController
     //     .povLeft()
     //     .onTrue(
@@ -635,53 +634,54 @@ public class RobotContainer { // Subsystems
     //                 drive)
     //             .ignoringDisable(true));
     driverController
-          .button(15)
-          .onTrue(
-              Commands.runOnce(
-                      () ->
-                          drive.setPose(
-                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                      drive)
-                  .ignoringDisable(true));
+        .button(15)
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
     driverController
-    .touchpad()
-    .whileTrue(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            () -> getDriverLeftY(),
-            () -> getDriverLeftX(),
-            () -> getDriverRightX(), // only used if no valid reef angle
-            () -> Rotation2d.fromDegrees(Drive.reefDriveAngle(vision))));
-
-            driverController
-            .povDown()
-            .whileTrue(
-                AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
-                    .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-        driverController
-            .povUp()
-            .whileTrue(
-                AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
-                    .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-    driverController
-    .options() // get ready
-    .whileTrue(climber.getClimberOutCommand(ramp));
-
-driverController
-    .create() // actually climb
-    .whileTrue(climber.getClimberInCommand());
+        .touchpad()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> getDriverLeftY(),
+                () -> getDriverLeftX(),
+                () -> getDriverRightX(), // only used if no valid reef angle
+                () -> Rotation2d.fromDegrees(Drive.reefDriveAngle(vision))));
 
     driverController
-    .R1()
-    .whileTrue(
-        AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
-            .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
-            driverController
-            .L1()
-            .whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
+        .povDown()
+        .whileTrue(
+            AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    driverController
+        .povUp()
+        .whileTrue(
+            AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    driverController
+        .options() // get ready
+        .whileTrue(climber.getClimberOutCommand(ramp));
+
+    driverController
+        .create() // actually climb
+        .whileTrue(climber.getClimberInCommand());
+
+    driverController
+        .R1()
+        .whileTrue(
+            AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    driverController.L1().whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
     driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
     driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
-    driverController.L3().and(driverController.R3()).whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
+    driverController
+        .L3()
+        .and(driverController.R3())
+        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     driverController.L3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
     driverController.R3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
   }
