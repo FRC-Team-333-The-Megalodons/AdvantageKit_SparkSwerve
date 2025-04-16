@@ -89,8 +89,6 @@ public class RobotContainer { // Subsystems
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  private final boolean isInSoloDrivingMode = false;
-
   private double applyJoystickAllianceAndLimits(double value) {
     /*
     if (drive.isRed()) {
