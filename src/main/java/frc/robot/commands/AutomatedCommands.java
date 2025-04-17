@@ -45,11 +45,8 @@ public class AutomatedCommands {
         .until(elevator::lowerLimit)
         .andThen(
             wrist
-                .setWristPosition(
-                    endEffecter.hasAlgae()
-                        ? WristConstants.homeSetpoint
-                        : WristConstants.algaeHomeSetpoint)
-                .until(endEffecter.hasAlgae() ? wrist::atAlgaeHomeSetpoint : wrist::atHomePosition)
+                .setWristPosition(WristConstants.homeSetpoint)
+                .until(wrist::atHomePosition)
                 .alongWith(rampIntakeCommand(ramp, RampConstants.speed)));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
   }
@@ -72,6 +69,9 @@ public class AutomatedCommands {
         .setWristPosition(WristConstants.coralL23Setpoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, false));
     // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
+  }
+  public static Command coralL1Command(EndEffecter endEffecter,Wrist wrist, Elevator elevator){
+    return wrist.setWristPosition(WristConstants.coralL1Setpoint).alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, false));
   }
 
   public static Command coralL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {

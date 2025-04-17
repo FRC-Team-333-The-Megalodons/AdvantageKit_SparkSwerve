@@ -182,6 +182,9 @@ public class Climber extends SubsystemBase {
   public Command getClimberInCommand() {
     return getClimberInCommand(FULL_SPEED);
   }
+  public Command manualClimberInCommand(){
+    return runPercent(ClimberConstants.IN_SPEED, Climber.SERVO_LOCKED);
+  }
 
   public Command getClimberInCommand(double manual_multiplier) {
     // Supplier<Boolean> targetReached = () -> this.getPosition() >=

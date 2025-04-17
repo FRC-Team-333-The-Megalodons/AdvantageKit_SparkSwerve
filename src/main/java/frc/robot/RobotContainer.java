@@ -313,11 +313,19 @@ public class RobotContainer { // Subsystems
         .whileTrue(
             AutomatedCommands.homeCommand(wrist, elevator, ramp, endEffecter)
                 .alongWith(
-                    endEffecter.hasAlgae()
-                        ? EndEffecterCommands.runEndEffecterBackward(endEffecter)
-                            .until(endEffecter::hasAlgae)
-                        : EndEffecterCommands.runEndEffecterForward(endEffecter)
-                            .until(endEffecter::isTriggered)));
+                    EndEffecterCommands.runEndEffecterForward(endEffecter)
+                        .until(endEffecter::isTriggered)));
+
+    operatorController
+        .touchpad()
+        .whileTrue(
+            AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+    // endEffecter.hasAlgae()
+    //     ? EndEffecterCommands.runEndEffecterBackward(endEffecter)
+    //         .until(endEffecter::hasAlgae)
+    //     : EndEffecterCommands.runEndEffecterForward(endEffecter)
+    //         .until(endEffecter::isTriggered)));
 
     operatorController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
 
@@ -385,7 +393,7 @@ public class RobotContainer { // Subsystems
     operatorController
         .cross()
         .whileTrue(
-            AutomatedCommands.homeWithAlgaeCommand(endEffecter, wrist, elevator)
+            AutomatedCommands.coralL1Command(endEffecter, wrist, elevator)
                 .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
 
     operatorController
@@ -400,7 +408,7 @@ public class RobotContainer { // Subsystems
 
     driverController.options().whileTrue(climber.getClimberOutCommand(ramp));
 
-    driverController.create().whileTrue(climber.getClimberInCommand());
+    driverController.create().whileTrue(climber.manualClimberInCommand());
 
     // operatorController.L1().whileTrue(AutomatedCommands.intakeCoralAgain(endEffecter));
 

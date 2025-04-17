@@ -107,9 +107,9 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Looping over multiple cameras, we can get multiple "poses" based on each effective tag.
-    // Our goal is to use the pose from the "closest" tag - but, two different cameras might 
+    // Our goal is to use the pose from the "closest" tag - but, two different cameras might
     //  have two different tags that are their closest.
-    // To manage this, we can 
+    // To manage this, we can
 
     // Loop over cameras
     camLoop_metric.start();
