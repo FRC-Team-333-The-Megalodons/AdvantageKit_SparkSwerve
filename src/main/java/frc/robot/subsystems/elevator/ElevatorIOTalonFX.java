@@ -10,6 +10,7 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -35,8 +36,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private DigitalInput upperLimitSwitch = new DigitalInput(upperLimitSwitchId);
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
+  // private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0);
   private final PositionDutyCycle positionRequest = new PositionDutyCycle(0).withSlot(0);
   private final PositionDutyCycle positionRequestAlgae = new PositionDutyCycle(0).withSlot(1);
+  private final DynamicMotionMagicDutyCycle positionRequest2 =
+      new DynamicMotionMagicDutyCycle(0, 12 / (1.5 * Math.PI), 24 / (1.5 * Math.PI), 0).withSlot(0);
 
   public ElevatorIOTalonFX() {
     var config = new TalonFXConfiguration();
@@ -51,8 +55,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // config.Slot0.kV = ElevatorConstants.kV_CTRE;
     // config.Slot0.kA = ElevatorConstants.kA_CTRE;
     // config.Slot0.kG = ElevatorConstants.kG_CTRE;
-    config.Slot1.kP = 0.1; // double check the number
-    config.Slot1.kP = 0.001;
+
+    config.Slot1.kP = 0.1;
+    config.Slot1.kD = 0.02;
+    // double check the number
+    // config.Slot1.kP = 0.001;
 
     tryUntilOk(5, () -> topElevatorMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> leftElevatorMotor.getConfigurator().apply(config, 0.25));
@@ -80,11 +87,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.lowerLimit = !lowerLimitSwitch.get();
     inputs.upperLimit = !upperLimitSwitch.get();
     inputs.atL4Setpoint =
-        inputs.position > ElevatorConstants.closeToL4 - 1
-            && inputs.position < ElevatorConstants.closeToL4 + 1;
+        inputs.position > ElevatorConstants.coralL4Setpoint - 1
+            && inputs.position < ElevatorConstants.coralL4Setpoint + 1;
+    inputs.atAutoL4SetPoint =
+        inputs.position > ElevatorConstants.autonCoralL4SetPoint - 1
+            && inputs.position < ElevatorConstants.autonCoralL4SetPoint + 1;
     inputs.atNetSetpoint =
-        inputs.position > ElevatorConstants.closeToL4 - 1
-            && inputs.position < ElevatorConstants.closeToL4 + 1;
+        inputs.position > ElevatorConstants.netSetPoint - 1
+            && inputs.position < ElevatorConstants.netSetPoint + 1;
   }
 
   @Override
@@ -94,10 +104,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setElevator(double currentPos, double targetPos, boolean down) {
+    //Changes the acceleration and Velocity on the way down using Dynamic Motion Magic Controller to make it less agressive
+    // harmful for the elevator
     if (down) {
-      topElevatorMotor.setControl(positionRequestAlgae.withPosition(targetPos));
+      topElevatorMotor.setControl(
+          positionRequest2
+              .withPosition(targetPos)
+              .withAcceleration(ElevatorConstants.accelerationDown)
+              .withVelocity(ElevatorConstants.velocityDown));
     } else {
-      topElevatorMotor.setControl(positionRequest.withPosition(targetPos));
+      topElevatorMotor.setControl(
+          positionRequest2
+              .withPosition(targetPos)
+              .withAcceleration(ElevatorConstants.accelerationUp)
+              .withVelocity(ElevatorConstants.velocityUp));
     }
   }
 

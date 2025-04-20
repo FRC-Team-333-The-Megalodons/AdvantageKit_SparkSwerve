@@ -22,8 +22,6 @@ public class RampIOSpark implements RampIO {
   private final SparkFlex ramp = new SparkFlex(rampCanId, MotorType.kBrushless);
   private final RelativeEncoder encoder = ramp.getEncoder();
   private final PIDController pidController = new PIDController(kP, kI, kD);
-  // private final DigitalInput digitalInputSensor = new DigitalInput(rampLimitSwitch1Id);
-  // private final DigitalInput limitSwitch2 = new DigitalInput(rampLimitSwitch2Id);
 
   public RampIOSpark() {
     var config = new SparkFlexConfig();

@@ -39,16 +39,9 @@ public class Ramp extends SubsystemBase {
 
   public Command runServoAtSpeed(double speed) {
     return run(() -> io.runRampServoSpeed(speed));
-    /*
-    return runEnd(
-        () -> io.runRampServoSpeed(speed),
-        // don't fry the servo!
-        () -> io.runRampServoSpeed(0));
-         */
+  
   }
-  // public BooleanSupplier atAngle(double deegree){
-  //   return deegree == io.getAngle() ? true : false;
-  // }
+ 
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
     return runEnd(
@@ -63,8 +56,4 @@ public class Ramp extends SubsystemBase {
   public boolean atSetpoint() {
     return inputs.atSetpoint;
   }
-
-  // public boolean isCoralInside() {
-  //   return inputs.digitalInputSensor;
-  // }
 }

@@ -17,13 +17,16 @@ public class ElevatorConstants {
 
   // Setpoints
   public static final double homeSetpoint = 0.0;
-  public static final double coralL4Setpoint = 19.4;
+  public static final double coralL4Setpoint = 19.7;
   public static final double coralL3Setpoint = 9.7;
   public static final double coralL2Setpoint = 4;
+  public static final double coralL1Setpoint = 6;
+  public static final double autonCoralL4SetPoint = 21;
+
   public static final double aglaeL2Setpoint = 6.5;
   public static final double aglaeL3Setpoint = 11.8;
   public static final double processorSetpoint = 0.0;
-  public static final double netSetPoint = 24.0;
+  public static final double netSetPoint = 23.0;
   public static final double closeToL4 = 19.0;
   public static final double closeToNet = 20.0;
 
@@ -35,9 +38,17 @@ public class ElevatorConstants {
   // PID Constants (CTRE)
   public static final double kP_CTRE = 0.29;
   public static final double kI_CTRE = 0.0;
-  public static final double kD_CTRE = 0.02;
+  public static final double kD_CTRE = 0.017;
   public static final double kS_CTRE = 0.1;
   public static final double kV_CTRE = 0.12;
   public static final double kA_CTRE = 0.02;
   public static final double kG_CTRE = 0.16;
+
+  //1.5 is the diameter of the output sproket and 400 in/s is the srokets velocity and we want to reach that speed in 0.5 sec which 
+  //leaves us with the acceleration of 800 in/s/s and on the way down its slower
+  public static final double accelerationUp = 800 / (1.5 * Math.PI);
+  public static final double velocityUp = 400 / (1.5 * Math.PI);
+
+  public static final double accelerationDown = 600 / (1.5 * Math.PI);
+  public static final double velocityDown = 300 / (1.5 * Math.PI);
 }

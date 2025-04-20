@@ -11,22 +11,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "H4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Position"
-                }
-              }
-            ]
+            "pathName": "H4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralL4Position"
           }
         },
         {
@@ -61,9 +54,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "AlgaeH2toNet"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "AlgaeH2toNet"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeHomePos"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeInNet"
           }
         }
       ]

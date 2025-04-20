@@ -101,6 +101,10 @@ public class Elevator extends SubsystemBase {
     return inputs.atL4Setpoint;
   }
 
+  public boolean atAutoL4SetPoint() {
+    return inputs.atAutoL4SetPoint;
+  }
+
   public boolean atNetSetpoint() {
     return inputs.atNetSetpoint;
   }
