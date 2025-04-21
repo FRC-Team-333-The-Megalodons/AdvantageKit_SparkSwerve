@@ -104,7 +104,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setElevator(double currentPos, double targetPos, boolean down) {
-    //Changes the acceleration and Velocity on the way down using Dynamic Motion Magic Controller to make it less agressive
+    // Changes the acceleration and Velocity on the way down using Dynamic Motion Magic Controller
+    // to make it less agressive
     // harmful for the elevator
     if (down) {
       topElevatorMotor.setControl(

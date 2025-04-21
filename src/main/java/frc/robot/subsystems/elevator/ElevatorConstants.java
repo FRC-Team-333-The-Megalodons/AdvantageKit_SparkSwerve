@@ -44,8 +44,9 @@ public class ElevatorConstants {
   public static final double kA_CTRE = 0.02;
   public static final double kG_CTRE = 0.16;
 
-  //1.5 is the diameter of the output sproket and 400 in/s is the srokets velocity and we want to reach that speed in 0.5 sec which 
-  //leaves us with the acceleration of 800 in/s/s and on the way down its slower
+  // 1.5 is the diameter of the output sproket and 400 in/s is the srokets velocity and we want to
+  // reach that speed in 0.5 sec which
+  // leaves us with the acceleration of 800 in/s/s and on the way down its slower
   public static final double accelerationUp = 800 / (1.5 * Math.PI);
   public static final double velocityUp = 400 / (1.5 * Math.PI);
 

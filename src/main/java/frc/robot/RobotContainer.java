@@ -140,8 +140,6 @@ public class RobotContainer { // Subsystems
 
     driverController.L3().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    
-
     driverController
         .PS()
         .onTrue(
@@ -151,7 +149,7 @@ public class RobotContainer { // Subsystems
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-     // TODO: Figure out how to fix the crazy jumping with the Precise Drive to Reef Command
+    // TODO: Figure out how to fix the crazy jumping with the Precise Drive to Reef Command
 
     driverController.L1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
     driverController.R1().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
@@ -169,7 +167,7 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerManualModeBindings() {
-   
+
     operatorController
         .povUp()
         .whileTrue(elevator.runPercent(ElevatorConstants.speed).until(elevator::upperLimit));
@@ -193,7 +191,7 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-    
+
     operatorController
         .L2()
         .whileTrue(

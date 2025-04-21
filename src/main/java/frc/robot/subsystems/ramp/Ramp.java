@@ -39,9 +39,7 @@ public class Ramp extends SubsystemBase {
 
   public Command runServoAtSpeed(double speed) {
     return run(() -> io.runRampServoSpeed(speed));
-  
   }
- 
 
   public Command runTeleop(DoubleSupplier forward, DoubleSupplier reverse) {
     return runEnd(

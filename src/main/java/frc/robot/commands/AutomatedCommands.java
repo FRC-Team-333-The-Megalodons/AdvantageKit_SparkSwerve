@@ -21,8 +21,6 @@ public class AutomatedCommands {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
   }
 
-
-
   public static Command intakeCoralAgain(EndEffecter endEffecter) {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
   }
@@ -103,7 +101,6 @@ public class AutomatedCommands {
         .setWristPosition(WristConstants.netSetPoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false));
   }
-
 
   public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return EndEffecterCommands.runEndEffecterBackward(endEffecter)
