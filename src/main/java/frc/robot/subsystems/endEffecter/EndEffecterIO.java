@@ -16,6 +16,7 @@ public interface EndEffecterIO {
     public double currentAmps = 0.0;
     public double canRangeDistance = 0.0;
     public boolean isTriggered = false;
+    public boolean hasAlgae = false;
   }
 
   /** Update the set of loggable inputs. */

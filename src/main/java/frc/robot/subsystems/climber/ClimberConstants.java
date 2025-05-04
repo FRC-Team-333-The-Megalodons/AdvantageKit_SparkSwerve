@@ -10,8 +10,20 @@ public class ClimberConstants {
   public static final int limitSwitchId = 2;
   public static final double motorReduction = 1.0;
   public static final int currentLimit = 40;
-  public static final double speed = 1.0;
+  public static final double IN_SPEED = 1.0;
+
   public static final double fullyOut = -1730;
   public static final double fullyIn = 0.0;
+
+  public static final double STARTING_POSITION = 0.0;
+  public static final double EXTENDED_POSITION = -61.079;
+  public static final double CLIMBED_POSITION = 23.368;
+  // public static final double CLIMBED_POSITION = 24.068;
+  // public static final double CLIMBED_POSITION = 27.068;
+  public static final double MAX_CLIMB_POSITION = 37.002;
+
   public static final double positionAbs = 0.0;
+  public static final double OUT_SPEED = -1.0;
+
+  public static final double TIME_FOR_SERVO_TO_UNLOCK = 0.5;
 }

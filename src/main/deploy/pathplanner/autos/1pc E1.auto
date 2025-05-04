@@ -7,37 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Prep-H4"
+            "pathName": "Prep-E4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "H4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "CoralL4Position"
+            "pathName": "E4"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ScoreCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BackUpH4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HomePos"
           }
         }
       ]

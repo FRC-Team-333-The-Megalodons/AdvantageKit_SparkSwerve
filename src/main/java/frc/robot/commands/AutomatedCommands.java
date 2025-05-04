@@ -21,30 +21,24 @@ public class AutomatedCommands {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
   }
 
-  // public static Command intakeCoral(EndEffecter endEffecter) {
-  //   return endEffecter
-  //       .runPercent(EndEffecterConstants.speed)
-  //       .until(endEffecter::isTriggered);
-  //       // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
-  // }
-
   public static Command intakeCoralAgain(EndEffecter endEffecter) {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
-    // .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
   }
 
   public static Command rampGoToIntakePosition(EndEffecter endEffecter) {
     return endEffecter.runPercent(EndEffecterConstants.speed).until(endEffecter::isTriggered);
-    // .alongWith(ramp.setRampPosition(RampConstants.intakeSetpoint));
   }
 
-  public static Command homeCommand(Wrist wrist, Elevator elevator, Ramp ramp) {
+  public static Command homeCommand(
+      Wrist wrist, Elevator elevator, Ramp ramp, EndEffecter endEffecter) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
         .until(elevator::lowerLimit)
-        .andThen(wrist.setWristPosition(WristConstants.homeSetpoint))
-        .alongWith(rampIntakeCommand(ramp, RampConstants.speed));
-    // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint)));
+        .andThen(
+            wrist
+                .setWristPosition(WristConstants.homeSetpoint)
+                .until(wrist::atHomePosition)
+                .alongWith(rampIntakeCommand(ramp, RampConstants.speed)));
   }
 
   public static Command coralL4Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
@@ -52,7 +46,6 @@ public class AutomatedCommands {
         .setWristPosition(WristConstants.coralL23Setpoint)
         .until(wrist::atL3Setpoint)
         .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
-        // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::atL4Setpoint)
         .andThen(
             wrist
@@ -63,21 +56,25 @@ public class AutomatedCommands {
   public static Command coralL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
-    // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, false));
+  }
+
+  public static Command coralL1Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return wrist
+        .setWristPosition(WristConstants.coralL1Setpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL1Setpoint, false));
   }
 
   public static Command coralL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
-    // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, false));
   }
 
   public static Command algaeL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, false));
   }
 
   public static Command algaeL2Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
@@ -102,15 +99,15 @@ public class AutomatedCommands {
   public static Command netCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
         .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false));
   }
 
   public static Command netLobCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return EndEffecterCommands.runEndEffecterBackward(endEffecter)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
+        .alongWith(wrist.setWristPosition(WristConstants.netLobSetPoint))
+        .until(wrist::atNetLobSetPoint)
+        .andThen(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false))
         .until(elevator::atL4Setpoint)
-        .andThen(wrist.setWristPosition(WristConstants.netSetPoint))
-        .until(wrist::atNetSetPoint)
         .andThen(EndEffecterCommands.runEndEffecterForward(endEffecter));
   }
 
@@ -131,14 +128,12 @@ public class AutomatedCommands {
     return wrist
         .setWristPosition(WristConstants.coralL23Setpoint)
         // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
-        .until(elevator::atL4Setpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.autonCoralL4SetPoint, false))
+        .until(elevator::atAutoL4SetPoint)
         .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
   }
 
   public static Command autoIntakeCoral(EndEffecter endEffecter) {
-    // return ramp.setRampPosition(RampConstants.intakeSetpoint)
-    // .onlyWhile(ramp::isCoralInside)
     return EndEffecterCommands.autoRunEndEffecterForward(endEffecter)
         .until(endEffecter::isTriggered);
   }
@@ -146,7 +141,6 @@ public class AutomatedCommands {
   public static Command autoHomeCommand(Wrist wrist, Elevator elevator) {
     return elevator
         .setElevatorPosition(ElevatorConstants.homeSetpoint, true)
-        // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .until(elevator::lowerLimit)
         .andThen(wrist.setWristPosition(WristConstants.homeSetpoint).until(wrist::atHomePosition));
   }
@@ -156,12 +150,22 @@ public class AutomatedCommands {
     return wrist
         .setWristPosition(WristConstants.aglaeSetpoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true))
-        .withTimeout(3);
+        .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
+        .until(endEffecter::hasAlgae);
   }
 
   public static Command autoNetCommand(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
+    return EndEffecterCommands.runEndEffecterBackward(endEffecter)
+        .alongWith(
+            wrist
+                .setWristPosition(WristConstants.netSetPoint)
+                .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, false)));
+  }
+
+  public static Command autoHomeWithAlgaeCommand(
+      EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
-        .setWristPosition(WristConstants.netSetPoint)
-        .alongWith(elevator.setElevatorPosition(ElevatorConstants.netSetPoint, true));
+        .setWristPosition(WristConstants.algaeHomeSetpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true));
   }
 }

@@ -19,25 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CoralL4Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ScoreCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BackUpH4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HomePos"
           }
         }
       ]

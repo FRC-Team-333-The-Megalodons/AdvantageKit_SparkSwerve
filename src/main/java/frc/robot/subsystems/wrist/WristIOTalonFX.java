@@ -10,8 +10,11 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -19,7 +22,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 /**
  * This roller implementation is for a Talon FX driving a motor like the Falon 500 or Kraken X60.
@@ -30,13 +32,18 @@ public class WristIOTalonFX implements WristIO {
   private final StatusSignal<AngularVelocity> velocityRotPerSec = wrist.getVelocity();
   private final StatusSignal<Voltage> appliedVolts = wrist.getMotorVoltage();
   private final StatusSignal<Current> currentAmps = wrist.getSupplyCurrent();
-  private final DutyCycleEncoder externalEncoder = new DutyCycleEncoder(wristEncoderId);
+  // private final DutyCycleEncoder externalEncoder = new DutyCycleEncoder(wristEncoderId);
+  private final CANcoder absoluteEncoder = new CANcoder(wristEncoderId, "rio");
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final PIDController pidController = new PIDController(kP, kI, kD);
+  private final MotionMagicDutyCycle positionRequest = new MotionMagicDutyCycle(0).withSlot(0);
 
   public WristIOTalonFX() {
     var config = new TalonFXConfiguration();
+
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.FeedbackRemoteSensorID = wristEncoderId;
 
     config.Slot0.kP = WristConstants.kP_CTRE;
     config.Slot0.kI = WristConstants.kI_CTRE;
@@ -55,7 +62,7 @@ public class WristIOTalonFX implements WristIO {
   @Override
   public void updateInputs(WristIOInputs inputs) {
     BaseStatusSignal.refreshAll(positionRot, velocityRotPerSec, appliedVolts, currentAmps);
-    inputs.positionAbs = externalEncoder.get();
+    inputs.positionAbs = absoluteEncoder.getPosition().getValueAsDouble();
     inputs.velocityRadPerSec = Units.rotationsToRadians(velocityRotPerSec.getValueAsDouble());
     inputs.appliedVolts = appliedVolts.getValueAsDouble();
     inputs.currentAmps = currentAmps.getValueAsDouble();
@@ -65,6 +72,9 @@ public class WristIOTalonFX implements WristIO {
     inputs.atAlgaeSetpoint = inputs.positionAbs > 0.11 && inputs.positionAbs < 0.13 ? true : false;
     inputs.atL3Setpoint = inputs.positionAbs > 0.45 && inputs.positionAbs < 0.49 ? true : false;
     inputs.atNetSetPoint = inputs.positionAbs > 0.39 && inputs.positionAbs < 0.42 ? true : false;
+    inputs.atNetLobSetPoint = inputs.positionAbs > 0.29 && inputs.positionAbs < 0.32 ? true : false;
+    inputs.atAlgaeHomeSetpoint =
+        inputs.positionAbs > 0.22 && inputs.positionAbs < 0.25 ? true : false;
   }
 
   @Override
@@ -74,7 +84,7 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setWristPosition(double currentPos, double targetPos) {
-    wrist.set(-pidController.calculate(currentPos, targetPos));
+    wrist.setControl(positionRequest.withPosition(targetPos));
     // to be worked on later
     // wrist.setControl(positionVoltage.withPosition(targetPos));
   }

@@ -356,15 +356,18 @@ public class DriveCommands {
     // This is the left/right distance from the Tag center we want to be for placing the coral on
     // the left/right posts.
     // (If M is passed, we're getting the Ball, so we want to be centered.)
-    double sideDistance = 0.25;
+    // double sideDistance = 0.25;
+    double sideDistance = 0.156;
     if (side == 'M') {
-      sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
+      // sideDistance = 0.1; // If we're staying in the middle, there's no side distance.
+      sideDistance = 0; // If we're staying in the middle, there's no side distance.
     } else if (side == 'L') {
-      sideDistance = -0.09; // If going left, flip the side direction
+      sideDistance = -0.17; // If going left, flip the side direction
+      // sideDistance = -0.07; // If going left, flip the side direction
     }
 
     // This is the buffer to the tag position (i.e. don't slam into wall)
-    double forwardDistance = 0.56;
+    double forwardDistance = 0.5;
 
     // 1. Define the movement (forward by forwardDistance units, side by sideDistance units)
     double forwardX = forwardDistance * Math.cos(tagPose.getRotation().getRadians());

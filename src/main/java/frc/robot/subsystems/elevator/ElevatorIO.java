@@ -17,6 +17,8 @@ public interface ElevatorIO {
     public boolean lowerLimit = false;
     public boolean atSetpoint = false;
     public boolean atL4Setpoint = false;
+    public boolean atNetSetpoint = false;
+    public boolean atAutoL4SetPoint = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -26,6 +28,8 @@ public interface ElevatorIO {
   public default void setVoltage(double volts) {}
 
   public default void setElevator(double currentPos, double tragetPos, boolean down) {}
+
+  public default void setElevatorAlgae(double currentPos, double tragetPos, boolean down) {}
 
   public default void runPosition(double positionRad, double feedforward) {}
 

@@ -14,8 +14,6 @@ public interface RampIO {
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
     public boolean atSetpoint = false;
-    // public boolean digitalInputSensor = false;
-    // public boolean limitSwitch2 = false;
   }
 
   /** Update the set of loggable inputs. */
@@ -34,13 +32,9 @@ public interface RampIO {
     return -1;
   }
 
-<<<<<<< HEAD
-  public default void runRampServo(double position) {}
-
   public default double getAngle() {
     return 0.0;
   }
-=======
-  public default void runRampServo(double deegree) {}
->>>>>>> 27dba79ed2d1e852343e156c78377dc936582e6d
+
+  public default void runRampServoSpeed(double speed) {}
 }

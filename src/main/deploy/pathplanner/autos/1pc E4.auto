@@ -11,22 +11,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "E4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Position"
-                }
-              }
-            ]
+            "pathName": "E4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralL4Position"
           }
         },
         {

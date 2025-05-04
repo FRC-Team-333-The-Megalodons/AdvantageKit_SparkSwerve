@@ -1,0 +1,25 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Prep-E4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": "DriveToTheReef",
+  "choreoAuto": false
+}

@@ -39,4 +39,8 @@ public class EndEffecter extends SubsystemBase {
   public boolean isTriggered() {
     return inputs.isTriggered;
   }
+
+  public boolean hasAlgae() {
+    return inputs.hasAlgae;
+  }
 }
