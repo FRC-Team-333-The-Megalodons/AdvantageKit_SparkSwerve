@@ -38,7 +38,7 @@ public class WristIOTalonFX implements WristIO {
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final PIDController pidController = new PIDController(kP, kI, kD);
-  private final MotionMagicDutyCycle positionRequest = new MotionMagicDutyCycle(0).withSlot(0);
+  private final MotionMagicDutyCycle positionRequest = new MotionMagicDutyCycle(0);
 
   public WristIOTalonFX() {
     var config = new TalonFXConfiguration();

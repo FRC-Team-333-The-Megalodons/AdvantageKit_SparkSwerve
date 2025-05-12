@@ -28,7 +28,7 @@ public class WristConstants {
   public static final double kD = 0.05;
 
   // OnBoard PID Controller
-  public static final double kP_CTRE = 6.2;
+  public static final double kP_CTRE = 0;
   public static final double kI_CTRE = 0;
   public static final double kD_CTRE = 0;
 }
