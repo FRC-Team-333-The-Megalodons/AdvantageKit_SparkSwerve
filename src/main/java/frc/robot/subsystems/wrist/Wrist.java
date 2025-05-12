@@ -65,7 +65,8 @@ public class Wrist extends SubsystemBase {
   public boolean atAlgaeHomeSetpoint() {
     return inputs.atAlgaeHomeSetpoint;
   }
-  public double getCurrentPosition(){
+
+  public double getCurrentPosition() {
     return inputs.positionAbs;
   }
 }

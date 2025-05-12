@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -41,14 +42,21 @@ public class WristIOTalonFX implements WristIO {
 
   public WristIOTalonFX() {
     var config = new TalonFXConfiguration();
+    var motionMagicConfigs = config.MotionMagic;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.FeedbackRemoteSensorID = wristEncoderId;
 
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    motionMagicConfigs.MotionMagicCruiseVelocity = 500;
+    // motionMagicConfigs.MotionMagicAcceleration = 160;
+    // motionMagicConfigs.MotionMagicJerk = 1600;
+
     config.Slot0.kP = WristConstants.kP_CTRE;
     config.Slot0.kI = WristConstants.kI_CTRE;
     config.Slot0.kD = WristConstants.kD_CTRE;
-    config.CurrentLimits.SupplyCurrentLimit = currentLimit;
+    config.Slot0.kV = config.CurrentLimits.SupplyCurrentLimit = currentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 

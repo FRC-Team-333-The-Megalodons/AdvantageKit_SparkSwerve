@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutomatedCommands;
@@ -192,8 +191,11 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-        wrist.setDefaultCommand(endEffecter.isTriggered() ? wrist.setWristPosition(WristConstants.coralL23Setpoint) : wrist.setWristPosition(wrist.getCurrentPosition()));
-            operatorController
+    // wrist.setDefaultCommand(
+    //     endEffecter.isTriggered()
+    //         ? wrist.setWristPosition(WristConstants.coralL23Setpoint)
+    //         : wrist.setWristPosition(wrist.getCurrentPosition()));
+    operatorController
         .L2()
         .whileTrue(
             AutomatedCommands.homeCommand(wrist, elevator, ramp, endEffecter)
@@ -497,8 +499,10 @@ public class RobotContainer { // Subsystems
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
-    wrist.setDefaultCommand(endEffecter.isTriggered() ? wrist.setWristPosition(WristConstants.coralL23Setpoint) : wrist.setWristPosition(wrist.getCurrentPosition()));
-
+    // wrist.setDefaultCommand(
+    //     endEffecter.isTriggered()
+    //         ? wrist.setWristPosition(WristConstants.coralL23Setpoint)
+    //         : wrist.setWristPosition(wrist.getCurrentPosition()));
 
     driverController
         .L2()
