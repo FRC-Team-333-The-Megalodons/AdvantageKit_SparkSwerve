@@ -168,10 +168,4 @@ public class AutomatedCommands {
         .setWristPosition(WristConstants.algaeHomeSetpoint)
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true));
   }
-
-  public static Command moveWristAfterIntakingCoral(EndEffecter endEffecter, Wrist wrist){
-    return EndEffecterCommands.runEndEffecterForward(endEffecter)
-          .until(endEffecter::isTriggered).andThen(
-           wrist.setWristPosition(WristConstants.coralL23Setpoint));
-  }
 }
