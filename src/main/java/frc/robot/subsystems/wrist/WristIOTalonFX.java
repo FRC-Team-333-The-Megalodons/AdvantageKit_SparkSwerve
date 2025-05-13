@@ -92,8 +92,12 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setWristPosition(double currentPos, double targetPos) {
-    wrist.setControl(positionRequest.withPosition(targetPos));
-    // to be worked on later
-    // wrist.setControl(positionVoltage.withPosition(targetPos));
+    wrist.set(pidController.calculate(currentPos, targetPos));
   }
+  // @Override
+  // public void setWristPosition(double currentPos, double targetPos) {
+  //   wrist.setControl(positionRequest.withPosition(targetPos));
+  //   // to be worked on later
+  //   // wrist.setControl(positionVoltage.withPosition(targetPos));
+  // }
 }
