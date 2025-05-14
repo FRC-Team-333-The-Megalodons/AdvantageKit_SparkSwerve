@@ -123,8 +123,11 @@ public class RobotContainer { // Subsystems
     configureDriverControllerBindings();
     configureOperatorControllerSmartModeBindings();
 
-    wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
+    // wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
     elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
+    // wrist.setDefaultCommand(AutomatedCommands.moveWristAfterIntakingCoral(endEffecter, wrist));
+    wrist.setDefaultCommand(
+        wrist.setWristPosition(WristConstants.coralL23Setpoint).onlyIf(endEffecter::isTriggered));
   }
 
   public void configureDriverControllerBindings() {
@@ -191,10 +194,6 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-    // wrist.setDefaultCommand(
-    //     endEffecter.isTriggered()
-    //         ? wrist.setWristPosition(WristConstants.coralL23Setpoint)
-    //         : wrist.setWristPosition(wrist.getCurrentPosition()));
     operatorController
         .L2()
         .whileTrue(
