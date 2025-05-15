@@ -123,7 +123,7 @@ public class RobotContainer { // Subsystems
     configureDriverControllerBindings();
     configureOperatorControllerSmartModeBindings();
 
-    // wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
+    wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
     elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
     // wrist.setDefaultCommand(AutomatedCommands.moveWristAfterIntakingCoral(endEffecter, wrist));
     wrist.setDefaultCommand(
