@@ -12,23 +12,23 @@ public class WristConstants {
   public static final double speed = 0.1;
 
   // Wrist Setpoints
-  public static final double homeSetpoint = 0.042;
+  public static final double homeSetpoint = 0.002;
   public static final double coralL1Setpoint = 0.47;
   public static final double coralL23Setpoint = 0.087;
-  public static final double coralL4Setpoint = 0.25; // 0.49;
+  public static final double coralL4Setpoint = 0.154; // 0.49;
   public static final double processorSetpoint = 0.125;
   public static final double netSetPoint = 0.4;
-  public static final double netLobSetPoint = 0.3;
-  public static final double aglaeSetpoint = 0.47;
+  public static final double netLobSetPoint = 0.2;
+  public static final double aglaeSetpoint = 0.441;
   public static final double algaeHomeSetpoint = 0.244;
 
   // PID Constants
-  public static final double kP = 3.9;
+  public static final double kP = 3;
   public static final double kI = 0.0;
   public static final double kD = 0.05;
 
   // OnBoard PID Controller
-  public static final double kP_CTRE = 6.2;
+  public static final double kP_CTRE = 0;
   public static final double kI_CTRE = 0;
   public static final double kD_CTRE = 0;
 }

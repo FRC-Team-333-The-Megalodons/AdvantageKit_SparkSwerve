@@ -36,4 +36,6 @@ public interface ElevatorIO {
   public default void setPID(double kP, double kI, double kD) {}
 
   public default void resetEncoder() {}
+
+  default void setBrakeMode(boolean enabled) {}
 }

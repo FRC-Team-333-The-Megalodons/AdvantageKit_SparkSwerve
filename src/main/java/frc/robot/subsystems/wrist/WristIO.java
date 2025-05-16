@@ -32,4 +32,6 @@ public interface WristIO {
   public default void setSpeed(double speed) {}
 
   public default void setWristPosition(double currentPos, double targetPos) {}
+
+  default void setBrakeMode(boolean enabled) {}
 }

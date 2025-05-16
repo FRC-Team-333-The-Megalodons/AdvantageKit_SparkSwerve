@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -37,18 +38,25 @@ public class WristIOTalonFX implements WristIO {
 
   private final VoltageOut voltageRequest = new VoltageOut(0.0);
   private final PIDController pidController = new PIDController(kP, kI, kD);
-  private final MotionMagicDutyCycle positionRequest = new MotionMagicDutyCycle(0).withSlot(0);
+  private final MotionMagicDutyCycle positionRequest = new MotionMagicDutyCycle(0);
 
   public WristIOTalonFX() {
     var config = new TalonFXConfiguration();
+    var motionMagicConfigs = config.MotionMagic;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.FeedbackRemoteSensorID = wristEncoderId;
 
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    motionMagicConfigs.MotionMagicCruiseVelocity = 500;
+    // motionMagicConfigs.MotionMagicAcceleration = 160;
+    // motionMagicConfigs.MotionMagicJerk = 1600;
+
     config.Slot0.kP = WristConstants.kP_CTRE;
     config.Slot0.kI = WristConstants.kI_CTRE;
     config.Slot0.kD = WristConstants.kD_CTRE;
-    config.CurrentLimits.SupplyCurrentLimit = currentLimit;
+    config.Slot0.kV = config.CurrentLimits.SupplyCurrentLimit = currentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -70,7 +78,10 @@ public class WristIOTalonFX implements WristIO {
     inputs.atL4Setpoint = inputs.positionAbs > 0.32 && inputs.positionAbs < 0.36 ? true : false;
     inputs.atHomePosition = inputs.positionAbs > 0.54 && inputs.positionAbs < 0.57 ? true : false;
     inputs.atAlgaeSetpoint = inputs.positionAbs > 0.11 && inputs.positionAbs < 0.13 ? true : false;
-    inputs.atL3Setpoint = inputs.positionAbs > 0.45 && inputs.positionAbs < 0.49 ? true : false;
+    inputs.atL3Setpoint =
+        inputs.positionAbs > coralL23Setpoint - 0.01 && inputs.positionAbs < coralL23Setpoint + 0.01
+            ? true
+            : false;
     inputs.atNetSetPoint = inputs.positionAbs > 0.39 && inputs.positionAbs < 0.42 ? true : false;
     inputs.atNetLobSetPoint = inputs.positionAbs > 0.29 && inputs.positionAbs < 0.32 ? true : false;
     inputs.atAlgaeHomeSetpoint =
@@ -84,8 +95,12 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setWristPosition(double currentPos, double targetPos) {
-    wrist.setControl(positionRequest.withPosition(targetPos));
-    // to be worked on later
-    // wrist.setControl(positionVoltage.withPosition(targetPos));
+    wrist.set(pidController.calculate(currentPos, targetPos));
   }
+  // @Override
+  // public void setWristPosition(double currentPos, double targetPos) {
+  //   wrist.setControl(positionRequest.withPosition(targetPos));
+  //   // to be worked on later
+  //   // wrist.setControl(positionVoltage.withPosition(targetPos));
+  // }
 }

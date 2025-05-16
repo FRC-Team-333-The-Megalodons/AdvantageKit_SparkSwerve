@@ -125,6 +125,9 @@ public class RobotContainer { // Subsystems
 
     wrist.setDefaultCommand(wrist.runPercent(operatorController.getRightY()));
     elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
+    // wrist.setDefaultCommand(AutomatedCommands.moveWristAfterIntakingCoral(endEffecter, wrist));
+    wrist.setDefaultCommand(
+        wrist.setWristPosition(WristConstants.coralL23Setpoint).onlyIf(endEffecter::isTriggered));
   }
 
   public void configureDriverControllerBindings() {
@@ -191,7 +194,6 @@ public class RobotContainer { // Subsystems
   }
 
   public void configureOperatorControllerSmartModeBindings() {
-
     operatorController
         .L2()
         .whileTrue(
@@ -496,6 +498,10 @@ public class RobotContainer { // Subsystems
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
+    // wrist.setDefaultCommand(
+    //     endEffecter.isTriggered()
+    //         ? wrist.setWristPosition(WristConstants.coralL23Setpoint)
+    //         : wrist.setWristPosition(wrist.getCurrentPosition()));
 
     driverController
         .L2()
@@ -526,6 +532,8 @@ public class RobotContainer { // Subsystems
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    driverController.PS().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     driverController
         .touchpad()

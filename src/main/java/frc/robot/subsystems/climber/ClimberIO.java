@@ -46,4 +46,6 @@ public interface ClimberIO {
   }
 
   public default void stopServo() {}
+
+  default void setBrakeMode(boolean enabled) {}
 }
