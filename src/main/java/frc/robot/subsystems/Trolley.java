@@ -27,12 +27,14 @@ import frc.robot.Constants.TrolleyConstants;
 
 public class Trolley extends SubsystemBase {
 
- private final SparkFlex trolleyMotor = new SparkFlex(0, MotorType.kBrushless);
+  private Pivot pivotRef;
+  private Wrist wristRef;
+
+ private SparkFlex trolleyMotor = new SparkFlex(0, MotorType.kBrushless);
   private final RelativeEncoder internalEncoder = trolleyMotor.getEncoder();
   private final DutyCycleEncoder externalEncoder = new DutyCycleEncoder(0);
   private final PIDController trolleyController = new PIDController(TrolleyConstants.kP, TrolleyConstants.kI, TrolleyConstants.kD);
-  private Pivot pivotRef; // Needed to check limits.
-  private Wrist wristRef;
+  private PIDController trolleyPIDController;
   private DigitalInput maxOutLimitSwitch, minInLimitSwitch;
 
   
@@ -40,30 +42,25 @@ public class Trolley extends SubsystemBase {
   private AnalogPotentiometer potentiometer;
 
   public Trolley() {
+    var config = new SparkFlexConfig();
     trolleyMotor = new SparkFlex(TrolleyConstants.TROLLEY_MOTOR_ID, MotorType.kBrushless);
+    trolleyPIDController = new PIDController(TrolleyConstants.kP, TrolleyConstants.kI, TrolleyConstants.kD);
+    config.idleMode(IdleMode.kBrake);
     maxOutLimitSwitch = new DigitalInput(TrolleyConstants.TROLLEY_OUT_LIMIT_SWITCH_ID);
     minInLimitSwitch = new DigitalInput(TrolleyConstants.TROLLEY_IN_LIMIT_SWITCH_ID);
 
 
     // Removed restoreFactoryDefaults() as it is not defined for SparkFlex
 
-    trolleyController = trolleyMotor.getPIDController();
-    trolleyController.setFeedbackDevice(trolleyMotor.getEncoder());
-    trolleyController.setP(TrolleyConstants.kP);
-    trolleyController.setI(TrolleyConstants.kI);
-    trolleyController.setD(TrolleyConstants.kD);
-    trolleyController.setFF(TrolleyConstants.kFF);
-    trolleyController.setOutputRange(TrolleyConstants.MIN_INPUT, TrolleyConstants.MAX_INPUT);
+    // trolleyController.setP(TrolleyConstants.kP);
+    // trolleyController.setI(TrolleyConstants.kI);
+    // trolleyController.setD(TrolleyConstants.kD);
+    // trolleyController.setOutputRange(TrolleyConstants.MIN_INPUT, TrolleyConstants.MAX_INPUT);
 
-    SparkFlexConfig config = trolleyMotor.getConfig();
-    trolleyMotor.setIdleMode(IdleMode.kBrake);
+    //SparkFlexConfig config = trolleyMotor.getConfig();
+    //trolleyMotor.setIdleMode(IdleMode.kBrake);
 
-    trolleyMotor.burnFlash();
-
-    
-    potInput = new AnalogInput(TrolleyConstants.TROLLEY_POTENTIOMETER_ID);
-    potInput.setAverageBits(2); // enable 2-bit averaging to smooth it out
-    potentiometer = new AnalogPotentiometer(potInput);
+ //   trolleyMotor.burnFlash();
 
   }
 
@@ -100,7 +97,7 @@ public class Trolley extends SubsystemBase {
   }
 
   public void setPosition(double setpoint) {
-    trolleyController.setReference(setpoint, ControlType.kPosition);
+    trolleyController.setSetpoint(setpoint);
   }
 
   public boolean atSetpoint(double setpoint) {

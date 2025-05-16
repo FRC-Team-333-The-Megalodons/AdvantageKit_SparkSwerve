@@ -6,15 +6,17 @@ package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
 
-import static frc.robot.util.SparkUtil.*;
-
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.controller.PIDController;
 import java.util.function.DoubleSupplier;
 
@@ -25,13 +27,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.TrolleyConstants;
+import frc.robot.Constants.WristConstants;
 
 public class Pivot extends SubsystemBase {
- // private CANSparkMax pivotMotorLeader, pivotMotorFollower;
-  private CANSparkFlex pivotMotorLeader, pivotMotorFollower;
-  private DutyCycleEncoder pivotEncoder;
-  private PhotonCamera camera;
 
+  private SparkFlex pivotMotorLeader, pivotMotorFollower;
+  private DutyCycleEncoder pivotEncoder;
   private PIDController pivotController;
 
   private final double cameraHeightMeters = Units.inchesToMeters(0);
@@ -44,9 +45,21 @@ public class Pivot extends SubsystemBase {
   private Trolley trolleyRef; 
   private Wrist wristRef;
   /** Creates a new Pivot. */
-    pivotMotorLeader = new CANSparkMax(PivotConstants.MOTOR1_ID, CANSparkMax.MotorType.kBrushless);
-    pivotMotorFollower = new CANSparkMax(PivotConstants.MOTOR2_ID, CANSparkMax.MotorType.kBrushless);
-    pivotMotorFollower = new CANSparkFlex(PivotConstants.MOTOR2_ID, MotorType.kBrushless);
+  public Pivot() {
+        var config = new SparkMaxConfig();
+        pivotMotorLeader = new SparkFlex(PivotConstants.PIVOT_MOTOR1_ID, MotorType.kBrushless);
+        
+        wristPIDController = new PIDController(0.05, 0, 0);
+        config.idleMode(IdleMode.kBrake);
+        //wristEncoder = wristMotor.getAlternateEncoder(kCPR);
+        wristEncoder = wristMotor.getAbsoluteEncoder();
+        // wristPIDController.setP(0.05);
+        // wristPIDController.setI(0);
+        // wristPIDController.setD(0);
+        wristMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+    pivotMotorLeader = new SparkFlex(PivotConstants.MOTOR1_ID, MotorType.kBrushless);
+    pivotMotorFollower = new SparkFlex(PivotConstants.MOTOR2_ID, MotorType.kBrushless);
 
     pivotMotorLeader.restoreFactoryDefaults();
     pivotMotorFollower.restoreFactoryDefaults();
@@ -65,7 +78,8 @@ public class Pivot extends SubsystemBase {
 
     pivotController = new PIDController(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD);
 
-  // camera = new PhotonCamera("camera");
+    // camera = new PhotonCamera("camera");
+  }
 
   public void setTrolleyRef(Trolley _trolleyRef) {
     trolleyRef = _trolleyRef;
