@@ -6,8 +6,15 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,8 +26,8 @@ import frc.robot.Constants.TrolleyConstants;
 import frc.robot.Constants.WristConstants;
 /** Add your docs here. */
 public class Wrist extends SubsystemBase {
-    private final CANSparkMax wristMotor;
-    private final CANPIDController wristPIDController;
+    private final SparkMax wristMotor;
+    private final PIDController wristPIDController;
     //private RelativeEncoder wristEncoder;
     private AbsoluteEncoder wristEncoder;
     private Trolley m_trolleyRef;
@@ -29,17 +36,16 @@ public class Wrist extends SubsystemBase {
     private static int kCPR = 8192; // Constant for Counts Per Revolution (CPR) from REV's website for REV Through Bore 
 
     public Wrist() {
-        wristMotor = new CANSparkMax(WristConstants.WRIST_MOTOR_ID, MotorType.kBrushless);
-
-        wristMotor.setIdleMode(IdleMode.kBrake);
-        wristPIDController = wristMotor.getPIDController();
+        var config = new SparkMaxConfig();
+        wristMotor = new SparkMax(WristConstants.WRIST_MOTOR_ID, MotorType.kBrushless);
+        wristPIDController = new PIDController(0.05, 0, 0);
+        config.idleMode(IdleMode.kBrake);
         //wristEncoder = wristMotor.getAlternateEncoder(kCPR);
-        wristEncoder = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-        wristEncoder.setZeroOffset(0.15);
-        wristPIDController.setP(0.05);
-        wristPIDController.setI(0);
-        wristPIDController.setD(0);
-        wristPIDController.setFeedbackDevice(wristEncoder);
+        wristEncoder = wristMotor.getAbsoluteEncoder();
+        // wristPIDController.setP(0.05);
+        // wristPIDController.setI(0);
+        // wristPIDController.setD(0);
+        wristMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setTrollyRef(Trolley trolleyRef)
@@ -57,7 +63,7 @@ public class Wrist extends SubsystemBase {
         wristMotor.set(0);
     }
     public void wristController(double setpoint){
-        wristPIDController.setReference(setpoint, ControlType.kPosition);
+        wristMotor.set(wristPIDController.calculate(wristEncoder.getPosition(), setpoint));
     }
     public double getPosition(){return wristEncoder.getPosition();}
     public boolean atSetpoint(){
