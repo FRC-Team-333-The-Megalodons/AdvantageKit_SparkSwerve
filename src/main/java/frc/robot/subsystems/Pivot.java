@@ -4,30 +4,18 @@
 
 package frc.robot.subsystems;
 
-import org.photonvision.PhotonCamera;
-
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.math.controller.PIDController;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
-import frc.robot.Constants.TrolleyConstants;
-import frc.robot.Constants.WristConstants;
 
 public class Pivot extends SubsystemBase {
 
@@ -42,37 +30,23 @@ public class Pivot extends SubsystemBase {
   // How far from the target we want to be
   private final double goalRangeMeters = Units.feetToMeters(0);
 
-  private Trolley trolleyRef; 
+  private Trolley trolleyRef;
   private Wrist wristRef;
   /** Creates a new Pivot. */
   public Pivot() {
-        var config = new SparkMaxConfig();
-        pivotMotorLeader = new SparkFlex(PivotConstants.PIVOT_MOTOR1_ID, MotorType.kBrushless);
-        
-        wristPIDController = new PIDController(0.05, 0, 0);
-        config.idleMode(IdleMode.kBrake);
-        //wristEncoder = wristMotor.getAlternateEncoder(kCPR);
-        wristEncoder = wristMotor.getAbsoluteEncoder();
-        // wristPIDController.setP(0.05);
-        // wristPIDController.setI(0);
-        // wristPIDController.setD(0);
-        wristMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    }
-    pivotMotorLeader = new SparkFlex(PivotConstants.MOTOR1_ID, MotorType.kBrushless);
-    pivotMotorFollower = new SparkFlex(PivotConstants.MOTOR2_ID, MotorType.kBrushless);
+    var config = new SparkMaxConfig();
+    pivotMotorLeader = new SparkFlex(PivotConstants.PIVOT_MOTOR1_ID, MotorType.kBrushless);
 
-    pivotMotorLeader.restoreFactoryDefaults();
-    pivotMotorFollower.restoreFactoryDefaults();
-
-    pivotMotorLeader.setIdleMode(IdleMode.kBrake);
-    pivotMotorFollower.setIdleMode(IdleMode.kBrake);
-
-    
-    pivotMotorFollower.follow(pivotMotorLeader);
-
-    pivotMotorLeader.burnFlash();
-    pivotMotorFollower.burnFlash();
-
+    pivotController = new PIDController(0.05, 0, 0);
+    config.idleMode(IdleMode.kBrake);
+    // pivotMotorLeader = pivotMotorLeader.getAlternateEncoder(kCPR);
+    // wristPIDController.setP(0.05);
+    // wristPIDController.setI(0);
+    // wristPIDController.setD(0);
+    pivotMotorLeader.configure(
+        config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    pivotMotorLeader = new SparkFlex(PivotConstants.PIVOT_MOTOR1_ID, MotorType.kBrushless);
+    pivotMotorFollower = new SparkFlex(PivotConstants.PIVOT_MOTOR2_ID, MotorType.kBrushless);
 
     pivotEncoder = new DutyCycleEncoder(PivotConstants.PIVOT_ENCODER_ID);
 
@@ -85,7 +59,7 @@ public class Pivot extends SubsystemBase {
     trolleyRef = _trolleyRef;
   }
 
-  public void setWristRef(Wrist _wristRef){
+  public void setWristRef(Wrist _wristRef) {
     wristRef = _wristRef;
   }
 
@@ -110,31 +84,20 @@ public class Pivot extends SubsystemBase {
     pivotMotorFollower.set(0.0);
   }
 
-  
   public boolean fuzzyEquals(double a, double b) {
     final double epsilon = 0.001;
-    return Math.abs(a-b) < epsilon;
+    return Math.abs(a - b) < epsilon;
   }
 
   public boolean isOkToMovePivotUp() {
     // For now, just return true here because my checks aren't working
     return true;
-    /*
-    if (m_trolleyRef.isTrolleyTooFarInToPivotUpPastBumper())
-    {
-        return getPivotPosition() > PivotConstants.PIVOT_UP_FAR_ENOUGH_THAT_TROLLEY_COULD_HIT_BACK_BUMPER;
-    }
-    if (m_trolleyRef.isTrolleyTooFarInToPivotVertical())
-    {
-        return getPivotPosition() > PivotConstants.PIVOT_UP_FAR_ENOUGH_THAT_TROLLEY_COULD_HIT_UNDERBELLY;
-    }
-    return true;
-    */
   }
 
   public boolean isOkToMovePivotDown() {
     if (trolleyRef.isTrolleyOut()) {
-      // If the Trolley is out, then we can only move down if we're above the "trolley can move safely" setpoint.
+      // If the Trolley is out, then we can only move down if we're above the "trolley can move
+      // safely" setpoint.
       return getPosition() < PivotConstants.PIVOT_FURTHEST_DOWN_WHERE_TROLLEY_CAN_MOVE;
     }
     return true;
@@ -152,28 +115,18 @@ public class Pivot extends SubsystemBase {
 
   public double getPosition() {
     // return (pivotEncoder.getAbsolutePosition() * -1) + 1.0;
-    return pivotEncoder.getAbsolutePosition();
+    return pivotEncoder.get();
   }
-
 
   public void setPosition(double setpoint) {
     double speed = pivotController.calculate(getPosition(), setpoint);
     runPivot(speed);
   }
 
-  public void trackTarget() {
-    var result = camera.getLatestResult();
-
-    if (result.hasTargets()) {
-      pivotMotorLeader.set(pivotController.calculate(result.getBestTarget().getYaw(), 0));
-    } else {
-      stopPivot();
-    }
-  }
-
   private boolean mustStopDueToLimit(double speed) {
     return false;
-    // // TODO: Is positive Up or Down? This code assumes value > 0 means "go Up", might need to be flipped if not so.
+    // // TODO: Is positive Up or Down? This code assumes value > 0 means "go Up", might need to be
+    // flipped if not so.
     // return ((speed > 0 && getPosition() >= getUpLimitFromState()) ||
     //         (speed < 0 && getPosition() <= getDownLimitFromState()));
   }
@@ -182,8 +135,9 @@ public class Pivot extends SubsystemBase {
   // private double getDownLimitFromState()
   // {
   //   if (trolleyRef.getPivotPosition() > TrolleyConstants.INTAKE_SETPOINT_POS) {
-  //     // This intends to say "if the trolley position is towards the front, don't let us move the Pivot down"
-  //     return PivotConstants.HOME_SETPOINT_POS; 
+  //     // This intends to say "if the trolley position is towards the front, don't let us move the
+  // Pivot down"
+  //     return PivotConstants.HOME_SETPOINT_POS;
   //   }
   //   return PivotConstants.AMP_SETPOINT_POS;
   // }
@@ -192,7 +146,8 @@ public class Pivot extends SubsystemBase {
   // private double getUpLimitFromState()
   // {
   //   if (trolleyRef.getPosition() < TrolleyConstants.HOME_SETPOINT_POS) {
-  //     // This intends to say "if the trolley position is towards the back, don't let us move the Pivot up"
+  //     // This intends to say "if the trolley position is towards the back, don't let us move the
+  // Pivot up"
   //     return PivotConstants.HOME_SETPOINT_POS;
   //   }
 
@@ -202,7 +157,7 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     final String PREFIX = "Pivot ";
-    SmartDashboard.putNumber(PREFIX+"Position", getPosition());
-    SmartDashboard.putBoolean(PREFIX+"Setpoint", pivotController.atSetpoint());
+    SmartDashboard.putNumber(PREFIX + "Position", getPosition());
+    SmartDashboard.putBoolean(PREFIX + "Setpoint", pivotController.atSetpoint());
   }
 }

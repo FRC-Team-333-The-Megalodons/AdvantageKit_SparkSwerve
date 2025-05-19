@@ -4,51 +4,25 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.util.SparkUtil.*;
-
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.math.controller.PIDController;
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
-
-  private CANSparkFlex topMotor;
-  private CANSpark
-
-  private SparkPIDController shooterController;
+  private final SparkFlex topMotor;
+  private final SparkFlex bottomMotor;
 
   /** Creates a new Shooter. */
   public Shooter() {
-    topMotor = new CANSparkFlex(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
-    bottomMotor = new CANSparkFlex(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+    var config = new SparkFlexConfig();
 
-    topMotor.restoreFactoryDefaults();
-    bottomMotor.restoreFactoryDefaults();
+    topMotor = new SparkFlex(9, MotorType.kBrushless);
+    bottomMotor = new SparkFlex(8, MotorType.kBrushless);
 
-    shooterController = topMotor.getPIDController();
-    shooterController.setFeedbackDevice(topMotor.getEncoder());
-    shooterController.setP(ShooterConstants.kP);
-    shooterController.setI(ShooterConstants.kI);
-    shooterController.setD(ShooterConstants.kD);
-    shooterController.setFF(ShooterConstants.kFF);
-    shooterController.setOutputRange(ShooterConstants.MIN_INPUT, ShooterConstants.MAX_INPUT);
-
-    topMotor.setInverted(true);
-
-    topMotor.setIdleMode(IdleMode.kCoast);
-    bottomMotor.setIdleMode(IdleMode.kCoast);
-
-    topMotor.burnFlash();
-    bottomMotor.burnFlash();
+    config.idleMode(IdleMode.kBrake);
   }
 
   public double getVelocity() {
@@ -57,7 +31,7 @@ public class Shooter extends SubsystemBase {
 
   public void runShooter(double value) {
     topMotor.set(value);
-    bottomMotor.follow(topMotor);
+    bottomMotor.set(value);
   }
 
   public void stopShooter() {
@@ -65,14 +39,13 @@ public class Shooter extends SubsystemBase {
     bottomMotor.set(0.0);
   }
 
-  public void setSpeed(double speed) {
-    shooterController.setReference(speed, ControlType.kVelocity);
-    bottomMotor.follow(topMotor);
-  }
+  // public void setSpeed(double speed) {
+  //   shooterController.setReference(speed, ControlType.kVelocity);
+  //   bottomMotor.follow(topMotor);
+  // }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Speed", getVelocity());
   }
 }
-

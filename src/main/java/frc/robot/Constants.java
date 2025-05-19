@@ -115,6 +115,7 @@ public final class Constants {
     public static final double PIVOT_INTAKE_POSITION = 0.37;
     public static final double PIVOT_UP_FAR_ENOUGH_THAT_TROLLEY_COULD_HIT_BACK_BUMPER = 0.44;
     public static final double PIVOT_UP_FAR_ENOUGH_THAT_TROLLEY_COULD_HIT_UNDERBELLY = 0.48;
+    public static final int MOTOR2_ID = 0;
   }
 
   public static final class ShooterConstants {
