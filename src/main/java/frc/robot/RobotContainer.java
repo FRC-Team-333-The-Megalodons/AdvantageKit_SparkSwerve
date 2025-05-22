@@ -497,7 +497,8 @@ public class RobotContainer { // Subsystems
   public void getTestModeControllerBindings() {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX()));
+                drive, () -> getDriverLeftY(), () -> getDriverLeftX(), () -> getDriverRightX())
+            .withName("Driving"));
     // wrist.setDefaultCommand(
     //     endEffecter.isTriggered()
     //         ? wrist.setWristPosition(WristConstants.coralL23Setpoint)
@@ -512,7 +513,8 @@ public class RobotContainer { // Subsystems
                         ? EndEffecterCommands.runEndEffecterBackward(endEffecter)
                             .until(endEffecter::hasAlgae)
                         : EndEffecterCommands.runEndEffecterForward(endEffecter)
-                            .until(endEffecter::isTriggered)));
+                            .until(endEffecter::isTriggered))
+                .withName("HomePos"));
 
     // driverController
     //     .povLeft()
@@ -531,61 +533,89 @@ public class RobotContainer { // Subsystems
                         drive.setPose(
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
+                .withName("ResetTheGyro")
                 .ignoringDisable(true));
 
-    driverController.PS().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController
+        .PS()
+        .onTrue(Commands.runOnce(drive::stopWithX, drive).withName("LockTheWheels"));
 
     driverController
         .touchpad()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> getDriverLeftY(),
-                () -> getDriverLeftX(),
-                () -> getDriverRightX(), // only used if no valid reef angle
-                () -> Rotation2d.fromDegrees(Drive.reefDriveAngle(vision))));
+                    drive,
+                    () -> getDriverLeftY(),
+                    () -> getDriverLeftX(),
+                    () -> getDriverRightX(), // only used if no valid reef angle
+                    () -> Rotation2d.fromDegrees(Drive.reefDriveAngle(vision)))
+                .withName("RotatingTowardsTheReef"));
 
     driverController
         .povDown()
         .whileTrue(
             AutomatedCommands.algaeL2Command(endEffecter, wrist, elevator)
-                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
+                .withName("AlgaeL2Pos"));
     driverController
         .povUp()
         .whileTrue(
             AutomatedCommands.algaeL3Command(endEffecter, wrist, elevator)
-                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
+                .withName("AlgaeL3Pos"));
     driverController
         .options() // get ready
-        .whileTrue(climber.getClimberOutCommand(ramp));
+        .whileTrue(climber.getClimberOutCommand(ramp).withName("ClimberOut"));
 
     driverController
         .create() // actually climb
-        .whileTrue(climber.getClimberInCommand());
+        .whileTrue(climber.getClimberInCommand().withName("Climb"));
 
     driverController
         .R1()
         .whileTrue(
             AutomatedCommands.processorCommand(endEffecter, wrist, elevator)
-                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter)));
+                .alongWith(EndEffecterCommands.runEndEffecterBackward(endEffecter))
+                .withName("ProcessorPos"));
+
     driverController.L1().whileTrue(AutomatedCommands.netLobCommand(endEffecter, wrist, elevator));
-    driverController.R2().whileTrue(EndEffecterCommands.runEndEffecterForward(endEffecter));
+    driverController
+        .R2()
+        .whileTrue(
+            EndEffecterCommands.runEndEffecterForward(endEffecter)
+                .withName("RunEndEffectorForward"));
 
     driverController
         .triangle()
-        .whileTrue(AutomatedCommands.coralL4Command(endEffecter, wrist, elevator));
+        .whileTrue(
+            AutomatedCommands.coralL4Command(endEffecter, wrist, elevator).withName("L4Pos"));
     driverController
         .circle()
-        .whileTrue(AutomatedCommands.coralL3Command(endEffecter, wrist, elevator));
+        .whileTrue(
+            AutomatedCommands.coralL3Command(endEffecter, wrist, elevator).withName("L3Pos"));
     driverController
         .square()
-        .whileTrue(AutomatedCommands.coralL2Command(endEffecter, wrist, elevator));
+        .whileTrue(
+            AutomatedCommands.coralL2Command(endEffecter, wrist, elevator).withName("L2Pos"));
 
-    driverController.cross().whileTrue(EndEffecterCommands.runEndEffecterBackward(endEffecter));
+    driverController
+        .cross()
+        .whileTrue(
+            EndEffecterCommands.runEndEffecterBackward(endEffecter)
+                .withName("RunEndEffectorBackwards"));
     driverController
         .povLeft()
-        .whileTrue(DriveCommands.generatePreciseDriveToReefCommand('M', drive));
-    driverController.L3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('L', drive));
-    driverController.R3().whileTrue(DriveCommands.generatePreciseDriveToReefCommand('R', drive));
+        .whileTrue(
+            DriveCommands.generatePreciseDriveToReefCommand('M', drive)
+                .withName("DriveToTheMiddle"));
+    driverController
+        .L3()
+        .whileTrue(
+            DriveCommands.generatePreciseDriveToReefCommand('L', drive).withName("DriveToTheLeft"));
+    driverController
+        .R3()
+        .whileTrue(
+            DriveCommands.generatePreciseDriveToReefCommand('R', drive)
+                .withName("DriveToTheRight"));
   }
 }
