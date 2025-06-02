@@ -50,6 +50,7 @@ public class WristIOTalonFX implements WristIO {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     motionMagicConfigs.MotionMagicCruiseVelocity = 500;
+
     // motionMagicConfigs.MotionMagicAcceleration = 160;
     // motionMagicConfigs.MotionMagicJerk = 1600;
 
@@ -61,6 +62,7 @@ public class WristIOTalonFX implements WristIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     tryUntilOk(5, () -> wrist.getConfigurator().apply(config, 0.25));
+    tryUntilOk(5, () -> wrist.getConfigurator().apply(motionMagicConfigs, 0.25));
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, positionRot, velocityRotPerSec, appliedVolts, currentAmps);
@@ -95,7 +97,8 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setWristPosition(double currentPos, double targetPos) {
-    wrist.set(pidController.calculate(currentPos, targetPos));
+    // wrist.set(pidController.calculate(currentPos, targetPos));
+    wrist.setControl(positionRequest.withPosition());
   }
   // @Override
   // public void setWristPosition(double currentPos, double targetPos) {

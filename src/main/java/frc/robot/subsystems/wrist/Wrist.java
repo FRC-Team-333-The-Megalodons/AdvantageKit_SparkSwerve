@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 public class Wrist extends SubsystemBase {
   private final WristIO io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
-
+  // UR GAY
   public Wrist(WristIO io) {
     this.io = io;
   }
