@@ -6,9 +6,9 @@ Can score corals all levels, algaes net and processor, human player station cora
 
 
 Controller(PS5) layout for 2 drivers mode:
-  
+
   Driver controller:
-  
+
     L3 - lock the wheels
     R3 - vision(rotation towards the reef)
     PS - reset the gyro
@@ -33,11 +33,3 @@ Controller(PS5) layout for 2 drivers mode:
     circle - L3 coral position
     square - L2 coral position
     button(15) - switch from samrt to manual mode
-    
-    
-    
-    
-    
-    
-    
-    
