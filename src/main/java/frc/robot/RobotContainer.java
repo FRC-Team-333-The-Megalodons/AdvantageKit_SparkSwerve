@@ -439,50 +439,50 @@ public class RobotContainer { // Subsystems
   public void updateDashboard() {
 
     // Basic Bitch Commands
-    SmartDashboard.putData("Intake", endEffecter.runPercent(0.5));
-    SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5));
-    SmartDashboard.putData("WristUp", wrist.runPercent(-0.1));
-    SmartDashboard.putData("WristDown", wrist.runPercent(0.1));
-    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit));
-    SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit));
+    SmartDashboard.putData("Intake", endEffecter.runPercent(0.5).withName("RunningEndEffForward"));
+    SmartDashboard.putData("Eject", endEffecter.runPercent(-0.5).withName("RunningEndEffBackwards"));
+    SmartDashboard.putData("WristUp", wrist.runPercent(-0.1).withName("MovingWristUp"));
+    SmartDashboard.putData("WristDown", wrist.runPercent(0.1).withName("MovingWristDown"));
+    SmartDashboard.putData("ElevateUp", elevator.runPercent(0.1).until(elevator::upperLimit).withName("MovingElevatorUp"));
+    SmartDashboard.putData("ElevateDown", elevator.runPercent(-0.1).until(elevator::lowerLimit).withName("MovingElevatorDown"));
     SmartDashboard.putData(
-        "ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED));
+        "ExtendClimber", climber.getClimberOutCommand(ramp, Climber.QUARTER_SPEED).withName("MovingClimberOut"));
     // .alongWith(climber.runServo(0.5, 90)));
-    SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(Ramp.SERVO_LATCH));
-    SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(Ramp.SERVO_UNLATCH));
-    SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.QUARTER_SPEED));
+    SmartDashboard.putData("RampServoOut", ramp.runServoAtSpeed(Ramp.SERVO_LATCH).withName("MovingRampServoOut"));
+    SmartDashboard.putData("RampServoIn", ramp.runServoAtSpeed(Ramp.SERVO_UNLATCH).withName("MovingRampServoIn"));
+    SmartDashboard.putData("RetractClimber", climber.getClimberInCommand(Climber.QUARTER_SPEED).withName("Climb"));
 
-    SmartDashboard.putData("ServoDown", climber.runServoToPosition(Climber.SERVO_UNLOCKED));
-    SmartDashboard.putData("ServoUp", climber.runServoToPosition(Climber.SERVO_LOCKED));
+    SmartDashboard.putData("ServoDown", climber.runServoToPosition(Climber.SERVO_UNLOCKED).withName("MovingClimberServoOut"));
+    SmartDashboard.putData("ServoUp", climber.runServoToPosition(Climber.SERVO_LOCKED).withName("MovingClimberServoOut"));
 
     // Advanced Commands
     SmartDashboard.putData(
-        "IntakeCoral", endEffecter.runPercent(0.5).until(endEffecter::isTriggered));
+        "IntakeCoral", endEffecter.runPercent(0.5).until(endEffecter::isTriggered).withName("IntakingCoralHomePos"));
 
-    SmartDashboard.putData("WristHomePos", wrist.setWristPosition(WristConstants.homeSetpoint));
-    SmartDashboard.putData("WristL23Pos", wrist.setWristPosition(WristConstants.coralL23Setpoint));
-    SmartDashboard.putData("WristL4Pos", wrist.setWristPosition(WristConstants.coralL4Setpoint));
-    SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.aglaeSetpoint));
+    SmartDashboard.putData("WristHomePos", wrist.setWristPosition(WristConstants.homeSetpoint).withName("WristHomePos"));
+    SmartDashboard.putData("WristL23Pos", wrist.setWristPosition(WristConstants.coralL23Setpoint).withName("WristL23Pos"));
+    SmartDashboard.putData("WristL4Pos", wrist.setWristPosition(WristConstants.coralL4Setpoint).withName("WristL4Pos"));
+    SmartDashboard.putData("WristAlgaePos", wrist.setWristPosition(WristConstants.aglaeSetpoint).withName("WristAlgaePos"));
     SmartDashboard.putData(
-        "WristProcPos", wrist.setWristPosition(WristConstants.processorSetpoint));
-    SmartDashboard.putData("WristNetPos", wrist.setWristPosition(WristConstants.netSetPoint));
+        "WristProcPos", wrist.setWristPosition(WristConstants.processorSetpoint).withName("WristPocessorPos"));
+    SmartDashboard.putData("WristNetPos", wrist.setWristPosition(WristConstants.netSetPoint).withName("WristNetPos"));
     SmartDashboard.putData(
-        "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true));
+        "ElevatorHomePos", elevator.setElevatorPosition(ElevatorConstants.homeSetpoint, true).withName("ElevatorHomePos"));
     SmartDashboard.putData(
         "ElevatorCoralL2Pos",
-        elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true));
+        elevator.setElevatorPosition(ElevatorConstants.coralL2Setpoint, true).withName("ElevatorCoralL2Pos"));
     SmartDashboard.putData(
         "ElevatorCoralL3Pos",
-        elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true));
+        elevator.setElevatorPosition(ElevatorConstants.coralL3Setpoint, true).withName("ElevatorCoralL3Pos"));
     SmartDashboard.putData(
         "ElevatorCoralL4Pos",
-        elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, true));
+        elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, true).withName("ElevatorCoralL4Pos"));
     SmartDashboard.putData(
         "ElevatorAlgaeL2Pos",
-        elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true));
+        elevator.setElevatorPosition(ElevatorConstants.aglaeL2Setpoint, true).withName("ElevatorAlgaeL2Pos"));
     SmartDashboard.putData(
         "ElevatorAlgaeL3Pos",
-        elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true));
+        elevator.setElevatorPosition(ElevatorConstants.aglaeL3Setpoint, true).withName("ElevatorAlgaeL3Pos"));
   }
 
   /**
