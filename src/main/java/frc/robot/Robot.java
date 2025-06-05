@@ -17,6 +17,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,6 +52,12 @@ public class Robot extends LoggedRobot {
   public static boolean isTestModde = false;
 
   public Robot() {
+
+    CameraServer.startAutomaticCapture();
+    // Creates the CvSink and connects it to the UsbCamera
+    CvSink cvSink = CameraServer.getVideo();
+    // Creates the CvSource and MjpegServer [2] and connects them
+    CvSource outputStream = CameraServer.putVideo("Blur", 640, 480);
 
     Pathfinding.setPathfinder(new LocalADStarAK());
 
