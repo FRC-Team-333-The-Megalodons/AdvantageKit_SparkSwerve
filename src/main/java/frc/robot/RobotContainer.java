@@ -130,7 +130,8 @@ public class RobotContainer { // Subsystems
     elevator.setDefaultCommand(elevator.runPercent(operatorController.getLeftY()));
     // wrist.setDefaultCommand(AutomatedCommands.moveWristAfterIntakingCoral(endEffecter, wrist));
     // wrist.setDefaultCommand(
-    //     wrist.setWristPosition(WristConstants.coralL23Setpoint).onlyIf(endEffecter::isTriggered));
+    //
+    // wrist.setWristPosition(WristConstants.coralL23Setpoint).onlyIf(endEffecter::isTriggered));
   }
 
   public void configureDriverControllerBindings() {

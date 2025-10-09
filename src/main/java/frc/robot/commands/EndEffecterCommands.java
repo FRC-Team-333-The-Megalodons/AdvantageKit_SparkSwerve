@@ -16,8 +16,10 @@ public class EndEffecterCommands {
   public static Command runEndEffecterForward(EndEffecter endEffecter) {
     return endEffecter.runPercent(speed + 0.3);
   }
+
   public static Command runEndEffecterForwardInHomePoisition(EndEffecter endEffecter) {
-    return endEffecter.runPercent(speed);
+    return endEffecter.runPercent(speed - 0.3
+    );
   }
 
   public static Command autoEunEndEffecterForward(EndEffecter endEffecter) {
