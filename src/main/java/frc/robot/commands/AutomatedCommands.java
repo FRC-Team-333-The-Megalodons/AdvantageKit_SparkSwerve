@@ -43,14 +43,16 @@ public class AutomatedCommands {
 
   public static Command coralL4Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
     return wrist
-        .setWristPosition(WristConstants.coralL23Setpoint)
-        .until(wrist::atL3Setpoint)
-        .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
-        .until(elevator::atL4Setpoint)
-        .andThen(
-            wrist
-                .setWristPosition(WristConstants.coralL4Setpoint)
-                .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false)));
+        .setWristPosition(WristConstants.coralL4Setpoint)
+        .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false));
+
+        // .until(wrist::atL3Setpoint)
+        // .andThen(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false))
+        // .until(elevator::atL4Setpoint)
+        // .andThen(
+        //     wrist
+        //         .setWristPosition(WristConstants.coralL4Setpoint)
+        //         .alongWith(elevator.setElevatorPosition(ElevatorConstants.coralL4Setpoint, false)));
   }
 
   public static Command coralL3Command(EndEffecter endEffecter, Wrist wrist, Elevator elevator) {
