@@ -55,6 +55,8 @@ public class EndEffecterIOSpark implements EndEffecterIO {
     ifOk(endEffecter, endEffecter::getOutputCurrent, (value) -> inputs.currentAmps = value);
 
     inputs.isTriggered = canRange.getIsDetected().getValue();
+    inputs.isEmpty = canRange.getIsDetected().getValue() == false;
+
     inputs.canRangeDistance = canRange.getDistance().getValueAsDouble();
     inputs.isConnected = canRange.isConnected();
     inputs.hasAlgae = !photoEletricSensor.get();

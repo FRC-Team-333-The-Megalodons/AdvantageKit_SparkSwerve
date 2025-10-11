@@ -387,10 +387,10 @@ public class RobotContainer { // Subsystems
     // Named Commands
     NamedCommands.registerCommand(
         "ScoreCoral",
-        EndEffecterCommands.autoRunEndEffecterForward(endEffecter)
-            .onlyWhile(endEffecter::isTriggered)
-            .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
-            .until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
+        EndEffecterCommands.autoRunEndEffecterForward(endEffecter).until(endEffecter::isEmpty));
+    // .onlyWhile(endEffecter::isTriggered)
+    // .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
+    // .until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
     NamedCommands.registerCommand("IntakeCoral", AutomatedCommands.autoIntakeCoral(endEffecter));
     NamedCommands.registerCommand(
         "RunRamp", AutomatedCommands.rampIntakeCommand(ramp, RampConstants.speed));
