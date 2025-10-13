@@ -29,15 +29,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BackUpH4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HomePos"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HomePos"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackUpH4"
+                }
+              }
+            ]
           }
         }
       ]

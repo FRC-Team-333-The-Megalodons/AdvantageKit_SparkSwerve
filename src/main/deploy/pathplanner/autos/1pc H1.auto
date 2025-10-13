@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Prep-H4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "H4"
+            "name": "CoralL4Position"
           }
         },
         {

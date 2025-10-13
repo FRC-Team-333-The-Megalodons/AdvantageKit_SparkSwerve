@@ -386,8 +386,9 @@ public class RobotContainer { // Subsystems
 
     // Named Commands
     NamedCommands.registerCommand(
-        "ScoreCoral",
-        EndEffecterCommands.autoRunEndEffecterForward(endEffecter).until(endEffecter::isEmpty));
+        "ScoreCoral", EndEffecterCommands.autoRunEndEffecterForward(endEffecter));
+    // .unless(endEffecter::isTriggered));
+    // until(endEffecter::isEmpty));
     // .onlyWhile(endEffecter::isTriggered)
     // .andThen(wrist.setWristPosition(WristConstants.coralL23Setpoint))
     // .until(wrist::atL3Setpoint)); // onlyIf(endEffecter::isTriggered));
