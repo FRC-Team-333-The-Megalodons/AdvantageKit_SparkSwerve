@@ -386,7 +386,7 @@ public class RobotContainer { // Subsystems
 
     // Named Commands
     NamedCommands.registerCommand(
-        "ScoreCoral", EndEffecterCommands.autoRunEndEffecterForward(endEffecter));
+        "ScoreCoral", EndEffecterCommands.autoRunEndEffecterForward(endEffecter).until(endEffecter::isEmpty));
     // .unless(endEffecter::isTriggered));
     // until(endEffecter::isEmpty));
     // .onlyWhile(endEffecter::isTriggered)

@@ -132,7 +132,7 @@ public class AutomatedCommands {
         // .alongWith(ramp.setRampPosition(RampConstants.coralStationSetpoint))
         .alongWith(elevator.setElevatorPosition(ElevatorConstants.autonCoralL4SetPoint, false))
         .until(elevator::atAutoL4SetPoint)
-        .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).withTimeout(0.5));
+        .andThen(wrist.setWristPosition(WristConstants.coralL4Setpoint).until(wrist::atL4Setpoint));
   }
 
   public static Command autoIntakeCoral(EndEffecter endEffecter) {
